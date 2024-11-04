@@ -1,5 +1,6 @@
 package org.appointment.backend.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.appointment.backend.dto.KullaniciDto;
 import org.appointment.backend.entity.Kullanici;
 import org.appointment.backend.repo.KullaniciRepository;
@@ -13,12 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class KullaniciServiceImpl implements KullaniciService {
-    private final KullaniciRepository kullaniciRepository;
+@RequiredArgsConstructor
 
-    public KullaniciServiceImpl(KullaniciRepository kullaniciRepository) {
-        this.kullaniciRepository = kullaniciRepository;
-    }
+public class KullaniciServiceImpl implements KullaniciService {
+
+    private final KullaniciRepository kullaniciRepository;
 
     @Override
     @Transactional
@@ -26,15 +26,15 @@ public class KullaniciServiceImpl implements KullaniciService {
         Kullanici kullanici = new Kullanici();
         kullanici.setAd(kullaniciDto.getAd());
         kullanici.setSoyad(kullaniciDto.getSoyad());
+        final Kullanici kullanicidb = kullaniciRepository.save(kullanici);
 
-        Kullanici savedKullanici = kullaniciRepository.save(kullanici);
-        kullaniciDto.setId(savedKullanici.getId());
+        kullaniciDto.setId(kullanicidb.getId());
         return kullaniciDto;
     }
 
     @Override
     public void delete(Long id) {
-        kullaniciRepository.deleteById(id);
+
     }
 
     @Override
@@ -42,25 +42,19 @@ public class KullaniciServiceImpl implements KullaniciService {
         List<Kullanici> kullanicilar = kullaniciRepository.findAll();
         List<KullaniciDto> kullaniciDtos = new ArrayList<>();
 
-        kullanicilar.forEach(it -> {
+        kullanicilar.forEach(it ->{
             KullaniciDto kullaniciDto = new KullaniciDto();
             kullaniciDto.setId(it.getId());
             kullaniciDto.setAd(it.getAd());
             kullaniciDto.setSoyad(it.getSoyad());
             kullaniciDtos.add(kullaniciDto);
-        });
 
+        });
         return kullaniciDtos;
     }
 
     @Override
     public Page<KullaniciDto> getAll(Pageable pageable) {
-        return kullaniciRepository.findAll(pageable).map(kullanici -> {
-            KullaniciDto kullaniciDto = new KullaniciDto();
-            kullaniciDto.setId(kullanici.getId());
-            kullaniciDto.setAd(kullanici.getAd());
-            kullaniciDto.setSoyad(kullanici.getSoyad());
-            return kullaniciDto;
-        });
+        return null;
     }
 }

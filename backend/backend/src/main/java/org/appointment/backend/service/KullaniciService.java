@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface KullaniciService {
+
     KullaniciDto save(KullaniciDto kullaniciDto);
 
     void delete(Long id);
