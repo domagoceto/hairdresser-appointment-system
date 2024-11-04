@@ -1,41 +1,17 @@
 package org.appointment.backend.service;
 
 import org.appointment.backend.dto.KullaniciDto;
-import org.appointment.backend.entity.Kullanici;
-import org.appointment.backend.repo.KullaniciRepository;
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Service
-public class KullaniciService {
-    private final KullaniciRepository kullaniciRepository;
+public interface KullaniciService {
+    KullaniciDto save(KullaniciDto kullaniciDto);
 
-    public KullaniciService(KullaniciRepository kullaniciRepository) {
-        this.kullaniciRepository = kullaniciRepository;
-    }
+    void delete(Long id);
 
-    public KullaniciDto save(KullaniciDto kullaniciDto) {
-        Kullanici kullanici = new Kullanici();
-        kullanici.setAd(kullaniciDto.getAd());
-        kullanici.setSoyad(kullaniciDto.getSoyad());
+    List<KullaniciDto> getAll();
 
-        Kullanici savedKullanici = kullaniciRepository.save(kullanici);
-        return convertToDto(savedKullanici);
-    }
-
-    public List<KullaniciDto> getAll() {
-        return kullaniciRepository.findAll().stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-    }
-
-    private KullaniciDto convertToDto(Kullanici kullanici) {
-        KullaniciDto dto = new KullaniciDto();
-        dto.setId(kullanici.getId());
-        dto.setAd(kullanici.getAd());
-        dto.setSoyad(kullanici.getSoyad());
-        return dto;
-    }
+    Page<KullaniciDto> getAll(Pageable pageable);
 }
