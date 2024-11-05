@@ -23,4 +23,18 @@ public class KullaniciController {
     public ResponseEntity<List<KullaniciDto>>tumunuListele() {
         return ResponseEntity.ok(kullaniciService.getAll());
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<KullaniciDto> guncelle(@PathVariable Long id,@RequestBody KullaniciDto kullaniciDto) {
+        kullaniciDto.setId(id);
+        return ResponseEntity.ok(kullaniciService.save(kullaniciDto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<KullaniciDto> sil(@PathVariable Long id) {
+        kullaniciService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }

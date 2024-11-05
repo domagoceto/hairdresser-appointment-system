@@ -1,11 +1,7 @@
 package org.appointment.backend.entity;
 
 import jakarta.persistence.*;
-
-
-
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -21,5 +17,22 @@ public class Kullanici {
     @Column(length = 100, name = "soyad")
     private String soyad;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10 ,name="cinsiyet" )
+    private Cinsiyet cinsiyet;
 
+    @Column(length = 15, name = "telefon")
+    private String telefon;
+
+    @Column (length = 100,name="email")
+    private String email;
+
+    @Column (length = 100,name="sifre")
+    private String sifre;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10, name = "rol")
+    private Rol rol;
 }
+
+

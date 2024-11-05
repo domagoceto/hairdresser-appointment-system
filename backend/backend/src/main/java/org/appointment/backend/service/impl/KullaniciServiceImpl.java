@@ -1,6 +1,6 @@
 package org.appointment.backend.service.impl;
 
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.appointment.backend.dto.KullaniciDto;
 import org.appointment.backend.entity.Kullanici;
 import org.appointment.backend.repo.KullaniciRepository;
@@ -26,6 +26,11 @@ public class KullaniciServiceImpl implements KullaniciService {
         Kullanici kullanici = new Kullanici();
         kullanici.setAd(kullaniciDto.getAd());
         kullanici.setSoyad(kullaniciDto.getSoyad());
+        kullanici.setRol(kullaniciDto.getRol());
+        kullanici.setEmail(kullaniciDto.getEmail());
+        kullanici.setTelefon(kullaniciDto.getTelefon());
+        kullanici.setSifre(kullaniciDto.getSifre());
+        kullanici.setCinsiyet(kullaniciDto.getCinsiyet());
         final Kullanici kullanicidb = kullaniciRepository.save(kullanici);
 
         kullaniciDto.setId(kullanicidb.getId());
@@ -47,12 +52,16 @@ public class KullaniciServiceImpl implements KullaniciService {
             kullaniciDto.setId(it.getId());
             kullaniciDto.setAd(it.getAd());
             kullaniciDto.setSoyad(it.getSoyad());
+            kullaniciDto.setRol(it.getRol());
+            kullaniciDto.setEmail(it.getEmail());
+            kullaniciDto.setTelefon(it.getTelefon());
+            kullaniciDto.setSifre(it.getSifre());
+            kullaniciDto.setCinsiyet(it.getCinsiyet());
             kullaniciDtos.add(kullaniciDto);
 
         });
         return kullaniciDtos;
     }
-
     @Override
     public Page<KullaniciDto> getAll(Pageable pageable) {
         return null;
