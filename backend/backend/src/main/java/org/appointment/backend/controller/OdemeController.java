@@ -15,23 +15,23 @@ public class OdemeController {
 
     private final OdemeService odemeService;
 
-    @PostMapping
+    @PostMapping("/olustur")
     public ResponseEntity<OdemeDto> kaydet (@RequestBody OdemeDto odemeDto) {
         return ResponseEntity.ok(odemeService.save(odemeDto));
     }
 
-    @GetMapping
+    @GetMapping("/hepsiniListele")
     public ResponseEntity<List<OdemeDto>> tumunuListele() {
         return ResponseEntity.ok(odemeService.getAll());
     }
 
-    @PutMapping("/{odemeId}")
+    @PutMapping("/guncelle/{odemeId}")
     public ResponseEntity<OdemeDto> guncelle(@PathVariable Long odemeId,@RequestBody OdemeDto odemeDto) {
         odemeDto.setOdemeId(odemeId);
         return ResponseEntity.ok(odemeService.save(odemeDto));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/sil/{odemeId}")
     public ResponseEntity<OdemeDto> sil(@PathVariable Long odemeId) {
         odemeService.delete(odemeId);
         return ResponseEntity.noContent().build();
