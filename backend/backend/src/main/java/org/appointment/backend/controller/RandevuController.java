@@ -9,19 +9,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("/randevu")
 @RequiredArgsConstructor
 
 public class RandevuController {
 
     private final RandevuService randevuService;
 
-    @PostMapping("/ekle")
+    @PostMapping("/ekleRandevu")
     public ResponseEntity<RandevuDto>kaydet(@RequestBody RandevuDto randevuDto) {
         return ResponseEntity.ok(randevuService.save(randevuDto));
     }
 
-    @GetMapping("/listele")
+    @GetMapping("/listeleRandevu")
     public ResponseEntity<List<RandevuDto>> tumunuListele() {
         return ResponseEntity.ok(randevuService.getAll());
     }

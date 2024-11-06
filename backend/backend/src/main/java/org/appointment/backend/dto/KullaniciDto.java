@@ -8,7 +8,7 @@ import org.appointment.backend.entity.Rol;
 
 public class KullaniciDto {
 
-    private Long id;
+    private Long kullaniciId;
     private String ad;
     private String soyad;
     private Cinsiyet cinsiyet;

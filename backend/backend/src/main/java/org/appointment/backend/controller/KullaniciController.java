@@ -15,24 +15,24 @@ public class KullaniciController {
 
     private final KullaniciService kullaniciService;
 
-    @PostMapping
+    @PostMapping({"/ekleKullanici"})
     public ResponseEntity<KullaniciDto> kaydet(@RequestBody KullaniciDto kullaniciDto) {
         return ResponseEntity.ok(kullaniciService.save(kullaniciDto));
     }
-    @GetMapping
+    @GetMapping({"/listeleKullanici"})
     public ResponseEntity<List<KullaniciDto>>tumunuListele() {
         return ResponseEntity.ok(kullaniciService.getAll());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<KullaniciDto> guncelle(@PathVariable Long id,@RequestBody KullaniciDto kullaniciDto) {
-        kullaniciDto.setId(id);
+    @PutMapping("/guncelle/{kullaniciId}")
+    public ResponseEntity<KullaniciDto> guncelle(@PathVariable Long kullaniciId,@RequestBody KullaniciDto kullaniciDto) {
+        kullaniciDto.setKullaniciId(kullaniciId);
         return ResponseEntity.ok(kullaniciService.save(kullaniciDto));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<KullaniciDto> sil(@PathVariable Long id) {
-        kullaniciService.delete(id);
+    @DeleteMapping("/sil/{kullaniciId}")
+    public ResponseEntity<KullaniciDto> sil(@PathVariable Long kullaniciId) {
+        kullaniciService.delete(kullaniciId);
         return ResponseEntity.noContent().build();
     }
 

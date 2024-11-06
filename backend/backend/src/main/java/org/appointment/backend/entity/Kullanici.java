@@ -9,7 +9,7 @@ import lombok.*;
 public class Kullanici {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long kullaniciId;
 
     @Column(length = 100, name = "ad")
     private String ad;

@@ -9,18 +9,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("/odeme")
 @RequiredArgsConstructor
 public class OdemeController {
 
     private final OdemeService odemeService;
 
-    @PostMapping("/olustur")
+    @PostMapping("/ekleOdeme")
     public ResponseEntity<OdemeDto> kaydet (@RequestBody OdemeDto odemeDto) {
         return ResponseEntity.ok(odemeService.save(odemeDto));
     }
 
-    @GetMapping("/hepsiniListele")
+    @GetMapping("/listeleOdeme")
     public ResponseEntity<List<OdemeDto>> tumunuListele() {
         return ResponseEntity.ok(odemeService.getAll());
     }

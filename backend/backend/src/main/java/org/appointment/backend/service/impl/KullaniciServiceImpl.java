@@ -33,7 +33,7 @@ public class KullaniciServiceImpl implements KullaniciService {
         kullanici.setCinsiyet(kullaniciDto.getCinsiyet());
         final Kullanici kullanicidb = kullaniciRepository.save(kullanici);
 
-        kullaniciDto.setId(kullanicidb.getId());
+        kullaniciDto.setKullaniciId(kullaniciDto.getKullaniciId());
         return kullaniciDto;
     }
 
@@ -49,7 +49,7 @@ public class KullaniciServiceImpl implements KullaniciService {
 
         kullanicilar.forEach(it ->{
             KullaniciDto kullaniciDto = new KullaniciDto();
-            kullaniciDto.setId(it.getId());
+            kullaniciDto.setKullaniciId(it.getKullaniciId());
             kullaniciDto.setAd(it.getAd());
             kullaniciDto.setSoyad(it.getSoyad());
             kullaniciDto.setRol(it.getRol());
