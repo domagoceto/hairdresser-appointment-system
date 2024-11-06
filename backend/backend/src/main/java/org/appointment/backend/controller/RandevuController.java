@@ -16,23 +16,23 @@ public class RandevuController {
 
     private final RandevuService randevuService;
 
-    @PostMapping
+    @PostMapping("/ekle")
     public ResponseEntity<RandevuDto>kaydet(@RequestBody RandevuDto randevuDto) {
         return ResponseEntity.ok(randevuService.save(randevuDto));
     }
 
-    @GetMapping
+    @GetMapping("/listele")
     public ResponseEntity<List<RandevuDto>> tumunuListele() {
         return ResponseEntity.ok(randevuService.getAll());
     }
 
-    @PutMapping("/{randevuId}")
+    @PutMapping("/guncelle/{randevuId}")
     public ResponseEntity<RandevuDto> guncelle(@PathVariable Long randevuId, @RequestBody RandevuDto randevuDto) {
         randevuDto.setRandevuId(randevuId);
         return ResponseEntity.ok(randevuService.save(randevuDto));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/sil/{randevuId}")
     public ResponseEntity<RandevuDto> sil(@PathVariable Long randevuId) {
         randevuService.delete(randevuId);
         return ResponseEntity.noContent().build();
