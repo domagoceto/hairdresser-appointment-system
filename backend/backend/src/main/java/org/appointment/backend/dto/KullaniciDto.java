@@ -1,11 +1,12 @@
 package org.appointment.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 import org.appointment.backend.entity.Cinsiyet;
 import org.appointment.backend.entity.Rol;
 
 @Data
-
+@JsonPropertyOrder({"kullaniciId", "ad", "soyad", "email", "telefon", "sifre", "cinsiyet","rol"})
 public class KullaniciDto {
 
     private Long kullaniciId;

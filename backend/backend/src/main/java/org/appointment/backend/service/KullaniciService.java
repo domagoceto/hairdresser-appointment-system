@@ -9,6 +9,8 @@ public interface KullaniciService {
 
     KullaniciDto save(KullaniciDto kullaniciDto);
 
+    KullaniciDto update(Long kullaniciId, KullaniciDto kullaniciDto);
+
     void delete(Long id);
 
     List<KullaniciDto> getAll();

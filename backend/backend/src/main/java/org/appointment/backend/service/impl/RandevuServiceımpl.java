@@ -27,7 +27,7 @@ public class RandevuServiceımpl implements RandevuService {
         Randevu randevu=new Randevu();
         randevu.setTarih(randevuDto.getTarih());
         randevu.setKuafor(randevuDto.getKuafor());
-        randevu.setIslem(randevuDto.getIslem());
+        randevu.setHizmet(randevuDto.getHizmet());
         randevu.setDurum(randevuDto.getDurum());
         randevu.setNotlar(randevuDto.getNotlar());
         randevu.setSaat(randevuDto.getSaat());
@@ -56,7 +56,7 @@ public class RandevuServiceımpl implements RandevuService {
             randevuDto.setRandevuId(it.getRandevuId());
             randevuDto.setTarih(it.getTarih());
             randevuDto.setKuafor(it.getKuafor());
-            randevuDto.setIslem(it.getIslem());
+            randevuDto.setHizmet(it.getHizmet());
             randevuDto.setDurum(it.getDurum());
             randevuDto.setNotlar(it.getNotlar());
             randevuDto.setSaat(it.getSaat());

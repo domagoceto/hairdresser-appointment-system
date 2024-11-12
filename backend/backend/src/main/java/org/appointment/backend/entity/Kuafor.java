@@ -1,12 +1,8 @@
 package org.appointment.backend.entity;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.*;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -27,8 +23,9 @@ public class Kuafor {
     @Column(nullable = false)
     private String soyad;
 
-    @Column(nullable = false)
-    private String cinsiyet;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10 ,name="cinsiyet" )
+    private Cinsiyet cinsiyet;
 
     @Column(nullable = false)
     private String telefon;
@@ -39,6 +36,8 @@ public class Kuafor {
     @OneToMany(mappedBy = "kuafor")
     private List<Randevu> randevular;
 
+
+    //Tablo oluşturuluyor
     @ManyToMany
     @JoinTable(
             name = "kuafor_hizmetler",

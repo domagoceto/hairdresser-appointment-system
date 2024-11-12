@@ -5,7 +5,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-
+@Table(name = "odemeler")
 @Getter
 @Setter
 @Entity
@@ -14,6 +14,7 @@ public class Odeme {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long odemeId;
 
+    //tutar randevu ücret bilgisinden çekilecek
     @Column(name = "tutar")
     private double tutar;
 

@@ -33,14 +33,50 @@ public class KullaniciServiceImpl implements KullaniciService {
         kullanici.setCinsiyet(kullaniciDto.getCinsiyet());
         final Kullanici kullanicidb = kullaniciRepository.save(kullanici);
 
-        kullaniciDto.setKullaniciId(kullaniciDto.getKullaniciId());
+        kullaniciDto.setKullaniciId(kullanicidb.getKullaniciId());
         return kullaniciDto;
     }
 
     @Override
     public void delete(Long id) {
+        kullaniciRepository.deleteById(id);
 
     }
+
+    @Transactional
+    @Override
+    public KullaniciDto update(Long kullaniciId, KullaniciDto kullaniciDto) {
+        // Mevcut kullanıcıyı veritabanından bul
+        Kullanici kullanici = kullaniciRepository.findById(kullaniciId)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+
+        // Sadece gelen kullaniciDto'da dolu olan alanları güncelle
+        kullanici.setAd(kullaniciDto.getAd() != null ? kullaniciDto.getAd() : kullanici.getAd());
+        kullanici.setSoyad(kullaniciDto.getSoyad() != null ? kullaniciDto.getSoyad() : kullanici.getSoyad());
+        kullanici.setRol(kullaniciDto.getRol() != null ? kullaniciDto.getRol() : kullanici.getRol());
+        kullanici.setEmail(kullaniciDto.getEmail() != null ? kullaniciDto.getEmail() : kullanici.getEmail());
+        kullanici.setTelefon(kullaniciDto.getTelefon() != null ? kullaniciDto.getTelefon() : kullanici.getTelefon());
+        kullanici.setSifre(kullaniciDto.getSifre() != null ? kullaniciDto.getSifre() : kullanici.getSifre());
+        kullanici.setCinsiyet(kullaniciDto.getCinsiyet() != null ? kullaniciDto.getCinsiyet() : kullanici.getCinsiyet());
+
+        // Güncellenmiş kullanıcıyı kaydet
+        Kullanici updatedKullanici = kullaniciRepository.save(kullanici);
+
+        // Güncellenmiş bilgileri geri döndür
+        KullaniciDto updatedKullaniciDto = new KullaniciDto();
+        updatedKullaniciDto.setKullaniciId(updatedKullanici.getKullaniciId());
+        updatedKullaniciDto.setAd(updatedKullanici.getAd());
+        updatedKullaniciDto.setSoyad(updatedKullanici.getSoyad());
+        updatedKullaniciDto.setRol(updatedKullanici.getRol());
+        updatedKullaniciDto.setEmail(updatedKullanici.getEmail());
+        updatedKullaniciDto.setTelefon(updatedKullanici.getTelefon());
+        updatedKullaniciDto.setSifre(updatedKullanici.getSifre());
+        updatedKullaniciDto.setCinsiyet(updatedKullanici.getCinsiyet());
+
+        return updatedKullaniciDto;
+    }
+
+
 
     @Override
     public List<KullaniciDto> getAll() {
@@ -66,4 +102,6 @@ public class KullaniciServiceImpl implements KullaniciService {
     public Page<KullaniciDto> getAll(Pageable pageable) {
         return null;
     }
+
+
 }

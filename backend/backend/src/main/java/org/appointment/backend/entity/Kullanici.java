@@ -3,6 +3,7 @@ package org.appointment.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Table(name = "kullanicilar")
 @Getter
 @Setter
 @Entity

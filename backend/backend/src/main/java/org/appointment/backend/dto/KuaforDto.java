@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import org.appointment.backend.entity.Cinsiyet;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class KuaforDto {
     private Long kuaforId;
     private String ad;
     private String soyad;
-    private String cinsiyet;
+    private Cinsiyet cinsiyet;
     private String telefon;
     private String email;
     private List<Long> yapabilecegiHizmetlerIds;

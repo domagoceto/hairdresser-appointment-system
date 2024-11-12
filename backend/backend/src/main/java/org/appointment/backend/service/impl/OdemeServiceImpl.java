@@ -38,7 +38,7 @@ public class OdemeServiceImpl implements OdemeService {
 
     @Override
     public void delete(Long odemeId){
-
+        odemeRepository.deleteById(odemeId);
     }
     @Override
     public List<OdemeDto> getAll(){
@@ -59,8 +59,18 @@ public class OdemeServiceImpl implements OdemeService {
     }
 
     @Override
-    public Page<OdemeDto> getAll(Pageable pageable){
-        return null;
+    public Page<OdemeDto> getAll(Pageable pageable) {
+        Page<Odeme> odemelerPage = odemeRepository.findAll(pageable);
+        return odemelerPage.map(odeme -> {
+            OdemeDto odemeDto = new OdemeDto();
+            odemeDto.setOdemeId(odeme.getOdemeId());
+            odemeDto.setTutar(odeme.getTutar());
+            odemeDto.setAciklama(odeme.getAciklama());
+            odemeDto.setKullanici(odeme.getKullanici());
+            odemeDto.setRandevu(odeme.getRandevu());
+            odemeDto.setDurum(odeme.getDurum());
+            return odemeDto;
+        });
     }
 
 

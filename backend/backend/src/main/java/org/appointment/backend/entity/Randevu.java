@@ -7,8 +7,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@Getter
-@Setter
+@Table(name = "randevular")
+@Data
 @Entity
 
 public class Randevu {
@@ -22,11 +22,13 @@ public class Randevu {
     @Column(length = 50, name = "saat")
     private LocalTime saat;
 
-    @Column(length = 100,name="kuafor")
-    private String kuafor; //Entity olarak güncellenecek
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="kuafor_id")
+    private Kuafor kuafor;
 
-    @Column(length = 100,name="islem")
-    private String islem; //Entity olarak güncellenecek
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hizmet_id")
+    private Hizmet hizmet;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kullanici_id")
@@ -38,6 +40,7 @@ public class Randevu {
 
     @Column(length = 300, name = "notlar")
     private String notlar;
+
 
     @Column(name = "ucret")
     private double ucret;

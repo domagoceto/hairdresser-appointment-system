@@ -15,6 +15,8 @@ public class KullaniciController {
 
     private final KullaniciService kullaniciService;
 
+
+
     @PostMapping({"/ekleKullanici"})
     public ResponseEntity<KullaniciDto> kaydet(@RequestBody KullaniciDto kullaniciDto) {
         return ResponseEntity.ok(kullaniciService.save(kullaniciDto));
@@ -25,10 +27,10 @@ public class KullaniciController {
     }
 
     @PutMapping("/guncelle/{kullaniciId}")
-    public ResponseEntity<KullaniciDto> guncelle(@PathVariable Long kullaniciId,@RequestBody KullaniciDto kullaniciDto) {
-        kullaniciDto.setKullaniciId(kullaniciId);
-        return ResponseEntity.ok(kullaniciService.save(kullaniciDto));
+    public ResponseEntity<KullaniciDto> guncelle(@PathVariable Long kullaniciId, @RequestBody KullaniciDto kullaniciDto) {
+        return ResponseEntity.ok(kullaniciService.update(kullaniciId, kullaniciDto));
     }
+
 
     @DeleteMapping("/sil/{kullaniciId}")
     public ResponseEntity<KullaniciDto> sil(@PathVariable Long kullaniciId) {

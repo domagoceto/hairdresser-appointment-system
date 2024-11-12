@@ -1,6 +1,8 @@
 package org.appointment.backend.dto;
 
 import lombok.Data;
+import org.appointment.backend.entity.Hizmet;
+import org.appointment.backend.entity.Kuafor;
 import org.appointment.backend.entity.Kullanici;
 import org.appointment.backend.entity.RandevuDurum;
 
@@ -13,8 +15,8 @@ public class RandevuDto {
     private Long randevuId;
     private LocalDate tarih;
     private LocalTime saat;
-    private String kuafor; //Kuafor entity  olarak güncellenecek
-    private String islem; //Islem entity olarak güncellenecek
+    private Kuafor kuafor;
+    private Hizmet hizmet ;
     private Kullanici kullanici;
     private RandevuDurum durum;
     private String notlar;
