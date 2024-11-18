@@ -46,7 +46,7 @@ public class Randevu {
     private double ucret;
 
     @Column(name = "sure")
-    private int sure; // işlem süresi dakika cinsinden
+    private String sure; // işlem süresi dakika cinsinden
 
     @Column(name = "created_at") //Randevu oluşturulma tarihi
     private LocalDateTime createdAt;

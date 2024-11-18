@@ -12,6 +12,8 @@ public interface RandevuService {
 
     void delete(long randevuId);
 
+   RandevuDto update(Long randevuId, RandevuDto randevuDto);
+
     List<RandevuDto> getAll();
 
     Page<RandevuDto> getAll(Pageable pageable);

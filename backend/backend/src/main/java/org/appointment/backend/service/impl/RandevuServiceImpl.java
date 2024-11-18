@@ -1,6 +1,5 @@
 package org.appointment.backend.service.impl;
 
-
 import lombok.*;
 import org.appointment.backend.dto.RandevuDto;
 import org.appointment.backend.entity.Randevu;
@@ -17,7 +16,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 
-public class RandevuServiceımpl implements RandevuService {
+public class RandevuServiceImpl implements RandevuService {
 
     private final RandevuRepository randevuRepository;
 
@@ -44,7 +43,47 @@ public class RandevuServiceımpl implements RandevuService {
 
     @Override
     public void delete(long randevuId) {
-    };
+        randevuRepository.deleteById(randevuId);
+    }
+
+    @Transactional
+    @Override
+    public RandevuDto update(Long ranrevuId, RandevuDto randevuDto){
+        Randevu randevu = randevuRepository.findById(ranrevuId)
+                .orElseThrow(()-> new RuntimeException("Randevu bulunamadı"));
+
+        randevu.setTarih(randevuDto.getTarih() != null ? randevuDto.getTarih() : randevu.getTarih());
+        randevu.setHizmet(randevuDto.getHizmet() != null ? randevuDto.getHizmet() : randevu.getHizmet());
+        randevu.setSaat(randevuDto.getSaat() != null ? randevuDto.getSaat() : randevu.getSaat());
+        randevu.setKullanici(randevuDto.getKullanici() != null ? randevuDto.getKullanici() : randevu.getKullanici());
+        randevu.setUpdatedAt(randevuDto.getUpdatedAt() != null ? randevuDto.getUpdatedAt() : randevu.getUpdatedAt());
+        randevu.setCreatedAt(randevuDto.getCreatedAt() != null ? randevuDto.getCreatedAt() : randevu.getCreatedAt());
+        randevu.setKullanici(randevuDto.getKullanici() != null ? randevuDto.getKullanici() : randevu.getKullanici());
+        randevu.setKuafor(randevuDto.getKuafor() != null ? randevuDto.getKuafor() : randevu.getKuafor());
+        randevu.setDurum(randevuDto.getDurum() != null ? randevuDto.getDurum() : randevu.getDurum());
+        randevu.setNotlar(randevuDto.getNotlar() != null ? randevuDto.getNotlar() : randevu.getNotlar());
+        randevu.setSure(randevuDto.getSure() != null ? randevuDto.getSure() : randevu.getSure());
+
+        Randevu updateRandevu = randevuRepository.save(randevu);
+
+        RandevuDto updateRandevuDto = new RandevuDto();
+        updateRandevuDto.setRandevuId(updateRandevu.getRandevuId());
+        updateRandevuDto.setSure(updateRandevu.getSure());
+        updateRandevuDto.setUpdatedAt(updateRandevu.getUpdatedAt());
+        updateRandevuDto.setCreatedAt(updateRandevu.getCreatedAt());
+        updateRandevuDto.setKullanici(updateRandevu.getKullanici());
+        updateRandevuDto.setKuafor(updateRandevu.getKuafor());
+        updateRandevuDto.setDurum(updateRandevu.getDurum());
+        updateRandevuDto.setNotlar(updateRandevu.getNotlar());
+        updateRandevuDto.setSaat(updateRandevu.getSaat());
+        updateRandevuDto.setTarih(updateRandevu.getTarih());
+        updateRandevuDto.setHizmet(updateRandevu.getHizmet());
+        updateRandevuDto.setUcret(updateRandevu.getUcret());
+
+        return updateRandevuDto;
+
+    }
+
 
     @Override
     public List<RandevuDto> getAll(){

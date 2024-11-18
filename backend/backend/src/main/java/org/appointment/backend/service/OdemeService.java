@@ -14,4 +14,6 @@ public interface OdemeService {
     List<OdemeDto> getAll();
 
     Page<OdemeDto> getAll(Pageable pageable);
+
+    OdemeDto update(Long odemeId, OdemeDto odemeDto);
 }

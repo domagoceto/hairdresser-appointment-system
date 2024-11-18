@@ -46,7 +46,6 @@ public class KullaniciServiceImpl implements KullaniciService {
     @Transactional
     @Override
     public KullaniciDto update(Long kullaniciId, KullaniciDto kullaniciDto) {
-        // Mevcut kullanıcıyı veritabanından bul
         Kullanici kullanici = kullaniciRepository.findById(kullaniciId)
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
 
@@ -75,8 +74,6 @@ public class KullaniciServiceImpl implements KullaniciService {
 
         return updatedKullaniciDto;
     }
-
-
 
     @Override
     public List<KullaniciDto> getAll() {

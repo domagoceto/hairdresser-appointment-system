@@ -21,7 +21,7 @@ public class RandevuDto {
     private RandevuDurum durum;
     private String notlar;
     private double ucret;
-    private int sure;
+    private String sure;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -27,8 +27,7 @@ public class OdemeController {
 
     @PutMapping("/guncelle/{odemeId}")
     public ResponseEntity<OdemeDto> guncelle(@PathVariable Long odemeId,@RequestBody OdemeDto odemeDto) {
-        odemeDto.setOdemeId(odemeId);
-        return ResponseEntity.ok(odemeService.save(odemeDto));
+        return ResponseEntity.ok(odemeService.update(odemeId,odemeDto));
     }
 
     @DeleteMapping("/sil/{odemeId}")

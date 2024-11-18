@@ -9,8 +9,6 @@ import org.appointment.backend.service.OdemeService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
-
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +37,36 @@ public class OdemeServiceImpl implements OdemeService {
     @Override
     public void delete(Long odemeId){
         odemeRepository.deleteById(odemeId);
+    }
+
+    @Override
+    @Transactional
+    public OdemeDto update(Long odemeId, OdemeDto odemeDto){
+        Odeme odeme =odemeRepository.findById(odemeId)
+                .orElseThrow(()-> new RuntimeException("Odeme bilgisi bulunamadı"));
+
+        odeme.setDurum(odemeDto.getDurum() != null ? odemeDto.getDurum() : odeme.getDurum());
+        odeme.setOdemeYontemi(odemeDto.getOdemeYontemi() != null ? odemeDto.getOdemeYontemi() : odeme.getOdemeYontemi());
+        odeme.setOdemeTarihi(odemeDto.getOdemeTarihi() != null ? odemeDto.getOdemeTarihi() : odeme.getOdemeTarihi());
+        odeme.setAciklama(odemeDto.getAciklama() != null ? odemeDto.getAciklama() : odeme.getAciklama());
+        odeme.setKullanici(odemeDto.getKullanici() != null ? odemeDto.getKullanici() : odeme.getKullanici());
+        odeme.setTutar(odemeDto.getTutar() != null ? odemeDto.getTutar() : odeme.getTutar());
+        odeme.setRandevu(odemeDto.getRandevu() != null ? odemeDto.getRandevu(): odeme.getRandevu());
+
+        Odeme updatedOdeme = odemeRepository.save(odeme);
+
+        OdemeDto updatedOdemeDto = new OdemeDto();
+        updatedOdemeDto.setOdemeId(updatedOdeme.getOdemeId());
+        updatedOdemeDto.setDurum(updatedOdeme.getDurum());
+        updatedOdemeDto.setAciklama(updatedOdeme.getAciklama());
+        updatedOdemeDto.setKullanici(updatedOdeme.getKullanici());
+        updatedOdemeDto.setOdemeYontemi(updatedOdeme.getOdemeYontemi());
+        updatedOdemeDto.setOdemeTarihi(updatedOdeme.getOdemeTarihi());
+        updatedOdemeDto.setTutar(updatedOdeme.getTutar());
+        updatedOdemeDto.setRandevu(updatedOdeme.getRandevu());
+
+        return updatedOdemeDto;
+
     }
     @Override
     public List<OdemeDto> getAll(){

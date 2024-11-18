@@ -27,9 +27,8 @@ public class RandevuController {
     }
 
     @PutMapping("/guncelle/{randevuId}")
-    public ResponseEntity<RandevuDto> guncelle(@PathVariable Long randevuId, @RequestBody RandevuDto randevuDto) {
-        randevuDto.setRandevuId(randevuId);
-        return ResponseEntity.ok(randevuService.save(randevuDto));
+    public ResponseEntity<RandevuDto>guncelle(@PathVariable Long randevuId, @RequestBody RandevuDto randevuDto) {
+        return ResponseEntity.ok(randevuService.update(randevuId,randevuDto));
     }
 
     @DeleteMapping("/sil/{randevuId}")

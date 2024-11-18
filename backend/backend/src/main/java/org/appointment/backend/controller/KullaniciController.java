@@ -15,8 +15,6 @@ public class KullaniciController {
 
     private final KullaniciService kullaniciService;
 
-
-
     @PostMapping({"/ekleKullanici"})
     public ResponseEntity<KullaniciDto> kaydet(@RequestBody KullaniciDto kullaniciDto) {
         return ResponseEntity.ok(kullaniciService.save(kullaniciDto));
@@ -31,12 +29,10 @@ public class KullaniciController {
         return ResponseEntity.ok(kullaniciService.update(kullaniciId, kullaniciDto));
     }
 
-
     @DeleteMapping("/sil/{kullaniciId}")
     public ResponseEntity<KullaniciDto> sil(@PathVariable Long kullaniciId) {
         kullaniciService.delete(kullaniciId);
         return ResponseEntity.noContent().build();
     }
-
 
 }
