@@ -1,6 +1,7 @@
 package org.appointment.backend.controller;
 
 import org.appointment.backend.config.JwtUtil;
+import org.appointment.backend.dto.AuthRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
