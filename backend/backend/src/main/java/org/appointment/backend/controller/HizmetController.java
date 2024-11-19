@@ -17,7 +17,7 @@ public class HizmetController {
 
     @GetMapping({"/listeleHizmet"})
     public ResponseEntity<List<HizmetDto>> tumunuListele() {
-        return ResponseEntity.ok(hizmetService.tumunuListele());
+        return ResponseEntity.ok(hizmetService.getAll());
     }
 
     @GetMapping("/{id}")
@@ -27,17 +27,18 @@ public class HizmetController {
 
     @PostMapping({"/ekleHizmet"})
     public ResponseEntity<HizmetDto> kaydet(@RequestBody HizmetDto hizmetDto) {
-        return ResponseEntity.ok(hizmetService.kaydet(hizmetDto));
+        return ResponseEntity.ok(hizmetService.save(hizmetDto));
     }
 
     @PutMapping("/guncelle/{hizmetId}")
-    public ResponseEntity<HizmetDto> guncelle(@PathVariable Long id, @RequestBody HizmetDto hizmetDto) {
-        return ResponseEntity.ok(hizmetService.guncelle(id, hizmetDto));
+    public ResponseEntity<HizmetDto> guncelle(@PathVariable Long hizmetId, @RequestBody HizmetDto hizmetDto) {
+        return ResponseEntity.ok(hizmetService.update(hizmetId, hizmetDto));
     }
 
     @DeleteMapping("/sil/{HizmetId}")
-    public ResponseEntity<Void> sil(@PathVariable Long id) {
-        hizmetService.sil(id);
+    public ResponseEntity<Void> sil(@PathVariable Long hizmetId) {
+        hizmetService.delete(hizmetId);
         return ResponseEntity.noContent().build();
     }
 }
+

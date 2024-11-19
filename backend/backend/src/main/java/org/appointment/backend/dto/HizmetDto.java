@@ -16,3 +16,4 @@ public class HizmetDto {
     private Integer sure;
     private Double fiyat;
 }
+

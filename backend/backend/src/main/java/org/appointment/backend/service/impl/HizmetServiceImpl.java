@@ -2,9 +2,12 @@ package org.appointment.backend.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.appointment.backend.dto.HizmetDto;
+import org.appointment.backend.dto.KullaniciDto;
 import org.appointment.backend.entity.Hizmet;
 import org.appointment.backend.repo.HizmetRepository;
 import org.appointment.backend.service.HizmetService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,8 +20,13 @@ public class HizmetServiceImpl implements HizmetService {
     private final HizmetRepository hizmetRepository;
 
     @Override
-    public List<HizmetDto> tumunuListele() {
+    public List<HizmetDto> getAll() {
         return hizmetRepository.findAll().stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<KullaniciDto> getAll(Pageable pageable) {
+        return null;
     }
 
     @Override
@@ -27,13 +35,13 @@ public class HizmetServiceImpl implements HizmetService {
     }
 
     @Override
-    public HizmetDto kaydet(HizmetDto hizmetDto) {
+    public HizmetDto save(HizmetDto hizmetDto) {
         Hizmet hizmet = convertToEntity(hizmetDto);
         return convertToDto(hizmetRepository.save(hizmet));
     }
 
     @Override
-    public HizmetDto guncelle(Long id, HizmetDto hizmetDto) {
+    public HizmetDto update(Long id, HizmetDto hizmetDto) {
         Hizmet existingHizmet = hizmetRepository.findById(id).orElseThrow(() -> new RuntimeException("Hizmet bulunamadı"));
         existingHizmet.setAd(hizmetDto.getAd());
         existingHizmet.setAciklama(hizmetDto.getAciklama());
@@ -43,7 +51,7 @@ public class HizmetServiceImpl implements HizmetService {
     }
 
     @Override
-    public void sil(Long id) {
+    public void delete(Long id) {
         hizmetRepository.deleteById(id);
     }
 
@@ -67,3 +75,4 @@ public class HizmetServiceImpl implements HizmetService {
                 .build();
     }
 }
+
