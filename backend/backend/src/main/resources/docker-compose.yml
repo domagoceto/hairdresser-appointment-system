@@ -3,7 +3,7 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: 1253
+      POSTGRES_PASSWORD: 182727
 
   adminer:
     image: adminer
