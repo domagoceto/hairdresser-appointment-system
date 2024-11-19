@@ -55,10 +55,10 @@ public class KullaniciServiceImpl implements KullaniciService {
         Kullanici savedKullanici = kullaniciRepository.save(kullanici);
 
         // Kaydedilen kullanıcıyı DTO'ya dönüştür ve geri döndür
-        return convertToDto(savedKullanici);
+        return convertKullaniciToDto(savedKullanici);
     }
 
-    private KullaniciDto convertToDto(Kullanici kullanici) {
+    private KullaniciDto convertKullaniciToDto(Kullanici kullanici) {
         KullaniciDto kullaniciDto = new KullaniciDto();
         kullaniciDto.setKullaniciId(kullanici.getKullaniciId());
         kullaniciDto.setAd(kullanici.getAd());
@@ -99,8 +99,7 @@ public class KullaniciServiceImpl implements KullaniciService {
         Kullanici kullanici = kullaniciRepository.findById(kullaniciId)
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
 
-        // Sadece gelen kullaniciDto'da dolu olan alanları güncelle
-        kullanici.setAd(kullaniciDto.getAd() != null ? kullaniciDto.getAd() : kullanici.getAd());
+        // Sadece gelen kullaniciDto'da dolu olan alanları güncellekullanici.setAd(kullaniciDto.getAd() != null ? kullaniciDto.getAd() : kullanici.getAd());
         kullanici.setSoyad(kullaniciDto.getSoyad() != null ? kullaniciDto.getSoyad() : kullanici.getSoyad());
         kullanici.setRol(kullaniciDto.getRol() != null ? kullaniciDto.getRol() : kullanici.getRol());
         kullanici.setEmail(kullaniciDto.getEmail() != null ? kullaniciDto.getEmail() : kullanici.getEmail());
@@ -147,6 +146,7 @@ public class KullaniciServiceImpl implements KullaniciService {
     }
     @Override
     public Page<KullaniciDto> getAll(Pageable pageable) {
+
         return null;
     }
 

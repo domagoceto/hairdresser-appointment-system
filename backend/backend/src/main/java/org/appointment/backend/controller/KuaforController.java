@@ -15,23 +15,24 @@ public class KuaforController {
 
     private final KuaforService kuaforService;
 
-    @GetMapping("/list")
-    public ResponseEntity<List<KuaforDto>> getAll() {
+    @GetMapping("/listeleKuafor")
+    public ResponseEntity<List<KuaforDto>> tumunuListele() {
+
         return ResponseEntity.ok(kuaforService.getAll());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<KuaforDto> save(@RequestBody KuaforDto kuaforDto) {
+    @PostMapping("/ekleKuafor")
+    public ResponseEntity<KuaforDto> kaydet(@RequestBody KuaforDto kuaforDto) {
         return ResponseEntity.ok(kuaforService.save(kuaforDto));
     }
 
     @PutMapping("/update/{kuaforId}")
-    public ResponseEntity<KuaforDto> update(@PathVariable Long kuaforId, @RequestBody KuaforDto kuaforDto) {
+    public ResponseEntity<KuaforDto> guncelle(@PathVariable Long kuaforId, @RequestBody KuaforDto kuaforDto) {
         return ResponseEntity.ok(kuaforService.update(kuaforId, kuaforDto));
     }
 
     @DeleteMapping("/delete/{kuaforId}")
-    public ResponseEntity<Void> delete(@PathVariable Long kuaforId) {
+    public ResponseEntity<Void> sil(@PathVariable Long kuaforId) {
         kuaforService.delete(kuaforId);
         return ResponseEntity.noContent().build();
     }

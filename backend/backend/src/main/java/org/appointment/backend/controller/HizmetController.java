@@ -35,7 +35,7 @@ public class HizmetController {
         return ResponseEntity.ok(hizmetService.update(hizmetId, hizmetDto));
     }
 
-    @DeleteMapping("/sil/{HizmetId}")
+    @DeleteMapping("/sil/{hizmetId}")
     public ResponseEntity<Void> sil(@PathVariable Long hizmetId) {
         hizmetService.delete(hizmetId);
         return ResponseEntity.noContent().build();

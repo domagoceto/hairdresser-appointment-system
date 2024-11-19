@@ -38,11 +38,12 @@ public class Kuafor {
 
 
     //Tablo oluşturuluyor
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "kuafor_hizmetler",
             joinColumns = @JoinColumn(name = "kuafor_id"),
-            inverseJoinColumns = @JoinColumn(name = "hizmet_id")
+            inverseJoinColumns = @JoinColumn(name = "hizmet_id"
+            )
     )
     private List<Hizmet> yapabilecegiHizmetler;
 

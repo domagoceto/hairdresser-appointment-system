@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,5 +17,7 @@ public class HizmetDto {
     private String aciklama;
     private Integer sure;
     private Double fiyat;
+    private List<Long> randevuIds;    // Randevuların ID'leri
+    private List<Long> kuaforIds;     // Kuaforlerin ID'leri
 }
 

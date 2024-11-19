@@ -35,7 +35,7 @@ public class Hizmet {
     @OneToMany(mappedBy = "hizmet")
     private List<Randevu> randevular;
 
-    @ManyToMany(mappedBy = "yapabilecegiHizmetler")
+    @ManyToMany(mappedBy = "yapabilecegiHizmetler" , cascade = CascadeType.PERSIST)
     private List<Kuafor> kuaforler;
 
 

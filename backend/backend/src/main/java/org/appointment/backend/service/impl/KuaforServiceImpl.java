@@ -2,7 +2,9 @@ package org.appointment.backend.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.appointment.backend.dto.KuaforDto;
+import org.appointment.backend.entity.Hizmet;
 import org.appointment.backend.entity.Kuafor;
+import org.appointment.backend.repo.HizmetRepository;
 import org.appointment.backend.repo.KuaforRepository;
 import org.appointment.backend.service.KuaforService;
 import org.springframework.data.domain.Page;
@@ -12,16 +14,19 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class KuaforServiceImpl implements KuaforService {
 
     private final KuaforRepository kuaforRepository;
+    private final HizmetRepository hizmetRepository;
 
     @Override
     @Transactional
     public KuaforDto save(KuaforDto kuaforDto) {
+
         Kuafor kuafor;
 
         // Eğer DTO'da kuaforId varsa, bu kuaförün zaten var olup olmadığını kontrol et
@@ -40,12 +45,40 @@ public class KuaforServiceImpl implements KuaforService {
         kuafor.setTelefon(kuaforDto.getTelefon());
         kuafor.setEmail(kuaforDto.getEmail());
 
+        // Eğer DTO'da "yapabilecegiHizmetlerIds" varsa, bu hizmetleri bulup set et
+        if (kuaforDto.getYapabilecegiHizmetlerIds() != null) {
+            List<Hizmet> hizmetler = hizmetRepository.findAllById(kuaforDto.getYapabilecegiHizmetlerIds());
+            kuafor.setYapabilecegiHizmetler(hizmetler);
+        }
+
         // Kuaförü veritabanına kaydet
         Kuafor savedKuafor = kuaforRepository.save(kuafor);
 
         // Kaydedilen kuaförü DTO'ya dönüştür ve geri döndür
         return convertToDto(savedKuafor);
     }
+
+    private KuaforDto convertKuaforToDto(Kuafor kuafor) {
+        KuaforDto kuaforDto = new KuaforDto();
+        kuaforDto.setKuaforId(kuafor.getKuaforId());
+        kuaforDto.setAd(kuafor.getAd());
+        kuaforDto.setSoyad(kuafor.getSoyad());
+        kuaforDto.setCinsiyet(kuafor.getCinsiyet());
+        kuaforDto.setTelefon(kuafor.getTelefon());
+        kuaforDto.setEmail(kuafor.getEmail());
+
+        if (kuafor.getYapabilecegiHizmetler() != null) {
+            kuaforDto.setYapabilecegiHizmetlerIds(
+                    kuafor.getYapabilecegiHizmetler().stream()
+                            .map(Hizmet::getHizmetId)
+                            .collect(Collectors.toList())
+            );
+        }
+
+        return kuaforDto;
+    }
+
+
 
     @Transactional
     @Override

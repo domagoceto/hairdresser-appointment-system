@@ -9,7 +9,8 @@ import java.util.List;
 
 public interface HizmetService {
     List<HizmetDto> getAll();
-    Page<KullaniciDto> getAll(Pageable pageable);
+    Page<HizmetDto> getAll(Pageable pageable);
+
 
     HizmetDto getHizmetById(Long id);
 
