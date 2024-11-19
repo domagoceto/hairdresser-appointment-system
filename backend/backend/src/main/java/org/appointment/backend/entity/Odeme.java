@@ -25,7 +25,7 @@ public class Odeme {
     @Column(name="durum",length = 20)
     private OdemeDurum durum;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "kullanici_id")
     private Kullanici kullanici;
 

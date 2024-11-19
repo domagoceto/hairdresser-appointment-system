@@ -30,9 +30,10 @@ public class Randevu {
     @JoinColumn(name = "hizmet_id")
     private Hizmet hizmet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "kullanici_id")
     private Kullanici kullanici;
+
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20,name = "durum")

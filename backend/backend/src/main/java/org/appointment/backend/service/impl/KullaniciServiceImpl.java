@@ -3,11 +3,16 @@ package org.appointment.backend.service.impl;
 import lombok.*;
 import org.appointment.backend.dto.KullaniciDto;
 import org.appointment.backend.entity.Kullanici;
+import org.appointment.backend.entity.Odeme;
+import org.appointment.backend.entity.Randevu;
 import org.appointment.backend.repo.KullaniciRepository;
+import org.appointment.backend.repo.OdemeRepository;
+import org.appointment.backend.repo.RandevuRepository;
 import org.appointment.backend.service.KullaniciService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
@@ -19,11 +24,25 @@ import java.util.List;
 public class KullaniciServiceImpl implements KullaniciService {
 
     private final KullaniciRepository kullaniciRepository;
+    private final OdemeRepository odemeRepository;
+    private final RandevuRepository randevuRepository;
 
     @Override
     @Transactional
     public KullaniciDto save(KullaniciDto kullaniciDto) {
-        Kullanici kullanici = new Kullanici();
+
+        Kullanici kullanici;
+
+        // Eğer DTO'da kullaniciId varsa, bu kullanıcının zaten var olup olmadığını kontrol et
+        if (kullaniciDto.getKullaniciId() != null) {
+            kullanici = kullaniciRepository.findById(kullaniciDto.getKullaniciId())
+                    .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+        } else {
+            // Eğer yoksa, yeni bir Kullanıcı oluştur
+            kullanici = new Kullanici();
+        }
+
+        // Kullanıcı bilgilerini DTO'dan güncelle
         kullanici.setAd(kullaniciDto.getAd());
         kullanici.setSoyad(kullaniciDto.getSoyad());
         kullanici.setRol(kullaniciDto.getRol());
@@ -31,17 +50,48 @@ public class KullaniciServiceImpl implements KullaniciService {
         kullanici.setTelefon(kullaniciDto.getTelefon());
         kullanici.setSifre(kullaniciDto.getSifre());
         kullanici.setCinsiyet(kullaniciDto.getCinsiyet());
-        final Kullanici kullanicidb = kullaniciRepository.save(kullanici);
 
-        kullaniciDto.setKullaniciId(kullanicidb.getKullaniciId());
+        // Kullanıcıyı veritabanına kaydet
+        Kullanici savedKullanici = kullaniciRepository.save(kullanici);
+
+        // Kaydedilen kullanıcıyı DTO'ya dönüştür ve geri döndür
+        return convertToDto(savedKullanici);
+    }
+
+    private KullaniciDto convertToDto(Kullanici kullanici) {
+        KullaniciDto kullaniciDto = new KullaniciDto();
+        kullaniciDto.setKullaniciId(kullanici.getKullaniciId());
+        kullaniciDto.setAd(kullanici.getAd());
+        kullaniciDto.setSoyad(kullanici.getSoyad());
+        kullaniciDto.setCinsiyet(kullanici.getCinsiyet());
+        kullaniciDto.setEmail(kullanici.getEmail());
+        kullaniciDto.setTelefon(kullanici.getTelefon());
+        kullaniciDto.setSifre(kullanici.getSifre());
+        kullaniciDto.setRol(kullanici.getRol());
         return kullaniciDto;
     }
 
-    @Override
-    public void delete(Long id) {
-        kullaniciRepository.deleteById(id);
 
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        Kullanici kullanici = kullaniciRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+
+        // Kullanıcıya bağlı randevularda kullanıcı bilgisini null yap
+        List<Randevu> randevular = randevuRepository.findByKullanici(kullanici);
+        randevular.forEach(randevu -> randevu.setKullanici(null));
+        randevuRepository.saveAll(randevular);
+
+        // Kullanıcıya bağlı ödemelerde kullanıcı bilgisini null yap
+        List<Odeme> odemeler = odemeRepository.findByKullanici(kullanici);
+        odemeler.forEach(odeme -> odeme.setKullanici(null));
+        odemeRepository.saveAll(odemeler);
+
+        // Kullanıcıyı sil
+        kullaniciRepository.delete(kullanici);
     }
+
 
     @Transactional
     @Override

@@ -3,7 +3,9 @@ package org.appointment.backend.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.appointment.backend.dto.OdemeDto;
+import org.appointment.backend.entity.Kullanici;
 import org.appointment.backend.entity.Odeme;
+import org.appointment.backend.entity.Randevu;
 import org.appointment.backend.repo.OdemeRepository;
 import org.appointment.backend.service.OdemeService;
 import org.springframework.data.domain.Pageable;
@@ -11,47 +13,86 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import java.util.ArrayList;
 import java.util.List;
+import org.appointment.backend.repo.KullaniciRepository;
+import org.appointment.backend.repo.RandevuRepository;
+
 
 @Service
 @RequiredArgsConstructor
 public class OdemeServiceImpl implements OdemeService {
 
     private final OdemeRepository odemeRepository;
+    private final KullaniciRepository kullaniciRepository;
+    private final RandevuRepository randevuRepository;
     @Transactional
     @Override
-    public OdemeDto save(OdemeDto odemeDto){
-        Odeme odeme =new Odeme();
+    public OdemeDto save(OdemeDto odemeDto) {
+        // Kullanıcıyı veritabanından bulup çekme
+        Kullanici kullanici = kullaniciRepository.findById(odemeDto.getKullanici().getKullaniciId())
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+
+        // Randevuyu veritabanından bulup çekme
+        Randevu randevu = randevuRepository.findById(odemeDto.getRandevu().getRandevuId())
+                .orElseThrow(() -> new RuntimeException("Randevu bulunamadı"));
+
+        // Yeni ödeme nesnesini oluşturup mevcut entity'leri ekleme
+        Odeme odeme = new Odeme();
         odeme.setTutar(odemeDto.getTutar());
         odeme.setOdemeTarihi(odemeDto.getOdemeTarihi());
         odeme.setOdemeYontemi(odemeDto.getOdemeYontemi());
         odeme.setAciklama(odemeDto.getAciklama());
-        odeme.setKullanici(odemeDto.getKullanici());
-        odeme.setRandevu(odemeDto.getRandevu());
+        odeme.setKullanici(kullanici); // Veritabanından çekilen kullanıcı
+        odeme.setRandevu(randevu); // Veritabanından çekilen randevu
         odeme.setDurum(odemeDto.getDurum());
-        final Odeme odemedb=odemeRepository.save(odeme);
 
-        odemeDto.setOdemeId(odemedb.getOdemeId());
-        return odemeDto;
+        // Yeni ödeme nesnesini kaydetme
+        Odeme savedOdeme = odemeRepository.save(odeme);
+
+        // Kaydedilmiş ödeme nesnesini DTO'ya çevirme ve geri döndürme
+        OdemeDto savedOdemeDto = new OdemeDto();
+        savedOdemeDto.setOdemeId(savedOdeme.getOdemeId());
+        savedOdemeDto.setTutar(savedOdeme.getTutar());
+        savedOdemeDto.setOdemeTarihi(savedOdeme.getOdemeTarihi());
+        savedOdemeDto.setOdemeYontemi(savedOdeme.getOdemeYontemi());
+        savedOdemeDto.setAciklama(savedOdeme.getAciklama());
+        savedOdemeDto.setKullanici(savedOdeme.getKullanici());
+        savedOdemeDto.setRandevu(savedOdeme.getRandevu());
+        savedOdemeDto.setDurum(savedOdeme.getDurum());
+
+        return savedOdemeDto;
     }
+
 
     @Override
     public void delete(Long odemeId){
         odemeRepository.deleteById(odemeId);
     }
 
-    @Override
     @Transactional
-    public OdemeDto update(Long odemeId, OdemeDto odemeDto){
-        Odeme odeme =odemeRepository.findById(odemeId)
-                .orElseThrow(()-> new RuntimeException("Odeme bilgisi bulunamadı"));
+    @Override
+    public OdemeDto update(Long odemeId, OdemeDto odemeDto) {
+        Odeme odeme = odemeRepository.findById(odemeId)
+                .orElseThrow(() -> new RuntimeException("Odeme bilgisi bulunamadı"));
+
+        // Eğer güncellenmesi isteniyorsa, Kullanıcıyı veritabanından bulup çekme
+        if (odemeDto.getKullanici() != null) {
+            Kullanici kullanici = kullaniciRepository.findById(odemeDto.getKullanici().getKullaniciId())
+                    .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+            odeme.setKullanici(kullanici);
+        }
+
+        // Eğer güncellenmesi isteniyorsa, Randevuyu veritabanından bulup çekme
+        if (odemeDto.getRandevu() != null) {
+            Randevu randevu = randevuRepository.findById(odemeDto.getRandevu().getRandevuId())
+                    .orElseThrow(() -> new RuntimeException("Randevu bulunamadı"));
+            odeme.setRandevu(randevu);
+        }
 
         odeme.setDurum(odemeDto.getDurum() != null ? odemeDto.getDurum() : odeme.getDurum());
         odeme.setOdemeYontemi(odemeDto.getOdemeYontemi() != null ? odemeDto.getOdemeYontemi() : odeme.getOdemeYontemi());
         odeme.setOdemeTarihi(odemeDto.getOdemeTarihi() != null ? odemeDto.getOdemeTarihi() : odeme.getOdemeTarihi());
         odeme.setAciklama(odemeDto.getAciklama() != null ? odemeDto.getAciklama() : odeme.getAciklama());
-        odeme.setKullanici(odemeDto.getKullanici() != null ? odemeDto.getKullanici() : odeme.getKullanici());
-        odeme.setTutar(odemeDto.getTutar() != null ? odemeDto.getTutar() : odeme.getTutar());
-        odeme.setRandevu(odemeDto.getRandevu() != null ? odemeDto.getRandevu(): odeme.getRandevu());
+        odeme.setTutar(odemeDto.getTutar() != 0 ? odemeDto.getTutar() : odeme.getTutar());
 
         Odeme updatedOdeme = odemeRepository.save(odeme);
 
@@ -66,8 +107,8 @@ public class OdemeServiceImpl implements OdemeService {
         updatedOdemeDto.setRandevu(updatedOdeme.getRandevu());
 
         return updatedOdemeDto;
-
     }
+
     @Override
     public List<OdemeDto> getAll(){
         List<Odeme> odemeler = odemeRepository.findAll();
