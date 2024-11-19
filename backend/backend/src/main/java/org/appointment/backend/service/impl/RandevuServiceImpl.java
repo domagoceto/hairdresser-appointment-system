@@ -2,14 +2,8 @@ package org.appointment.backend.service.impl;
 
 import lombok.*;
 import org.appointment.backend.dto.RandevuDto;
-import org.appointment.backend.entity.Hizmet;
-import org.appointment.backend.entity.Kuafor;
-import org.appointment.backend.entity.Kullanici;
-import org.appointment.backend.entity.Randevu;
-import org.appointment.backend.repo.HizmetRepository;
-import org.appointment.backend.repo.KuaforRepository;
-import org.appointment.backend.repo.KullaniciRepository;
-import org.appointment.backend.repo.RandevuRepository;
+import org.appointment.backend.entity.*;
+import org.appointment.backend.repo.*;
 import org.appointment.backend.service.KullaniciService;
 import org.appointment.backend.service.RandevuService;
 import org.springframework.data.domain.Page;
@@ -29,6 +23,7 @@ public class RandevuServiceImpl implements RandevuService {
     private final KullaniciRepository kullaniciRepository;
     private final HizmetRepository hizmetRepository;
     private final KuaforRepository kuaforRepository;
+    private final OdemeRepository odemeRepository;
 
     @Override
     @Transactional
@@ -66,9 +61,28 @@ public class RandevuServiceImpl implements RandevuService {
 
 
     @Override
-    public void delete(long randevuId) {
-        randevuRepository.deleteById(randevuId);
+    @Transactional
+    public void delete(Long id) {
+        // Randevuyu bul
+        Randevu randevu = randevuRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Randevu bulunamadı"));
+
+        // Randevuya bağlı ödeme varsa, önce ödeme kaydını sil
+        List<Odeme> odemeler = odemeRepository.findByRandevu(randevu);
+        if (!odemeler.isEmpty()) {
+            odemeRepository.deleteAll(odemeler);
+        }
+
+        // Sonra randevuyu sil
+        randevuRepository.deleteById(id);
     }
+
+
+
+
+
+
+
 
     @Transactional
     @Override

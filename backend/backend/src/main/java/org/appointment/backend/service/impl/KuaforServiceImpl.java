@@ -17,7 +17,7 @@ public class KuaforServiceImpl implements KuaforService {
     private final KuaforRepository kuaforRepository;
 
     @Override
-    public List<KuaforDto> getAllKuaforler() {
+    public List<KuaforDto> tumunuListele() {
         return kuaforRepository.findAll().stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
@@ -27,13 +27,13 @@ public class KuaforServiceImpl implements KuaforService {
     }
 
     @Override
-    public KuaforDto createKuafor(KuaforDto kuaforDto) {
+    public KuaforDto kaydet(KuaforDto kuaforDto) {
         Kuafor kuafor = convertToEntity(kuaforDto);
         return convertToDto(kuaforRepository.save(kuafor));
     }
 
     @Override
-    public KuaforDto updateKuafor(Long id, KuaforDto kuaforDto) {
+    public KuaforDto guncelle(Long id, KuaforDto kuaforDto) {
         Kuafor existingKuafor = kuaforRepository.findById(id).orElseThrow(() -> new RuntimeException("Kuafor not found"));
         existingKuafor.setAd(kuaforDto.getAd());
         existingKuafor.setSoyad(kuaforDto.getSoyad());
@@ -44,7 +44,7 @@ public class KuaforServiceImpl implements KuaforService {
     }
 
     @Override
-    public void deleteKuafor(Long id) {
+    public void sil(Long id) {
         kuaforRepository.deleteById(id);
     }
 

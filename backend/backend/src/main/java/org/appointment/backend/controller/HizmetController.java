@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/hizmetler")
+@RequestMapping("/hizmet")
 @RequiredArgsConstructor
 public class HizmetController {
 
     private final HizmetService hizmetService;
 
-    @GetMapping
-    public ResponseEntity<List<HizmetDto>> getAllHizmetler() {
-        return ResponseEntity.ok(hizmetService.getAllHizmetler());
+    @GetMapping({"/listeleHizmet"})
+    public ResponseEntity<List<HizmetDto>> tumunuListele() {
+        return ResponseEntity.ok(hizmetService.tumunuListele());
     }
 
     @GetMapping("/{id}")
@@ -25,19 +25,19 @@ public class HizmetController {
         return ResponseEntity.ok(hizmetService.getHizmetById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<HizmetDto> createHizmet(@RequestBody HizmetDto hizmetDto) {
-        return ResponseEntity.ok(hizmetService.createHizmet(hizmetDto));
+    @PostMapping({"/ekleHizmet"})
+    public ResponseEntity<HizmetDto> kaydet(@RequestBody HizmetDto hizmetDto) {
+        return ResponseEntity.ok(hizmetService.kaydet(hizmetDto));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<HizmetDto> updateHizmet(@PathVariable Long id, @RequestBody HizmetDto hizmetDto) {
-        return ResponseEntity.ok(hizmetService.updateHizmet(id, hizmetDto));
+    @PutMapping("/guncelle/{hizmetId}")
+    public ResponseEntity<HizmetDto> guncelle(@PathVariable Long id, @RequestBody HizmetDto hizmetDto) {
+        return ResponseEntity.ok(hizmetService.guncelle(id, hizmetDto));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteHizmet(@PathVariable Long id) {
-        hizmetService.deleteHizmet(id);
+    @DeleteMapping("/sil/{HizmetId}")
+    public ResponseEntity<Void> sil(@PathVariable Long id) {
+        hizmetService.sil(id);
         return ResponseEntity.noContent().build();
     }
 }

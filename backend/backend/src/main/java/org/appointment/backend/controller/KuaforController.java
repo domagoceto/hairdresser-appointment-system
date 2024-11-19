@@ -10,35 +10,35 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/kuaforler")
+@RequestMapping("/kuafor")
 @RequiredArgsConstructor
 public class KuaforController {
 
     private final KuaforService kuaforService;
 
-    @GetMapping
-    public ResponseEntity<List<KuaforDto>> getAllKuaforler() {
-        return ResponseEntity.ok(kuaforService.getAllKuaforler());
+    @GetMapping({"/listeleKuafor"})
+    public ResponseEntity<List<KuaforDto>> tumunuListele() {
+        return ResponseEntity.ok(kuaforService.tumunuListele());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{kuaforId}")
     public ResponseEntity<KuaforDto> getKuaforById(@PathVariable Long id) {
         return ResponseEntity.ok(kuaforService.getKuaforById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<KuaforDto> createKuafor(@RequestBody KuaforDto kuaforDto) {
-        return ResponseEntity.ok(kuaforService.createKuafor(kuaforDto));
+    @PostMapping({"/ekleKuafor"})
+    public ResponseEntity<KuaforDto> kaydet(@RequestBody KuaforDto kuaforDto) {
+        return ResponseEntity.ok(kuaforService.kaydet(kuaforDto));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<KuaforDto> updateKuafor(@PathVariable Long id, @RequestBody KuaforDto kuaforDto) {
-        return ResponseEntity.ok(kuaforService.updateKuafor(id, kuaforDto));
+    @PutMapping("/guncelle/{kuaforId}")
+    public ResponseEntity<KuaforDto> guncelle(@PathVariable Long id, @RequestBody KuaforDto kuaforDto) {
+        return ResponseEntity.ok(kuaforService.guncelle(id, kuaforDto));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteKuafor(@PathVariable Long id) {
-        kuaforService.deleteKuafor(id);
+    @DeleteMapping("/sil/{kuaforId}")
+    public ResponseEntity<Void> sil(@PathVariable Long id) {
+        kuaforService.sil(id);
         return ResponseEntity.noContent().build();
     }
 }

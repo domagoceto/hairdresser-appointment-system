@@ -5,9 +5,9 @@ import org.appointment.backend.dto.KuaforDto;
 import java.util.List;
 
 public interface KuaforService {
-    List<KuaforDto> getAllKuaforler();
+    List<KuaforDto> tumunuListele();
     KuaforDto getKuaforById(Long id);
-    KuaforDto createKuafor(KuaforDto kuaforDto);
-    KuaforDto updateKuafor(Long id, KuaforDto kuaforDto);
-    void deleteKuafor(Long id);
+    KuaforDto kaydet(KuaforDto kuaforDto);
+    KuaforDto guncelle(Long id, KuaforDto kuaforDto);
+    void sil(Long id);
 }

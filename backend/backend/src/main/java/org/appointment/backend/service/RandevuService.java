@@ -10,7 +10,7 @@ public interface RandevuService {
 
     RandevuDto save(RandevuDto randevuDto);
 
-    void delete(long randevuId);
+    void delete(Long randevuId);
 
    RandevuDto update(Long randevuId, RandevuDto randevuDto);
 

@@ -17,7 +17,7 @@ public class HizmetServiceImpl implements HizmetService {
     private final HizmetRepository hizmetRepository;
 
     @Override
-    public List<HizmetDto> getAllHizmetler() {
+    public List<HizmetDto> tumunuListele() {
         return hizmetRepository.findAll().stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
@@ -27,14 +27,14 @@ public class HizmetServiceImpl implements HizmetService {
     }
 
     @Override
-    public HizmetDto createHizmet(HizmetDto hizmetDto) {
+    public HizmetDto kaydet(HizmetDto hizmetDto) {
         Hizmet hizmet = convertToEntity(hizmetDto);
         return convertToDto(hizmetRepository.save(hizmet));
     }
 
     @Override
-    public HizmetDto updateHizmet(Long id, HizmetDto hizmetDto) {
-        Hizmet existingHizmet = hizmetRepository.findById(id).orElseThrow(() -> new RuntimeException("Hizmet not found"));
+    public HizmetDto guncelle(Long id, HizmetDto hizmetDto) {
+        Hizmet existingHizmet = hizmetRepository.findById(id).orElseThrow(() -> new RuntimeException("Hizmet bulunamadı"));
         existingHizmet.setAd(hizmetDto.getAd());
         existingHizmet.setAciklama(hizmetDto.getAciklama());
         existingHizmet.setSure(hizmetDto.getSure());
@@ -43,7 +43,7 @@ public class HizmetServiceImpl implements HizmetService {
     }
 
     @Override
-    public void deleteHizmet(Long id) {
+    public void sil(Long id) {
         hizmetRepository.deleteById(id);
     }
 
