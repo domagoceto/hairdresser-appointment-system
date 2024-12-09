@@ -13,9 +13,9 @@ public class OdemeDto {
     private Long odemeId;
     private Double tutar;
     private LocalDateTime odemeTarihi;
-    private OdemeDurum durum;
-    private Kullanici kullanici;
-    private Randevu randevu;
-    private OdemeYontemi odemeYontemi;
+    private String durum;
+    private Long kullaniciId;
+    private Long randevuId;
+    private String odemeYontemi;
     private String aciklama;
 }

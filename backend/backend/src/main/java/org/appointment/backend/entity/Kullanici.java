@@ -32,7 +32,7 @@ public class Kullanici {
     private String sifre;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 10, name = "rol")
+    @Column(length = 20, name = "rol")
     private Rol rol;
 }
 

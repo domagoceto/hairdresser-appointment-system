@@ -1,12 +1,12 @@
 package org.appointment.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.*;
+
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "hizmetler")
@@ -14,10 +14,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Hizmet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long hizmetId;
 
     @Column(nullable = false)
@@ -35,9 +37,9 @@ public class Hizmet {
     @OneToMany(mappedBy = "hizmet")
     private List<Randevu> randevular;
 
-    @ManyToMany(mappedBy = "yapabilecegiHizmetler" , cascade = CascadeType.PERSIST)
-    private List<Kuafor> kuaforler;
-
-
+    @ManyToMany(mappedBy = "yapabilecegiHizmetler", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<Kuafor> kuaforler = new HashSet<>();
 }
+
+
 

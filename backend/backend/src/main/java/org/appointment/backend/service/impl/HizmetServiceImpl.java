@@ -14,7 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,8 +51,10 @@ public class HizmetServiceImpl implements HizmetService {
         }
 
         if (hizmetDto.getKuaforIds() != null) {
-            List<Kuafor> kuaforler = kuaforRepository.findAllById(hizmetDto.getKuaforIds());
-            hizmet.setKuaforler(kuaforler);
+            Set<Kuafor> kuaforler = new HashSet<>(kuaforRepository.findAllById(hizmetDto.getKuaforIds()));
+
+            hizmet.setKuaforler(new HashSet<>(kuaforler));
+
         }
 
         Hizmet savedHizmet = hizmetRepository.save(hizmet);
@@ -105,8 +109,9 @@ public class HizmetServiceImpl implements HizmetService {
 
                 // Kuaförlerin güncellenmesi
                 if (hizmetDto.getKuaforIds() != null) {
-                List<Kuafor> kuaforler = kuaforRepository.findAllById(hizmetDto.getKuaforIds());
-                hizmet.setKuaforler(kuaforler);
+                    List<Kuafor> kuaforlerList = kuaforRepository.findAllById(hizmetDto.getKuaforIds());
+                    Set<Kuafor> kuaforlerSet = new HashSet<>(kuaforlerList);
+                    hizmet.setKuaforler(kuaforlerSet);
                 }
 
                 Hizmet updatedHizmet = hizmetRepository.save(hizmet);

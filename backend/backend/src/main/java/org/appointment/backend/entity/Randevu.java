@@ -16,17 +16,17 @@ public class Randevu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long randevuId;
 
-    @Column(length = 50, name="tarih")
+    @Column(name="tarih")
     private LocalDate tarih;
 
-    @Column(length = 50, name = "saat")
+    @Column(name = "saat")
     private LocalTime saat;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="kuafor_id")
     private Kuafor kuafor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "hizmet_id")
     private Hizmet hizmet;
 

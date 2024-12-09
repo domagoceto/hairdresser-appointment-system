@@ -19,5 +19,6 @@ public class KuaforDto {
     private Cinsiyet cinsiyet;
     private String telefon;
     private String email;
+    private String sifre;
     private List<Long> yapabilecegiHizmetlerIds;
 }

@@ -26,12 +26,12 @@ public class KuaforController {
         return ResponseEntity.ok(kuaforService.save(kuaforDto));
     }
 
-    @PutMapping("/update/{kuaforId}")
+    @PutMapping("/guncelle/{kuaforId}")
     public ResponseEntity<KuaforDto> guncelle(@PathVariable Long kuaforId, @RequestBody KuaforDto kuaforDto) {
         return ResponseEntity.ok(kuaforService.update(kuaforId, kuaforDto));
     }
 
-    @DeleteMapping("/delete/{kuaforId}")
+    @DeleteMapping("/sil/{kuaforId}")
     public ResponseEntity<Void> sil(@PathVariable Long kuaforId) {
         kuaforService.delete(kuaforId);
         return ResponseEntity.noContent().build();

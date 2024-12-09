@@ -15,12 +15,12 @@ public class RandevuDto {
     private Long randevuId;
     private LocalDate tarih;
     private LocalTime saat;
-    private Kuafor kuafor;
-    private Hizmet hizmet ;
-    private Kullanici kullanici;
+    private Long kuaforId;
+    private Long hizmetId;
+    private Long kullaniciId;
     private RandevuDurum durum;
     private String notlar;
-    private double ucret;
+    private Double ucret;
     private String sure;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

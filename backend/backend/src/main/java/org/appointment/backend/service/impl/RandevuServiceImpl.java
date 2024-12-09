@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,36 +31,60 @@ public class RandevuServiceImpl implements RandevuService {
     @Transactional
     public RandevuDto save(RandevuDto randevuDto) {
         // Kullanıcıyı veritabanından bulup çekme
-        Kullanici kullanici = kullaniciRepository.findById(randevuDto.getKullanici().getKullaniciId())
+        Kullanici kullanici = kullaniciRepository.findById(randevuDto.getKullaniciId())
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
 
         // Hizmeti veritabanından bulup çekme
-        Hizmet hizmet = hizmetRepository.findById(randevuDto.getHizmet().getHizmetId())
+        Hizmet hizmet = hizmetRepository.findById(randevuDto.getHizmetId())
                 .orElseThrow(() -> new RuntimeException("Hizmet bulunamadı"));
 
         // Kuaförü veritabanından bulup çekme
-        Kuafor kuafor = kuaforRepository.findById(randevuDto.getKuafor().getKuaforId())
+        Kuafor kuafor = kuaforRepository.findById(randevuDto.getKuaforId())
                 .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı"));
 
         // Randevu nesnesi oluşturma
         Randevu randevu = new Randevu();
         randevu.setTarih(randevuDto.getTarih());
-        randevu.setKuafor(kuafor); // Veritabanından çekilen kuaför
-        randevu.setHizmet(hizmet); // Veritabanından çekilen hizmet
+        randevu.setKuafor(kuafor);
+        randevu.setHizmet(hizmet);
         randevu.setDurum(randevuDto.getDurum());
         randevu.setNotlar(randevuDto.getNotlar());
         randevu.setSaat(randevuDto.getSaat());
         randevu.setUcret(randevuDto.getUcret());
-        randevu.setKullanici(kullanici); // Veritabanından çekilen kullanıcı
+        randevu.setKullanici(kullanici);
         randevu.setSure(randevuDto.getSure());
 
         // Randevu kaydetme
-        final Randevu randevudb = randevuRepository.save(randevu);
-        randevuDto.setRandevuId(randevudb.getRandevuId());
+        Randevu savedRandevu = randevuRepository.save(randevu);
+
+        return convertRandevuToDto(savedRandevu);
+    }
+
+    private RandevuDto convertRandevuToDto(Randevu randevu) {
+        RandevuDto randevuDto = new RandevuDto();
+        randevuDto.setRandevuId(randevu.getRandevuId());
+        randevuDto.setTarih(randevu.getTarih());
+        randevuDto.setSaat(randevu.getSaat());
+        randevuDto.setDurum(randevu.getDurum());
+        randevuDto.setNotlar(randevu.getNotlar());
+        randevuDto.setUcret(randevu.getUcret());
+        randevuDto.setSure(randevu.getSure());
+        randevuDto.setCreatedAt(randevu.getCreatedAt());
+        randevuDto.setUpdatedAt(randevu.getUpdatedAt());
+
+        // Kuafor, Hizmet ve Kullanici varlıklarının sadece ID'lerini DTO'ya ekle
+        if (randevu.getKuafor() != null) {
+            randevuDto.setKuaforId(randevu.getKuafor().getKuaforId());
+        }
+        if (randevu.getHizmet() != null) {
+            randevuDto.setHizmetId(randevu.getHizmet().getHizmetId());
+        }
+        if (randevu.getKullanici() != null) {
+            randevuDto.setKullaniciId(randevu.getKullanici().getKullaniciId());
+        }
 
         return randevuDto;
     }
-
 
     @Override
     @Transactional
@@ -77,70 +103,57 @@ public class RandevuServiceImpl implements RandevuService {
         randevuRepository.deleteById(id);
     }
 
-
-
-
-
-
-
-
     @Transactional
     @Override
     public RandevuDto update(Long randevuId, RandevuDto randevuDto) {
         Randevu randevu = randevuRepository.findById(randevuId)
                 .orElseThrow(() -> new RuntimeException("Randevu bulunamadı"));
 
-        if (randevuDto.getTarih() != null) {
+        if (randevuDto.getTarih() != null) { randevuDto.getTarih();
             randevu.setTarih(randevuDto.getTarih());
         }
-        if (randevuDto.getHizmet() != null) {
-            Hizmet hizmet = hizmetRepository.findById(randevuDto.getHizmet().getHizmetId())
+        if (randevuDto.getHizmetId() != null) {
+            Hizmet hizmet = hizmetRepository.findById(randevuDto.getHizmetId())
                     .orElseThrow(() -> new RuntimeException("Hizmet bulunamadı"));
             randevu.setHizmet(hizmet);
         }
         if (randevuDto.getSaat() != null) {
+            System.out.println("Saat güncelleniyor: " + randevuDto.getSaat());
             randevu.setSaat(randevuDto.getSaat());
         }
-        if (randevuDto.getKullanici() != null) {
-            Kullanici kullanici = kullaniciRepository.findById(randevuDto.getKullanici().getKullaniciId())
+        if (randevuDto.getKullaniciId() != null) {
+            Kullanici kullanici = kullaniciRepository.findById(randevuDto.getKullaniciId())
                     .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
             randevu.setKullanici(kullanici);
         }
-        if (randevuDto.getKuafor() != null) {
-            Kuafor kuafor = kuaforRepository.findById(randevuDto.getKuafor().getKuaforId())
+        if (randevuDto.getKuaforId() != null) {
+            Kuafor kuafor = kuaforRepository.findById(randevuDto.getKuaforId())
                     .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı"));
             randevu.setKuafor(kuafor);
         }
         if (randevuDto.getDurum() != null) {
+            System.out.println("Durum güncelleniyor: " + randevuDto.getDurum());
             randevu.setDurum(randevuDto.getDurum());
         }
         if (randevuDto.getNotlar() != null) {
+            System.out.println("Notlar güncelleniyor: " + randevuDto.getNotlar());
             randevu.setNotlar(randevuDto.getNotlar());
         }
         if (randevuDto.getSure() != null) {
+            System.out.println("Süre güncelleniyor: " + randevuDto.getSure());
             randevu.setSure(randevuDto.getSure());
         }
+        if (randevuDto.getUcret() != null) {
+            System.out.println("Ücret güncelleniyor: " + randevuDto.getUcret());
+            randevu.setUcret(randevuDto.getUcret());
+        }
+
+        // Manuel olarak updatedAt alanını güncelle
+        randevu.setUpdatedAt(LocalDateTime.now());
 
         Randevu updatedRandevu = randevuRepository.save(randevu);
-
-        RandevuDto updatedRandevuDto = new RandevuDto();
-        updatedRandevuDto.setRandevuId(updatedRandevu.getRandevuId());
-        updatedRandevuDto.setSure(updatedRandevu.getSure());
-        updatedRandevuDto.setUpdatedAt(updatedRandevu.getUpdatedAt());
-        updatedRandevuDto.setCreatedAt(updatedRandevu.getCreatedAt());
-        updatedRandevuDto.setKullanici(updatedRandevu.getKullanici());
-        updatedRandevuDto.setKuafor(updatedRandevu.getKuafor());
-        updatedRandevuDto.setDurum(updatedRandevu.getDurum());
-        updatedRandevuDto.setNotlar(updatedRandevu.getNotlar());
-        updatedRandevuDto.setSaat(updatedRandevu.getSaat());
-        updatedRandevuDto.setTarih(updatedRandevu.getTarih());
-        updatedRandevuDto.setHizmet(updatedRandevu.getHizmet());
-        updatedRandevuDto.setUcret(updatedRandevu.getUcret());
-
-        return updatedRandevuDto;
+        return convertRandevuToDto(updatedRandevu);
     }
-
-
 
 
     @Override
@@ -152,15 +165,15 @@ public class RandevuServiceImpl implements RandevuService {
             RandevuDto randevuDto=new RandevuDto();
             randevuDto.setRandevuId(it.getRandevuId());
             randevuDto.setTarih(it.getTarih());
-            randevuDto.setKuafor(it.getKuafor());
-            randevuDto.setHizmet(it.getHizmet());
+            randevuDto.setKuaforId(it.getKuafor().getKuaforId());
+            randevuDto.setHizmetId(it.getHizmet().getHizmetId());
             randevuDto.setDurum(it.getDurum());
             randevuDto.setNotlar(it.getNotlar());
             randevuDto.setSaat(it.getSaat());
             randevuDto.setUcret(it.getUcret());
             randevuDto.setUpdatedAt(it.getUpdatedAt());
             randevuDto.setCreatedAt(it.getCreatedAt());
-            randevuDto.setKullanici(it.getKullanici());
+            randevuDto.setKullaniciId(it.getKullanici().getKullaniciId());
             randevuDto.setSure(it.getSure());
             randevuDtos.add(randevuDto);
         });
