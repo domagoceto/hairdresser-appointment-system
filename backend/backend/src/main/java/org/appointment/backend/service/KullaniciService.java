@@ -16,4 +16,10 @@ public interface KullaniciService {
     List<KullaniciDto> getAll();
 
     Page<KullaniciDto> getAll(Pageable pageable);
+
+    KullaniciDto updateByEmail(String email, KullaniciDto kullaniciDto);
+
+    void deleteByEmail(String email);
+
+    KullaniciDto findByEmail(String email);
 }

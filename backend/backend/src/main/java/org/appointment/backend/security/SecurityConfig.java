@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @Configuration
 public class SecurityConfig {
 
@@ -37,18 +36,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable()) // CSRF korumasını devre dışı bırak
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // Tüm endpointlere izin ver
+                        // Register ve Login endpoint'leri herkese açık
+                        .requestMatchers("/auth/register", "/auth/login").permitAll()
+                        // Sadece ADMIN rolüne sahip kullanıcılar için
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        // Sadece MUSTERI rolüne sahip kullanıcılar için
+                        .requestMatchers("/user/**").hasRole("MUSTERI")
+                        // Diğer tüm endpoint'ler için kimlik doğrulaması gerekli
+                        .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                .cors(cors -> cors.disable());
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class) // JWT doğrulama filtresi
+                .cors(cors -> cors.disable()); // CORS yapılandırmasını devre dışı bırak
         return http.build();
     }
-
-
-
-
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {

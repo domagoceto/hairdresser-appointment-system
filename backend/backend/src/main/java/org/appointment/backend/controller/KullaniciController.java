@@ -4,6 +4,7 @@ import org.appointment.backend.dto.KullaniciDto;
 import org.appointment.backend.service.KullaniciService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,24 +16,28 @@ public class KullaniciController {
 
     private final KullaniciService kullaniciService;
 
-    @PostMapping({"/ekleKullanici"})
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')") // Sadece ADMIN rolü kullanıcı ekleyebilir
     public ResponseEntity<KullaniciDto> kaydet(@RequestBody KullaniciDto kullaniciDto) {
         return ResponseEntity.ok(kullaniciService.save(kullaniciDto));
     }
-    @GetMapping({"/listeleKullanici"})
-    public ResponseEntity<List<KullaniciDto>>tumunuListele() {
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN')") // ADMIN ve MUSTERI kullanıcıları listeleyebilir
+    public ResponseEntity<List<KullaniciDto>> tumunuListele() {
         return ResponseEntity.ok(kullaniciService.getAll());
     }
 
-    @PutMapping("/guncelle/{kullaniciId}")
+    @PutMapping("guncelle/{kullaniciId}")
+    @PreAuthorize("hasRole('ADMIN')") // Sadece ADMIN güncelleyebilir
     public ResponseEntity<KullaniciDto> guncelle(@PathVariable Long kullaniciId, @RequestBody KullaniciDto kullaniciDto) {
         return ResponseEntity.ok(kullaniciService.update(kullaniciId, kullaniciDto));
     }
 
-    @DeleteMapping("/sil/{kullaniciId}")
-    public ResponseEntity<KullaniciDto> sil(@PathVariable Long kullaniciId) {
+    @DeleteMapping("sil/{kullaniciId}")
+    @PreAuthorize("hasRole('ADMIN')") // Sadece ADMIN silebilir
+    public ResponseEntity<Void> sil(@PathVariable Long kullaniciId) {
         kullaniciService.delete(kullaniciId);
         return ResponseEntity.noContent().build();
     }
-
 }

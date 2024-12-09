@@ -25,7 +25,7 @@ public class Kullanici {
     @Column(length = 15, name = "telefon")
     private String telefon;
 
-    @Column (length = 100,name="email")
+    @Column (length = 100,name="email",unique = true)
     private String email;
 
     @Column (length = 100,name="sifre")

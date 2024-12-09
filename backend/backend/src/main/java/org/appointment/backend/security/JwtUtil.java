@@ -2,38 +2,44 @@ package org.appointment.backend.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.Value;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import java.util.Base64;
+import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
 
-
-    // Rastgele güçlü bir anahtar kullanın
-    private final String secretKey = Base64.getEncoder().encodeToString("BuÇokGüçlüBirGizliAnahtarOlsun12345!".getBytes());
+    private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256); // Güvenli bir key oluştur
 
     private final long expirationTime = 86400000; // 1 gün (milisaniye cinsinden)
 
     // Token oluşturma
     public String generateToken(Authentication authentication) {
         String username = authentication.getName();
+        List<String> roles = authentication.getAuthorities()
+                .stream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .collect(Collectors.toList());
 
         return Jwts.builder()
                 .setSubject(username)
+                .claim("roles", roles) // Rol bilgisi ekleniyor
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // 1 gün
-                .signWith(SignatureAlgorithm.HS256, secretKey) // HMAC-SHA256 algoritması
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // Token süresi
+                .signWith(secretKey, SignatureAlgorithm.HS256) // Güvenli key ile imzalama
                 .compact();
     }
 
     // Token doğrulama
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;
@@ -42,10 +48,31 @@ public class JwtUtil {
 
     // Kullanıcı adını token'dan çıkartma
     public String extractUsername(String token) {
-        return Jwts.parser()
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
+    }
+
+    // Token'ın süresi doldu mu kontrolü
+    public boolean isTokenExpired(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        Date expiration = claims.getExpiration();
+        return expiration.before(new Date());
+    }
+
+    public List<String> extractRoles(String token) {
+        Claims claims = Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
+        return claims.get("roles", List.class); // "roles" claim'ini al
     }
+
 }
