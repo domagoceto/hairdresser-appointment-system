@@ -16,8 +16,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
+@Slf4j
 @RequestMapping("/auth")
 public class AuthController {
 
@@ -39,42 +41,68 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
         try {
+            log.debug("Kayıt işlemi başladı. Gelen bilgiler: {}", registerRequest);
+
             KullaniciDto kullaniciDto = new KullaniciDto();
             kullaniciDto.setAd(registerRequest.getAd());
             kullaniciDto.setSoyad(registerRequest.getSoyad());
             kullaniciDto.setEmail(registerRequest.getEmail());
             kullaniciDto.setTelefon(registerRequest.getTelefon());
-            kullaniciDto.setSifre(passwordEncoder.encode(registerRequest.getSifre()));
-            kullaniciDto.setCinsiyet(Cinsiyet.valueOf(registerRequest.getCinsiyet()));
+            kullaniciDto.setSifre(registerRequest.getSifre());
 
-            // Admin key kontrolü
+            if (registerRequest.getCinsiyet() != null) {
+                kullaniciDto.setCinsiyet(Cinsiyet.valueOf(registerRequest.getCinsiyet().toUpperCase()));
+            } else {
+                log.warn("Cinsiyet null, varsayılan olarak ERKEK atanıyor.");
+                kullaniciDto.setCinsiyet(Cinsiyet.ERKEK); // Varsayılan değer
+            }
+
+            // Rol ataması
             if (adminKey.equals(registerRequest.getAdminKey())) {
                 kullaniciDto.setRol(Rol.ADMIN);
             } else {
                 kullaniciDto.setRol(Rol.MUSTERI);
             }
 
-            // Kullanıcıyı kaydet
             KullaniciDto savedUser = kullaniciService.save(kullaniciDto);
+            log.debug("Kayıt işlemi başarılı. Kaydedilen kullanıcı: {}", savedUser);
 
             return ResponseEntity.ok("Kayıt başarılı: " + savedUser.getEmail());
         } catch (Exception e) {
+            log.error("Kayıt sırasında hata oluştu: ", e);
             return ResponseEntity.status(400).body("Kayıt sırasında hata oluştu: " + e.getMessage());
         }
     }
 
+
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
+            log.info("Giriş yapılan kullanıcı adı: {}", loginRequest.getUsername());
+            log.info("Giriş yapılan şifre: {}", loginRequest.getPassword());
+
+            KullaniciDto kullanici = kullaniciService.findByEmail(loginRequest.getUsername());
+            if (kullanici == null) {
+                log.warn("Kullanıcı bulunamadı: {}", loginRequest.getUsername());
+                return ResponseEntity.status(404).body("Kullanıcı bulunamadı.");
+            }
+
+            log.info("Veritabanındaki hashlenmiş şifre: {}", kullanici.getSifre());
+
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
             );
+
             String token = jwtUtil.generateToken(authentication);
             return ResponseEntity.ok("Bearer " + token);
         } catch (Exception e) {
+            log.error("Login sırasında hata oluştu: ", e);
             return ResponseEntity.status(401).body("Giriş başarısız: " + e.getMessage());
         }
     }
+
+
 
     @PutMapping("/update")
     public ResponseEntity<?> updateUser(@RequestBody KullaniciUpdateRequest updateRequest, Authentication authentication) {
@@ -84,6 +112,7 @@ public class AuthController {
             KullaniciDto kullanici = kullaniciService.findByEmail(email);
 
             if (kullanici == null) {
+                System.out.println("Güncelleme sırasında kullanıcı bulunamadı: " + email);
                 return ResponseEntity.status(404).body("Kullanıcı bulunamadı!");
             }
 
@@ -98,10 +127,12 @@ public class AuthController {
                 kullanici.setTelefon(updateRequest.getTelefon());
             }
             if (updateRequest.getSifre() != null) {
-                // Şifreyi hash'le
-                kullanici.setSifre(passwordEncoder.encode(updateRequest.getSifre()));
+                String hashedPassword = passwordEncoder.encode(updateRequest.getSifre());
+                System.out.println("Güncellenen hashlenmiş şifre: " + hashedPassword);
+                kullanici.setSifre(hashedPassword);
             }
             if (updateRequest.getEmail() != null) {
+                System.out.println("Güncellenen e-mail: " + updateRequest.getEmail());
                 kullanici.setEmail(updateRequest.getEmail());
             }
 

@@ -28,7 +28,7 @@ public class Kullanici {
     @Column (length = 100,name="email",unique = true)
     private String email;
 
-    @Column (length = 100,name="sifre")
+    @Column (length = 100,name="sifre",nullable = false)
     private String sifre;
 
     @Enumerated(EnumType.STRING)

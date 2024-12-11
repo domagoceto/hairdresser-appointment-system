@@ -4,15 +4,21 @@ import org.appointment.backend.entity.Kullanici;
 import org.appointment.backend.repo.KullaniciRepository;
 import org.appointment.backend.service.MusteriDetailService;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Collection;
+import java.util.List;
 
 @Service
-public class MusteriDetailServiceImpl implements MusteriDetailService, UserDetailsService {
+@Slf4j
+public class MusteriDetailServiceImpl implements MusteriDetailService {
     private final KullaniciRepository kullaniciRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -23,17 +29,30 @@ public class MusteriDetailServiceImpl implements MusteriDetailService, UserDetai
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Kullanici kullanici = kullaniciRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Kullanıcı bulunamadı: " + email));
+        log.info("LoadUserByUsername çağrıldı. Kullanıcı email: {}", email);
 
-        return User.builder()
-                .username(kullanici.getEmail())
-                .password(kullanici.getSifre())
-                .roles(kullanici.getRol().name()) // Enum rolünü string olarak kullanıyoruz
-                .build();
+        Kullanici kullanici = kullaniciRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    log.warn("Kullanıcı bulunamadı: {}", email);
+                    return new UsernameNotFoundException("Kullanıcı bulunamadı: " + email);
+                });
+
+        // Rol kontrolü
+        if (kullanici.getRol() == null) {
+            log.error("Kullanıcının rolü atanmış değil: {}", kullanici.getEmail());
+            throw new RuntimeException("Kullanıcının rolü atanmış değil!");
+        }
+
+        log.info("Kullanıcı bulundu: {}", kullanici);
+
+        return new User(
+                kullanici.getEmail(),
+                kullanici.getSifre(),
+                getAuthorities(kullanici)
+        );
     }
 
+    private Collection<? extends GrantedAuthority> getAuthorities(Kullanici kullanici) {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + kullanici.getRol().name()));
+    }
 }
-
-
-
