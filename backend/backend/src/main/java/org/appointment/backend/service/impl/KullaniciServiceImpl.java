@@ -2,20 +2,21 @@ package org.appointment.backend.service.impl;
 
 import org.appointment.backend.dto.KullaniciDto;
 import org.appointment.backend.entity.Kullanici;
-import org.appointment.backend.entity.Rol;
 import org.appointment.backend.repo.KullaniciRepository;
 import org.appointment.backend.service.KullaniciService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+<<<<<<< HEAD
 import lombok.extern.slf4j.Slf4j;
+=======
+>>>>>>> parent of b67c09f (kullanıcı kayıt,giris güncellendi)
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 public class KullaniciServiceImpl implements KullaniciService {
 
     private final KullaniciRepository kullaniciRepository;
@@ -28,32 +29,16 @@ public class KullaniciServiceImpl implements KullaniciService {
 
     @Override
     public KullaniciDto save(KullaniciDto kullaniciDto) {
-        log.info("Kaydedilecek kullanıcı bilgileri: {}", kullaniciDto);
-
-        // Rol kontrolü
-        if (kullaniciDto.getRol() == null) {
-            log.warn("Kullanıcının rolü null, varsayılan olarak MUSTERI atanıyor.");
-            kullaniciDto.setRol(Rol.MUSTERI); // Varsayılan değer atanıyor
-        }
-
         Kullanici kullanici = new Kullanici();
         kullanici.setAd(kullaniciDto.getAd());
         kullanici.setSoyad(kullaniciDto.getSoyad());
         kullanici.setEmail(kullaniciDto.getEmail());
         kullanici.setTelefon(kullaniciDto.getTelefon());
+        kullanici.setSifre(passwordEncoder.encode(kullaniciDto.getSifre()));
+        kullanici.setRol(kullaniciDto.getRol());
         kullanici.setCinsiyet(kullaniciDto.getCinsiyet());
 
-        // Şifre hashleme
-        String hashedPassword = passwordEncoder.encode(kullaniciDto.getSifre());
-        log.info("Hashlenmiş şifre: {}", hashedPassword);
-        kullanici.setSifre(hashedPassword);
-
-        // Rol atama
-        kullanici.setRol(kullaniciDto.getRol());
-
         Kullanici savedKullanici = kullaniciRepository.save(kullanici);
-        log.info("Veritabanına kaydedilen kullanıcı: {}", savedKullanici);
-
         return convertToDto(savedKullanici);
     }
 
