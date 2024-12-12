@@ -41,10 +41,16 @@ public class JwtUtil {
         try {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            System.out.println("Token süresi dolmuş: " + e.getMessage());
+        } catch (io.jsonwebtoken.SignatureException e) {
+            System.out.println("Token imza doğrulaması başarısız: " + e.getMessage());
         } catch (Exception e) {
-            return false;
+            System.out.println("Token doğrulama hatası: " + e.getMessage());
         }
+        return false;
     }
+
 
     // Kullanıcı adını token'dan çıkartma
     public String extractUsername(String token) {
@@ -68,11 +74,13 @@ public class JwtUtil {
     }
 
     public List<String> extractRoles(String token) {
-        Claims claims = Jwts.parser()
+        Claims claims = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return claims.get("roles", List.class); // "roles" claim'ini al
+        return (List<String>) claims.get("roles");
     }
+
 
 }

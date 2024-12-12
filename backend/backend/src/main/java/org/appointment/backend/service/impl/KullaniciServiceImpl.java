@@ -11,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,22 +57,48 @@ public class KullaniciServiceImpl implements KullaniciService {
         return convertToDto(savedKullanici);
     }
 
-
-
     @Override
     public KullaniciDto update(Long kullaniciId, KullaniciDto kullaniciDto) {
         Kullanici kullanici = kullaniciRepository.findById(kullaniciId)
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
-        kullanici.setAd(kullaniciDto.getAd());
-        kullanici.setSoyad(kullaniciDto.getSoyad());
-        kullanici.setTelefon(kullaniciDto.getTelefon());
-        kullanici.setEmail(kullaniciDto.getEmail());
-        if (kullaniciDto.getSifre() != null) {
-            kullanici.setSifre(passwordEncoder.encode(kullaniciDto.getSifre()));
+
+        kullanici.setAd(kullaniciDto.getAd() != null ? kullaniciDto.getAd() : kullanici.getAd());
+        kullanici.setSoyad(kullaniciDto.getSoyad() != null ? kullaniciDto.getSoyad() : kullanici.getSoyad());
+        kullanici.setTelefon(kullaniciDto.getTelefon() != null ? kullaniciDto.getTelefon() : kullanici.getTelefon());
+        kullanici.setEmail(kullaniciDto.getEmail() != null ? kullaniciDto.getEmail() : kullanici.getEmail());
+
+        // Şifre güncelleniyorsa, hash'le ve logla
+        if (kullaniciDto.getSifre() != null && !kullaniciDto.getSifre().isEmpty()) {
+            String hashedPassword = passwordEncoder.encode(kullaniciDto.getSifre());
+            log.info("Hashlenmiş şifre (güncelleme): {}", hashedPassword);
+            kullanici.setSifre(hashedPassword);
         }
+
         Kullanici updatedKullanici = kullaniciRepository.save(kullanici);
         return convertToDto(updatedKullanici);
     }
+
+    @Override
+    public KullaniciDto updateByEmail(String email, KullaniciDto kullaniciDto) {
+        Kullanici kullanici = kullaniciRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+
+        kullanici.setAd(kullaniciDto.getAd() != null ? kullaniciDto.getAd() : kullanici.getAd());
+        kullanici.setSoyad(kullaniciDto.getSoyad() != null ? kullaniciDto.getSoyad() : kullanici.getSoyad());
+        kullanici.setTelefon(kullaniciDto.getTelefon() != null ? kullaniciDto.getTelefon() : kullanici.getTelefon());
+        kullanici.setEmail(kullaniciDto.getEmail() != null ? kullaniciDto.getEmail() : kullanici.getEmail());
+
+        // Şifre güncelleniyorsa, hash'le ve logla
+        if (kullaniciDto.getSifre() != null && !kullaniciDto.getSifre().isEmpty()) {
+            String hashedPassword = passwordEncoder.encode(kullaniciDto.getSifre());
+            log.info("Hashlenmiş şifre (güncelleme): {}", hashedPassword);
+            kullanici.setSifre(hashedPassword);
+        }
+
+        Kullanici updatedKullanici = kullaniciRepository.save(kullanici);
+        return convertToDto(updatedKullanici);
+    }
+
 
     @Override
     public void delete(Long id) {
@@ -101,19 +126,12 @@ public class KullaniciServiceImpl implements KullaniciService {
     }
 
     @Override
-    public KullaniciDto updateByEmail(String email, KullaniciDto kullaniciDto) {
-        Kullanici kullanici = kullaniciRepository.findByEmail(email)
+    public Kullanici findEntityByEmail(String email) {
+        return kullaniciRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
-        kullanici.setAd(kullaniciDto.getAd());
-        kullanici.setSoyad(kullaniciDto.getSoyad());
-        kullanici.setTelefon(kullaniciDto.getTelefon());
-        kullanici.setEmail(kullaniciDto.getEmail());
-        if (kullaniciDto.getSifre() != null) {
-            kullanici.setSifre(passwordEncoder.encode(kullaniciDto.getSifre()));
-        }
-        Kullanici updatedKullanici = kullaniciRepository.save(kullanici);
-        return convertToDto(updatedKullanici);
     }
+
+
 
     @Override
     public void deleteByEmail(String email) {

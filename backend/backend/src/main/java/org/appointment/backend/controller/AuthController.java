@@ -5,18 +5,24 @@ import org.appointment.backend.dto.RegisterRequest;
 import org.appointment.backend.dto.KullaniciDto;
 import org.appointment.backend.dto.KullaniciUpdateRequest;
 import org.appointment.backend.entity.Cinsiyet;
+import org.appointment.backend.entity.Kullanici;
 import org.appointment.backend.entity.Rol;
 import org.appointment.backend.security.JwtUtil;
 import org.appointment.backend.service.KullaniciService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -79,28 +85,35 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
-            log.info("Giriş yapılan kullanıcı adı: {}", loginRequest.getUsername());
-            log.info("Giriş yapılan şifre: {}", loginRequest.getPassword());
-
-            KullaniciDto kullanici = kullaniciService.findByEmail(loginRequest.getUsername());
-            if (kullanici == null) {
-                log.warn("Kullanıcı bulunamadı: {}", loginRequest.getUsername());
-                return ResponseEntity.status(404).body("Kullanıcı bulunamadı.");
-            }
-
-            log.info("Veritabanındaki hashlenmiş şifre: {}", kullanici.getSifre());
-
+            // AuthenticationManager kullanılarak kimlik doğrulama
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getEmail(),
+                            loginRequest.getPassword()
+                    )
             );
 
+            // Kimlik doğrulama başarılıysa kullanıcıyı al
+            Kullanici kullanici = kullaniciService.findEntityByEmail(loginRequest.getEmail());
+
+            // JWT Token oluşturma
             String token = jwtUtil.generateToken(authentication);
+            log.info("Oluşturulan token: {}", token);
+
+            // Bearer token'ı response ile döndürme
             return ResponseEntity.ok("Bearer " + token);
+        } catch (BadCredentialsException e) {
+            log.error("Hatalı giriş: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Giriş başarısız: " + e.getMessage());
         } catch (Exception e) {
-            log.error("Login sırasında hata oluştu: ", e);
-            return ResponseEntity.status(401).body("Giriş başarısız: " + e.getMessage());
+            log.error("Beklenmeyen bir hata oluştu: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Beklenmeyen bir hata oluştu.");
         }
     }
+
+
+
+
 
 
 

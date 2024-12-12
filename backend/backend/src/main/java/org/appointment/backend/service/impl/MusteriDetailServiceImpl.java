@@ -37,13 +37,13 @@ public class MusteriDetailServiceImpl implements MusteriDetailService {
                     return new UsernameNotFoundException("Kullanıcı bulunamadı: " + email);
                 });
 
-        // Rol kontrolü
+        // Veritabanındaki hashlenmiş şifreyi loglayın
+        log.info("Veritabanındaki hashlenmiş şifre: {}", kullanici.getSifre());
+
         if (kullanici.getRol() == null) {
             log.error("Kullanıcının rolü atanmış değil: {}", kullanici.getEmail());
             throw new RuntimeException("Kullanıcının rolü atanmış değil!");
         }
-
-        log.info("Kullanıcı bulundu: {}", kullanici);
 
         return new User(
                 kullanici.getEmail(),
@@ -51,6 +51,8 @@ public class MusteriDetailServiceImpl implements MusteriDetailService {
                 getAuthorities(kullanici)
         );
     }
+
+
 
     private Collection<? extends GrantedAuthority> getAuthorities(Kullanici kullanici) {
         return List.of(new SimpleGrantedAuthority("ROLE_" + kullanici.getRol().name()));
