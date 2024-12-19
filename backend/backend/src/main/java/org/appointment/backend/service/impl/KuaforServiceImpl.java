@@ -1,14 +1,10 @@
 package org.appointment.backend.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.appointment.backend.dto.KuaforDetailsResponse;
-import org.appointment.backend.dto.KuaforRegisterRequest;
-import org.appointment.backend.dto.KuaforUpdateRequest;
-import org.appointment.backend.dto.RandevuDto;
-import org.appointment.backend.entity.Kuafor;
-import org.appointment.backend.entity.Kullanici;
-import org.appointment.backend.entity.Randevu;
-import org.appointment.backend.entity.Rol;
+import org.appointment.backend.dto.*;
+import org.appointment.backend.entity.*;
+import org.appointment.backend.repo.HizmetRepository;
 import org.appointment.backend.repo.KuaforRepository;
 import org.appointment.backend.repo.KullaniciRepository;
 import org.appointment.backend.repo.RandevuRepository;
@@ -16,6 +12,7 @@ import org.appointment.backend.service.KuaforService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +24,7 @@ public class KuaforServiceImpl implements KuaforService {
     private final KuaforRepository kuaforRepository;
     private final PasswordEncoder passwordEncoder;
     private final RandevuRepository randevuRepository;
+    private final HizmetRepository hizmetRepository;
 
     @Override
     public Kuafor registerKuafor(KuaforRegisterRequest request) {
@@ -56,21 +54,37 @@ public class KuaforServiceImpl implements KuaforService {
         return kuaforRepository.save(kuafor);
     }
 
+    @Override
+    public Kuafor findKuaforByEmail(String email) {
+        return kuaforRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı."));
+    }
 
     @Override
-    public List<RandevuDto> getKuaforRandevular(String currentUserEmail) {
-        // Kuaförün email adresi ile Kuafor nesnesini bul
-        Kuafor kuafor = kuaforRepository.findByEmail(currentUserEmail)
+    public List<KuaforRandevuResponseDto> getKuaforRandevular(String email, Long kuaforId, LocalDate tarih) {
+        Kuafor kuafor = kuaforRepository.findById(kuaforId)
                 .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı."));
 
-        // Kuaföre ait randevuları al
-        List<Randevu> randevular = randevuRepository.findByKuafor(kuafor);
+        if (!kuafor.getKullanici().getEmail().equals(email)) {
+            throw new RuntimeException("Bu kuaföre erişim yetkiniz yok.");
+        }
 
-        // Randevuları RandevuDto'ya dönüştür
+        List<Randevu> randevular = randevuRepository.findByKuafor_KuaforIdAndTarih(kuaforId, tarih);
+
         return randevular.stream()
-                .map(this::toRandevuDto)  // Her randevuyu DTO'ya çeviriyoruz
+                .map(randevu -> {
+                    KuaforRandevuResponseDto dto = new KuaforRandevuResponseDto();
+                    dto.setAdSoyad(randevu.getKullanici().getAd() + " " + randevu.getKullanici().getSoyad());
+                    dto.setHizmet(randevu.getHizmet().getAd());
+                    dto.setSaat(randevu.getSaat().toString());
+                    dto.setNotlar(randevu.getNotlar());
+                    dto.setUcret(randevu.getUcret());
+                    dto.setSure(randevu.getSure());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
+
 
 
     @Override
@@ -115,19 +129,20 @@ public class KuaforServiceImpl implements KuaforService {
     }
 
     @Override
+    @Transactional
     public Kuafor addServiceToKuafor(Long kuaforId, Long hizmetId) {
         Kuafor kuafor = kuaforRepository.findById(kuaforId)
                 .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı."));
+        Hizmet hizmet = hizmetRepository.findById(hizmetId)
+                .orElseThrow(() -> new RuntimeException("Hizmet bulunamadı."));
 
-        // Hizmet ekleme mantığı burada yer almalı
-        // Bu kısımda `HizmetRepository` kullanarak hizmeti eklemelisiniz
+        kuafor.getYapabilecegiHizmetler().add(hizmet);
+        hizmet.getKuaforler().add(kuafor);
+
+        kuaforRepository.save(kuafor);
+        hizmetRepository.save(hizmet);
+
         return kuafor;
-    }
-
-    @Override
-    public Kuafor getKuaforById(Long id) {
-        return kuaforRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı: " + id));
     }
 
     // Helper method for converting Kuafor entity to DTO

@@ -120,12 +120,6 @@ public class RandevuController {
         }
     }
 
-
-
-
-
-
-
     // Admin tüm randevuları görüntüleyebilir
     @GetMapping("/admin/görüntüle")
     @PreAuthorize("hasRole('ADMIN')")
@@ -136,34 +130,5 @@ public class RandevuController {
             return ResponseEntity.status(400).body("Randevular alınırken hata oluştu.");
         }
     }
-
-    @GetMapping("/gecmis")
-    @PreAuthorize("hasRole('MUSTERI')")
-    public ResponseEntity<?> getPastRandevular() {
-        try {
-            String email = SecurityContextHolder.getContext().getAuthentication().getName();
-            KullaniciDto kullanici = kullaniciService.findByEmail(email);
-
-            List<RandevuDto> randevular = randevuService.getPastRandevular(kullanici.getKullaniciId());
-            return ResponseEntity.ok(randevular);
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body("Geçmiş randevular alınırken hata oluştu: " + e.getMessage());
-        }
-    }
-
-    @GetMapping("/gelecek")
-    @PreAuthorize("hasRole('MUSTERI')")
-    public ResponseEntity<?> getFutureRandevular() {
-        try {
-            String email = SecurityContextHolder.getContext().getAuthentication().getName();
-            KullaniciDto kullanici = kullaniciService.findByEmail(email);
-
-            List<RandevuDto> randevular = randevuService.getFutureRandevular(kullanici.getKullaniciId());
-            return ResponseEntity.ok(randevular);
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body("Gelecek randevular alınırken hata oluştu: " + e.getMessage());
-        }
-    }
-
 
 }

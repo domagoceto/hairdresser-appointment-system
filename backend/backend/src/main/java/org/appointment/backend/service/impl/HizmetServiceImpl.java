@@ -29,18 +29,27 @@ public class HizmetServiceImpl implements HizmetService {
     private final KuaforRepository kuaforRepository;
 
     @Override
-    @Transactional
-    public Hizmet hizmetEkle(HizmetEkleRequest request) {
-        // Yeni bir Hizmet nesnesi oluştur ve doldur
+    public HizmetDto hizmetEkle(HizmetDto hizmetDto) {
         Hizmet hizmet = new Hizmet();
-        hizmet.setAd(request.getAd());
-        hizmet.setAciklama(request.getAciklama());
-        hizmet.setSure(request.getSure());
-        hizmet.setFiyat(request.getFiyat());
+        hizmet.setAd(hizmetDto.getAd());
+        hizmet.setAciklama(hizmetDto.getAciklama());
+        hizmet.setFiyat(hizmetDto.getFiyat());
+        hizmet.setSure(hizmetDto.getSure());
 
-        // Hizmeti kaydet
-        return hizmetRepository.save(hizmet);
+        Hizmet savedHizmet = hizmetRepository.save(hizmet);
+        return toDto(savedHizmet);
     }
+
+    private HizmetDto toDto(Hizmet hizmet) {
+        return HizmetDto.builder()
+                .hizmetId(hizmet.getHizmetId())
+                .ad(hizmet.getAd())
+                .aciklama(hizmet.getAciklama())
+                .fiyat(hizmet.getFiyat())
+                .sure(hizmet.getSure())
+                .build();
+    }
+
     @Override
     public Hizmet getHizmetById(Long id) {
         return hizmetRepository.findById(id)

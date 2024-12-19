@@ -5,43 +5,36 @@ import lombok.RequiredArgsConstructor;
 import org.appointment.backend.dto.OdemeDto;
 import org.appointment.backend.entity.*;
 import org.appointment.backend.repo.OdemeRepository;
-import org.appointment.backend.service.OdemeService;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Page;
-import java.util.ArrayList;
-import java.util.List;
-import org.appointment.backend.repo.KullaniciRepository;
 import org.appointment.backend.repo.RandevuRepository;
+import org.appointment.backend.service.OdemeService;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OdemeServiceImpl implements OdemeService {
 
     private final OdemeRepository odemeRepository;
-    private final KullaniciRepository kullaniciRepository;
     private final RandevuRepository randevuRepository;
 
     @Override
     @Transactional
     public OdemeDto save(OdemeDto odemeDto) {
-        // Kullanıcıyı veritabanından bulup çekme
-        Kullanici kullanici = kullaniciRepository.findById(odemeDto.getKullaniciId())
-                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
-
         // Randevuyu veritabanından bulup çekme
         Randevu randevu = randevuRepository.findById(odemeDto.getRandevuId())
-                .orElseThrow(() -> new RuntimeException("Randevu bulunamadı"));
+                .orElseThrow(() -> new RuntimeException("Randevu bulunamadı. ID: " + odemeDto.getRandevuId()));
 
         // Ödeme nesnesi oluşturma
         Odeme odeme = new Odeme();
-        odeme.setTutar(odemeDto.getTutar());
-        odeme.setOdemeTarihi(odemeDto.getOdemeTarihi());
-        odeme.setDurum(OdemeDurum.valueOf(odemeDto.getDurum()));
-        odeme.setKullanici(kullanici);
         odeme.setRandevu(randevu);
-        odeme.setOdemeYontemi(OdemeYontemi.valueOf(odemeDto.getOdemeYontemi()));
+        odeme.setTutar(randevu.getUcret()); // Tutar, randevudaki ücret
+        odeme.setOdemeTarihi(odemeDto.getOdemeTarihi() != null ? odemeDto.getOdemeTarihi() : LocalDateTime.now());
+        odeme.setDurum(odemeDto.getDurum() != null ? OdemeDurum.valueOf(odemeDto.getDurum()) : OdemeDurum.ODENMEDI);
+        odeme.setKullanici(randevu.getKullanici()); // Kullanıcıyı randevudan al
+        odeme.setOdemeYontemi(odemeDto.getOdemeYontemi() != null ? OdemeYontemi.valueOf(odemeDto.getOdemeYontemi()) : null);
         odeme.setAciklama(odemeDto.getAciklama());
 
         // Ödemeyi veritabanına kaydetme
@@ -51,31 +44,32 @@ public class OdemeServiceImpl implements OdemeService {
         return convertOdemeToDto(savedOdeme);
     }
 
+
     @Override
     @Transactional
     public OdemeDto update(Long odemeId, OdemeDto odemeDto) {
         Odeme odeme = odemeRepository.findById(odemeId)
                 .orElseThrow(() -> new RuntimeException("Ödeme bilgisi bulunamadı"));
 
-        // Eğer güncellenmesi isteniyorsa, Kullanıcıyı veritabanından bulup çekme
-        if (odemeDto.getKullaniciId() != null) {
-            Kullanici kullanici = kullaniciRepository.findById(odemeDto.getKullaniciId())
-                    .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
-            odeme.setKullanici(kullanici);
-        }
-
-        // Eğer güncellenmesi isteniyorsa, Randevuyu veritabanından bulup çekme
         if (odemeDto.getRandevuId() != null) {
+            // Eğer güncellenmesi isteniyorsa, randevuyu bul
             Randevu randevu = randevuRepository.findById(odemeDto.getRandevuId())
                     .orElseThrow(() -> new RuntimeException("Randevu bulunamadı"));
             odeme.setRandevu(randevu);
+            odeme.setTutar(randevu.getUcret()); // Tutarı randevudan güncelle
         }
 
-        odeme.setDurum(odemeDto.getDurum() != null ? OdemeDurum.valueOf(odemeDto.getDurum()) : odeme.getDurum());
-        odeme.setOdemeYontemi(odemeDto.getOdemeYontemi() != null ? OdemeYontemi.valueOf(odemeDto.getOdemeYontemi()) : odeme.getOdemeYontemi());
-        odeme.setOdemeTarihi(odemeDto.getOdemeTarihi() != null ? odemeDto.getOdemeTarihi() : odeme.getOdemeTarihi());
-        odeme.setAciklama(odemeDto.getAciklama() != null ? odemeDto.getAciklama() : odeme.getAciklama());
-        odeme.setTutar(odemeDto.getTutar() != 0 ? odemeDto.getTutar() : odeme.getTutar());
+        if (odemeDto.getDurum() != null) {
+            odeme.setDurum(Enum.valueOf(OdemeDurum.class, odemeDto.getDurum()));
+        }
+
+        if (odemeDto.getOdemeYontemi() != null) {
+            odeme.setOdemeYontemi(Enum.valueOf(OdemeYontemi.class, odemeDto.getOdemeYontemi()));
+        }
+
+        if (odemeDto.getAciklama() != null) {
+            odeme.setAciklama(odemeDto.getAciklama());
+        }
 
         Odeme updatedOdeme = odemeRepository.save(odeme);
 
@@ -83,38 +77,23 @@ public class OdemeServiceImpl implements OdemeService {
     }
 
     @Override
-    public void delete(Long odemeId) {
-        odemeRepository.deleteById(odemeId);
-    }
-
-    @Override
     public List<OdemeDto> getAll() {
-        List<Odeme> odemeler = odemeRepository.findAll();
-        List<OdemeDto> odemeDtos = new ArrayList<>();
-
-        odemeler.forEach(odeme -> odemeDtos.add(convertOdemeToDto(odeme)));
-
-        return odemeDtos;
+        return odemeRepository.findAll().stream()
+                .map(this::convertOdemeToDto)
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public Page<OdemeDto> getAll(Pageable pageable) {
-        Page<Odeme> odemelerPage = odemeRepository.findAll(pageable);
-        return odemelerPage.map(this::convertOdemeToDto);
-    }
-
-    // Ödeme nesnesini DTO'ya dönüştürmek için yardımcı metot
     private OdemeDto convertOdemeToDto(Odeme odeme) {
         OdemeDto odemeDto = new OdemeDto();
         odemeDto.setOdemeId(odeme.getOdemeId());
         odemeDto.setTutar(odeme.getTutar());
         odemeDto.setOdemeTarihi(odeme.getOdemeTarihi());
-        odemeDto.setDurum(odeme.getDurum().toString());
+        odemeDto.setDurum(odeme.getDurum().name());
         odemeDto.setKullaniciId(odeme.getKullanici().getKullaniciId());
+        odemeDto.setAdSoyad(odeme.getKullanici().getAd() + " " + odeme.getKullanici().getSoyad());
         odemeDto.setRandevuId(odeme.getRandevu().getRandevuId());
-        odemeDto.setOdemeYontemi(odeme.getOdemeYontemi().toString());
+        odemeDto.setOdemeYontemi(odeme.getOdemeYontemi() != null ? odeme.getOdemeYontemi().name() : null);
         odemeDto.setAciklama(odeme.getAciklama());
-
         return odemeDto;
     }
 }

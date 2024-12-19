@@ -2,6 +2,8 @@ package org.appointment.backend.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.appointment.backend.dto.KuaforRandevuDto;
+import org.appointment.backend.dto.KuaforRandevuResponseDto;
 import org.appointment.backend.dto.RandevuDto;
 import org.appointment.backend.entity.*;
 import org.appointment.backend.repo.HizmetRepository;
@@ -63,6 +65,36 @@ public class RandevuServiceImpl implements RandevuService {
 
         return toRandevuDto(savedRandevu);
     }
+    @Override
+    public List<KuaforRandevuResponseDto> getKuaforRandevular(String email, Long kuaforId, LocalDate tarih) {
+        // Kuaförü doğrula
+        Kuafor kuafor = kuaforRepository.findById(kuaforId)
+                .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı."));
+
+        if (!kuafor.getKullanici().getEmail().equals(email)) {
+            throw new RuntimeException("Bu kuaföre erişim yetkiniz yok.");
+        }
+
+        // Seçili tarihteki randevuları getir
+        List<Randevu> randevular = randevuRepository.findByKuafor_KuaforIdAndTarih(kuaforId, tarih);
+
+        // DTO'ya dönüştür
+        return randevular.stream()
+                .map(randevu -> {
+                    KuaforRandevuResponseDto dto = new KuaforRandevuResponseDto();
+                    dto.setAdSoyad(randevu.getKullanici().getAd() + " " + randevu.getKullanici().getSoyad());
+                    dto.setHizmet(randevu.getHizmet().getAd());
+                    dto.setSaat(randevu.getSaat().toString());
+                    dto.setNotlar(randevu.getNotlar());
+                    dto.setUcret(randevu.getUcret());
+                    dto.setSure(randevu.getSure());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+
+
 
 
     @Override
@@ -124,6 +156,23 @@ public class RandevuServiceImpl implements RandevuService {
     }
 
     @Override
+    public List<KuaforRandevuDto> getRandevularByKuaforAndTarih(Long kuaforId, LocalDate tarih) {
+        List<Randevu> randevular = randevuRepository.findByKuafor_KuaforIdAndTarih(kuaforId, tarih);
+
+        return randevular.stream().map(randevu -> {
+            KuaforRandevuDto dto = new KuaforRandevuDto();
+            dto.setSaat(randevu.getSaat());
+            dto.setAdSoyad(randevu.getKullanici().getAd() + " " + randevu.getKullanici().getSoyad());
+            dto.setTelefon(randevu.getKullanici().getTelefon());
+            dto.setIslem(randevu.getHizmet().getAd());
+            dto.setDurum(randevu.getDurum());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+
+
+    @Override
     public void iptalRandevu(Long randevuId, Long kullaniciId) {
         // Randevu mevcut mu kontrol et
         Randevu randevu = randevuRepository.findById(randevuId)
@@ -170,23 +219,6 @@ public class RandevuServiceImpl implements RandevuService {
     @Override
     public List<RandevuDto> getRandevularByKullaniciId(Long kullaniciId) {
         List<Randevu> randevular = randevuRepository.findByKullanici_KullaniciId(kullaniciId);
-        return randevular.stream()
-                .map(this::toRandevuDto)
-                .collect(Collectors.toList());
-    }
-
-
-    @Override
-    public List<RandevuDto> getPastRandevular(Long kullaniciId) {
-        List<Randevu> randevular = randevuRepository.findByKullanici_KullaniciIdAndTarihBefore(kullaniciId, LocalDate.now());
-        return randevular.stream()
-                .map(this::toRandevuDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<RandevuDto> getFutureRandevular(Long kullaniciId) {
-        List<Randevu> randevular = randevuRepository.findByKullanici_KullaniciIdAndTarihAfter(kullaniciId, LocalDate.now());
         return randevular.stream()
                 .map(this::toRandevuDto)
                 .collect(Collectors.toList());

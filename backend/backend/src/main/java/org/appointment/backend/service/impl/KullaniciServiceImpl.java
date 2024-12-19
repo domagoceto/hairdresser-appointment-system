@@ -2,6 +2,7 @@ package org.appointment.backend.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.appointment.backend.dto.AdminKullaniciDto;
 import org.appointment.backend.dto.KullaniciDto;
 import org.appointment.backend.entity.Kuafor;
 import org.appointment.backend.entity.Kullanici;
@@ -112,12 +113,24 @@ public class KullaniciServiceImpl implements KullaniciService {
     }
 
     @Override
-    public List<KullaniciDto> getAll() {
+    public List<AdminKullaniciDto> getAll() {
         return kullaniciRepository.findAll()
                 .stream()
-                .map(this::toDto)
+                .map(this::toAdminKullaniciDto)
                 .collect(Collectors.toList());
     }
+
+
+    private AdminKullaniciDto toAdminKullaniciDto(Kullanici kullanici) {
+        return AdminKullaniciDto.builder()
+                .ad(kullanici.getAd())
+                .soyad(kullanici.getSoyad())
+                .cinsiyet(kullanici.getCinsiyet() != null ? kullanici.getCinsiyet().toString() : null)
+                .telefon(kullanici.getTelefon())
+                .email(kullanici.getEmail())
+                .build();
+    }
+
 
     private KullaniciDto toDto(Kullanici kullanici) {
         return KullaniciDto.builder()

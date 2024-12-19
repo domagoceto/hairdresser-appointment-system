@@ -14,30 +14,28 @@ public class Odeme {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long odemeId;
 
-    //tutar randevu ücret bilgisinden çekilecek
-    @Column(name = "tutar")
+    @Column(name = "tutar", nullable = false)
     private double tutar;
 
-    @Column(name="odeme_tarihi")
+    @Column(name = "odeme_tarihi", nullable = false)
     private LocalDateTime odemeTarihi;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="durum",length = 20)
+    @Column(name = "durum", length = 20, nullable = false)
     private OdemeDurum durum;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "kullanici_id")
+    @JoinColumn(name = "kullanici_id", nullable = false)
     private Kullanici kullanici;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="randevu_id")
+    @JoinColumn(name = "randevu_id", nullable = false)
     private Randevu randevu;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="odeme_yontemi",length = 50)
+    @Column(name = "odeme_yontemi", length = 50)
     private OdemeYontemi odemeYontemi;
 
     @Column(name = "aciklama", length = 500)
     private String aciklama;
-
 }

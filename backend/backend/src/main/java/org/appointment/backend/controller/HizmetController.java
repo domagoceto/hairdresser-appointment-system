@@ -18,11 +18,16 @@ public class HizmetController {
 
     private final HizmetService hizmetService;
 
+    // Admin hizmet ekleyebilir
     @PostMapping("/ekle")
     @PreAuthorize("hasRole('ADMIN')") // Sadece ADMIN rolüne izin verilir
-    public ResponseEntity<Hizmet> hizmetEkle(@RequestBody HizmetEkleRequest request) {
-        Hizmet hizmet = hizmetService.hizmetEkle(request);
-        return ResponseEntity.ok(hizmet);
+    public ResponseEntity<?> hizmetEkle(@RequestBody HizmetDto hizmetDto) {
+        try {
+            HizmetDto yeniHizmet = hizmetService.hizmetEkle(hizmetDto);
+            return ResponseEntity.ok(yeniHizmet);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Hizmet eklenirken hata oluştu: " + e.getMessage());
+        }
     }
 }
 

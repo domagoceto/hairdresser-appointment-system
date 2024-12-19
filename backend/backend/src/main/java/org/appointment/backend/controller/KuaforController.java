@@ -1,14 +1,17 @@
 package org.appointment.backend.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.appointment.backend.dto.KuaforDetailsResponse;
-import org.appointment.backend.dto.KuaforRegisterRequest;
-import org.appointment.backend.dto.KuaforUpdateRequest;
+import org.appointment.backend.dto.*;
+import org.appointment.backend.entity.Kuafor;
 import org.appointment.backend.service.KuaforService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/kuafor")
@@ -63,26 +66,44 @@ public class KuaforController {
     // Kuaför kendi randevularını görüntüleyebilir
     @GetMapping("/{kuaforId}/randevular")
     @PreAuthorize("hasRole('KUAFOR')")
-    public ResponseEntity<?> getKuaforRandevular(@PathVariable Long kuaforId, Authentication authentication) {
-        String currentUserEmail = authentication.getName();
+    public ResponseEntity<List<KuaforRandevuResponseDto>> getKuaforRandevular(
+            @PathVariable Long kuaforId,
+            @RequestParam("tarih") LocalDate tarih,
+            Authentication authentication) {
 
-        // Randevularını görüntüleme
-        try {
-            return ResponseEntity.ok(kuaforService.getKuaforRandevular(currentUserEmail));
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body("Randevular alınırken hata oluştu: " + e.getMessage());
-        }
+        String email = authentication.getName();
+
+        // Servis çağrısı
+        List<KuaforRandevuResponseDto> randevular = kuaforService.getKuaforRandevular(email, kuaforId, tarih);
+
+        return ResponseEntity.ok(randevular);
     }
+
+
 
     // Kuaför hizmet ekleyebilir
     @PostMapping("/{kuaforId}/hizmetler")
     @PreAuthorize("hasRole('KUAFOR')")
     public ResponseEntity<?> addServiceToKuafor(@PathVariable Long kuaforId, @RequestBody Long hizmetId) {
         try {
+            // Oturum açmış kuaförün email bilgisi alınır
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+            // Kuaförün sahibi olduğu ID kontrol edilir
+            Kuafor kuafor = kuaforService.findKuaforByEmail(email);
+
+            if (!kuafor.getKuaforId().equals(kuaforId)) {
+                return ResponseEntity.status(403).body("Bu kuaföre hizmet ekleme yetkiniz yok.");
+            }
+
+            // Hizmet ekleme işlemi yapılır
             kuaforService.addServiceToKuafor(kuaforId, hizmetId);
             return ResponseEntity.ok("Hizmet başarıyla eklendi.");
         } catch (Exception e) {
             return ResponseEntity.status(400).body("Hizmet eklenirken hata oluştu: " + e.getMessage());
         }
     }
+
+
+
 }

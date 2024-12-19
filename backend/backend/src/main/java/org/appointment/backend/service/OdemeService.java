@@ -7,13 +7,9 @@ import java.util.List;
 
 public interface OdemeService {
 
-    OdemeDto save(OdemeDto odemeDto);
-
-    void delete(Long odemeId);
-
     List<OdemeDto> getAll();
 
-    Page<OdemeDto> getAll(Pageable pageable);
-
     OdemeDto update(Long odemeId, OdemeDto odemeDto);
+
+    OdemeDto save(OdemeDto odemeDto);
 }

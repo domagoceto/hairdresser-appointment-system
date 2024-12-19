@@ -1,6 +1,8 @@
 package org.appointment.backend.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.appointment.backend.dto.AdminKullaniciDto;
+import org.appointment.backend.dto.KuaforRandevuDto;
 import org.appointment.backend.dto.KullaniciDto;
 import org.appointment.backend.dto.RandevuDto;
 import org.appointment.backend.service.KullaniciService;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -27,7 +30,7 @@ public class AdminController {
 
     @GetMapping("/kullanicilar")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<KullaniciDto>> getAllUsers() {
+    public ResponseEntity<List<AdminKullaniciDto>> getAllUsers() {
         return ResponseEntity.ok(kullaniciService.getAll());
     }
 
@@ -46,7 +49,17 @@ public class AdminController {
 
     @GetMapping("/randevular")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<RandevuDto>> getAllAppointments() {
-        return ResponseEntity.ok(randevuService.getAllRandevular()); // randevuService'i kullandık
+    public ResponseEntity<List<KuaforRandevuDto>> getFilteredAppointments(
+            @RequestParam Long kuaforId,
+            @RequestParam String tarih // Tarihi String olarak alıp LocalDate'e çevireceğiz
+    ) {
+        try {
+            LocalDate localDate = LocalDate.parse(tarih); // String tarihi LocalDate'e çeviriyoruz
+            List<KuaforRandevuDto> randevular = randevuService.getRandevularByKuaforAndTarih(kuaforId, localDate);
+            return ResponseEntity.ok(randevular);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(null);
+        }
     }
+
 }
