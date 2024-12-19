@@ -3,6 +3,7 @@ package org.appointment.backend.service.impl;
 import org.appointment.backend.dto.KullaniciDto;
 import org.appointment.backend.entity.Kullanici;
 import org.appointment.backend.repo.KullaniciRepository;
+import org.appointment.backend.repo.KuaforRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,10 +15,11 @@ class KullaniciServiceImplTest {
 
     private final KullaniciRepository kullaniciRepository = mock(KullaniciRepository.class); // Kullanıcı repository'sinin mock'u
     private final PasswordEncoder passwordEncoder = mock(PasswordEncoder.class); // PasswordEncoder'ın mock'u
+    private final KuaforRepository kuaforRepository = mock(KuaforRepository.class); // KuaforRepository'nin mock'u
 
     // Test edilen sınıf
     private final KullaniciServiceImpl kullaniciService =
-            new KullaniciServiceImpl(kullaniciRepository, passwordEncoder);
+            new KullaniciServiceImpl(kullaniciRepository, passwordEncoder, kuaforRepository);
 
     @Test
     void testSaveKullanici() {

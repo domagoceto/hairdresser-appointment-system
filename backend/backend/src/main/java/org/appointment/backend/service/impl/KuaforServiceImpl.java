@@ -1,22 +1,21 @@
 package org.appointment.backend.service.impl;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.appointment.backend.dto.KuaforDto;
-import org.appointment.backend.entity.Hizmet;
+import org.appointment.backend.dto.KuaforDetailsResponse;
+import org.appointment.backend.dto.KuaforRegisterRequest;
+import org.appointment.backend.dto.KuaforUpdateRequest;
+import org.appointment.backend.dto.RandevuDto;
 import org.appointment.backend.entity.Kuafor;
-import org.appointment.backend.repo.HizmetRepository;
+import org.appointment.backend.entity.Kullanici;
+import org.appointment.backend.entity.Randevu;
+import org.appointment.backend.entity.Rol;
 import org.appointment.backend.repo.KuaforRepository;
+import org.appointment.backend.repo.KullaniciRepository;
+import org.appointment.backend.repo.RandevuRepository;
 import org.appointment.backend.service.KuaforService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.Set;
-import java.util.HashSet;
 
-import jakarta.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,150 +23,146 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class KuaforServiceImpl implements KuaforService {
 
+    private final KullaniciRepository kullaniciRepository;
     private final KuaforRepository kuaforRepository;
-    private final HizmetRepository hizmetRepository;
-    private final PasswordEncoder passwordEncoder;  // PasswordEncoder'ı enjekte ediyoruz
+    private final PasswordEncoder passwordEncoder;
+    private final RandevuRepository randevuRepository;
 
     @Override
-    @Transactional
-    public KuaforDto save(KuaforDto kuaforDto) {
-        Kuafor kuafor = new Kuafor();
+    public Kuafor registerKuafor(KuaforRegisterRequest request) {
+        // Kullanıcıyı oluşturuyoruz
+        Kullanici kullanici = Kullanici.builder()
+                .ad(request.getAd())
+                .soyad(request.getSoyad())
+                .email(request.getEmail())
+                .telefon(request.getTelefon())
+                .sifre(passwordEncoder.encode(request.getSifre()))
+                .rol(Rol.KUAFOR)
+                .build();
 
-        // Kuaför bilgilerini DTO'dan güncelle
-        kuafor.setAd(kuaforDto.getAd());
-        kuafor.setSoyad(kuaforDto.getSoyad());
-        kuafor.setCinsiyet(kuaforDto.getCinsiyet());
-        kuafor.setTelefon(kuaforDto.getTelefon());
-        kuafor.setEmail(kuaforDto.getEmail());
+        Kullanici savedKullanici = kullaniciRepository.save(kullanici);
 
-        // Şifre hashleme ve ayarlama
-        if (kuaforDto.getSifre() != null && !kuaforDto.getSifre().isEmpty()) {
-            kuafor.setSifre(passwordEncoder.encode(kuaforDto.getSifre()));  // Şifreyi hash'liyoruz
-        }
+        // Kuaför detaylarını ekliyoruz
+        Kuafor kuafor = Kuafor.builder()
+                .kullanici(savedKullanici)
+                .telefon(request.getTelefon())
+                .build();
 
-        // Eğer DTO'da "yapabilecegiHizmetlerIds" varsa, bu hizmetleri bulup set et
-        if (kuaforDto.getYapabilecegiHizmetlerIds() != null) {
-            Set<Hizmet> yeniHizmetler = new HashSet<>(hizmetRepository.findAllById(kuaforDto.getYapabilecegiHizmetlerIds()));
-
-            // Eski ilişkileri kaldır
-            if (kuafor.getYapabilecegiHizmetler() != null) {
-                kuafor.getYapabilecegiHizmetler().forEach(hizmet -> hizmet.getKuaforler().remove(kuafor));
-            }
-
-            kuafor.setYapabilecegiHizmetler(yeniHizmetler);
-
-            // Yeni hizmetlere kuaförü ekle
-            yeniHizmetler.forEach(hizmet -> hizmet.getKuaforler().add(kuafor));
-        }
-
-        // Kuaförü veritabanına kaydet
-        Kuafor savedKuafor = kuaforRepository.save(kuafor);
-
-        return convertKuaforToDto(savedKuafor);
+        return kuaforRepository.save(kuafor);
     }
 
-    private KuaforDto convertKuaforToDto(Kuafor kuafor) {
-        KuaforDto kuaforDto = new KuaforDto();
-        kuaforDto.setKuaforId(kuafor.getKuaforId());
-        kuaforDto.setAd(kuafor.getAd());
-        kuaforDto.setSoyad(kuafor.getSoyad());
-        kuaforDto.setCinsiyet(kuafor.getCinsiyet());
-        kuaforDto.setTelefon(kuafor.getTelefon());
-        kuaforDto.setEmail(kuafor.getEmail());
-
-        // Şifreyi DTO'ya eklemiyoruz (güvenlik nedeniyle).
-
-        if (kuafor.getYapabilecegiHizmetler() != null) {
-            kuaforDto.setYapabilecegiHizmetlerIds(
-                    kuafor.getYapabilecegiHizmetler().stream()
-                            .map(Hizmet::getHizmetId)
-                            .collect(Collectors.toList())
-            );
-        }
-
-        return kuaforDto;
-    }
-
-    @Transactional
     @Override
-    public KuaforDto update(Long kuaforId, KuaforDto kuaforDto) {
+    public Kuafor save(Kuafor kuafor) {
+        return kuaforRepository.save(kuafor);
+    }
+
+
+    @Override
+    public List<RandevuDto> getKuaforRandevular(String currentUserEmail) {
+        // Kuaförün email adresi ile Kuafor nesnesini bul
+        Kuafor kuafor = kuaforRepository.findByEmail(currentUserEmail)
+                .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı."));
+
+        // Kuaföre ait randevuları al
+        List<Randevu> randevular = randevuRepository.findByKuafor(kuafor);
+
+        // Randevuları RandevuDto'ya dönüştür
+        return randevular.stream()
+                .map(this::toRandevuDto)  // Her randevuyu DTO'ya çeviriyoruz
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public KuaforDetailsResponse getKuaforDetails(Long kuaforId, String currentUserEmail) {
         Kuafor kuafor = kuaforRepository.findById(kuaforId)
-                .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı"));
+                .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı."));
 
-        kuafor.setAd(kuaforDto.getAd() != null ? kuaforDto.getAd() : kuafor.getAd());
-        kuafor.setSoyad(kuaforDto.getSoyad() != null ? kuaforDto.getSoyad() : kuafor.getSoyad());
-        kuafor.setCinsiyet(kuaforDto.getCinsiyet() != null ? kuaforDto.getCinsiyet() : kuafor.getCinsiyet());
-        kuafor.setTelefon(kuaforDto.getTelefon() != null ? kuaforDto.getTelefon() : kuafor.getTelefon());
-        kuafor.setEmail(kuaforDto.getEmail() != null ? kuaforDto.getEmail() : kuafor.getEmail());
-
-        // Şifre güncelleme
-        if (kuaforDto.getSifre() != null && !kuaforDto.getSifre().isEmpty()) {
-            // Şifre hashleme işlemi
-            String hashedPassword = passwordEncoder.encode(kuaforDto.getSifre());
-            kuafor.setSifre(hashedPassword);
+        // Kullanıcı email'inin doğruluğunu kontrol et
+        if (!kuafor.getKullanici().getEmail().equals(currentUserEmail)) {
+            throw new RuntimeException("Bu kuaförün bilgilerine erişim izniniz yok.");
         }
 
-        if (kuaforDto.getYapabilecegiHizmetlerIds() != null) {
-            Set<Hizmet> yeniHizmetler = new HashSet<>(hizmetRepository.findAllById(kuaforDto.getYapabilecegiHizmetlerIds()));
-
-            // Eski ilişkileri kaldır
-            if (kuafor.getYapabilecegiHizmetler() != null) {
-                kuafor.getYapabilecegiHizmetler().forEach(hizmet -> hizmet.getKuaforler().remove(kuafor));
-            }
-
-            // Yeni hizmetleri kuaföre set et
-            kuafor.setYapabilecegiHizmetler(yeniHizmetler);
-
-            // Yeni hizmetlere kuaförü ekle
-            yeniHizmetler.forEach(hizmet -> hizmet.getKuaforler().add(kuafor));
-        } else {
-            // Eğer hizmet bilgisi yoksa, mevcut tüm hizmetleri temizle
-            if (kuafor.getYapabilecegiHizmetler() != null) {
-                kuafor.getYapabilecegiHizmetler().forEach(hizmet -> hizmet.getKuaforler().remove(kuafor));
-                kuafor.getYapabilecegiHizmetler().clear();
-            }
-        }
-
-        Kuafor updatedKuafor = kuaforRepository.save(kuafor);
-        return convertKuaforToDto(updatedKuafor);
+        return toDto(kuafor);
     }
 
-    @Transactional
     @Override
-    public void delete(Long kuaforId) {
+    public Kuafor updateKuaforInfo(Long kuaforId, KuaforUpdateRequest updateRequest, String currentUserEmail) {
         Kuafor kuafor = kuaforRepository.findById(kuaforId)
-                .orElseThrow(() -> new EntityNotFoundException("Kuaför bulunamadı"));
+                .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı: " + kuaforId));
 
-        // Kuaföre bağlı randevuların yönetimi (randevuların kuaför bilgisi null yapılabilir)
-        if (kuafor.getRandevular() != null) {
-            kuafor.getRandevular().forEach(randevu -> randevu.setKuafor(null));
+        // Kuaförün güncellenebilir bilgilerini alıyoruz
+        if (updateRequest.getAd() != null) {
+            kuafor.getKullanici().setAd(updateRequest.getAd());
+        }
+        if (updateRequest.getSoyad() != null) {
+            kuafor.getKullanici().setSoyad(updateRequest.getSoyad());
+        }
+        if (updateRequest.getTelefon() != null) {
+            kuafor.setTelefon(updateRequest.getTelefon());
+        }
+        if (updateRequest.getEmail() != null) {
+            kuafor.getKullanici().setEmail(updateRequest.getEmail());
+        }
+        if (updateRequest.getSifre() != null && !updateRequest.getSifre().isEmpty()) {
+            kuafor.getKullanici().setSifre(updateRequest.getSifre());
         }
 
-        // Kuaföre bağlı hizmetlerden kuaförü kaldır
-        if (kuafor.getYapabilecegiHizmetler() != null) {
-            kuafor.getYapabilecegiHizmetler().forEach(hizmet -> hizmet.getKuaforler().remove(kuafor));
-        }
+        // Güncelleme işlemini kaydediyoruz
+        kuaforRepository.save(kuafor);
 
-        // Kuaförü sil
-        kuaforRepository.delete(kuafor);
+        return kuafor;
     }
 
     @Override
-    public List<KuaforDto> getAll() {
-        List<Kuafor> kuaforler = kuaforRepository.findAll();
-        List<KuaforDto> kuaforDtos = new ArrayList<>();
+    public Kuafor addServiceToKuafor(Long kuaforId, Long hizmetId) {
+        Kuafor kuafor = kuaforRepository.findById(kuaforId)
+                .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı."));
 
-        kuaforler.forEach(it -> {
-            KuaforDto kuaforDto = convertKuaforToDto(it);
-            kuaforDtos.add(kuaforDto);
-        });
-        return kuaforDtos;
+        // Hizmet ekleme mantığı burada yer almalı
+        // Bu kısımda `HizmetRepository` kullanarak hizmeti eklemelisiniz
+        return kuafor;
     }
 
     @Override
-    public Page<KuaforDto> getAll(Pageable pageable) {
-        return kuaforRepository.findAll(pageable).map(this::convertKuaforToDto);
+    public Kuafor getKuaforById(Long id) {
+        return kuaforRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı: " + id));
     }
+
+    // Helper method for converting Kuafor entity to DTO
+    private KuaforDetailsResponse toDto(Kuafor kuafor) {
+        return new KuaforDetailsResponse(
+                kuafor.getKuaforId(),
+                kuafor.getKullanici().getAd(),
+                kuafor.getKullanici().getSoyad(),
+                kuafor.getKullanici().getEmail(),
+                kuafor.getTelefon(),
+                kuafor.getKullanici().getCinsiyet().name() // Enum -> String dönüşümü
+        );
+    }
+
+    private RandevuDto toRandevuDto(Randevu randevu) {
+        return RandevuDto.builder()
+                .randevuId(randevu.getRandevuId())
+                .tarih(randevu.getTarih()) // LocalDate tarih bilgisi
+                .saat(randevu.getSaat()) // LocalTime saat bilgisi
+                .kuaforId(randevu.getKuafor().getKuaforId()) // Kuaför ID'si
+                .hizmetId(randevu.getHizmet().getHizmetId()) // Hizmet ID'si
+                .kullaniciId(randevu.getKullanici().getKullaniciId()) // Kullanıcı ID'si
+                .durum(randevu.getDurum()) // Durum
+                .notlar(randevu.getNotlar()) // Notlar
+                .ucret(randevu.getUcret()) // Ücret
+                .sure(randevu.getSure()) // Süre
+                .createdAt(randevu.getCreatedAt()) // CreatedAt
+                .updatedAt(randevu.getUpdatedAt()) // UpdatedAt
+                .build();
+    }
+
+
+
+
+
+
+
 }
-
-

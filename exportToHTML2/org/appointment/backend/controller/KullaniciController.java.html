@@ -1,0 +1,64 @@
+<html>
+<head>
+<title>KullaniciController.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #6aab73;}
+.s4 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+KullaniciController.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">org</span><span class="s2">.</span><span class="s1">appointment</span><span class="s2">.</span><span class="s1">backend</span><span class="s2">.</span><span class="s1">controller</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">appointment</span><span class="s2">.</span><span class="s1">backend</span><span class="s2">.</span><span class="s1">dto</span><span class="s2">.</span><span class="s1">KullaniciDto</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">appointment</span><span class="s2">.</span><span class="s1">backend</span><span class="s2">.</span><span class="s1">service</span><span class="s2">.</span><span class="s1">KullaniciService</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">lombok</span><span class="s2">.</span><span class="s1">RequiredArgsConstructor</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">springframework</span><span class="s2">.</span><span class="s1">http</span><span class="s2">.</span><span class="s1">ResponseEntity</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">springframework</span><span class="s2">.</span><span class="s1">security</span><span class="s2">.</span><span class="s1">access</span><span class="s2">.</span><span class="s1">prepost</span><span class="s2">.</span><span class="s1">PreAuthorize</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">springframework</span><span class="s2">.</span><span class="s1">web</span><span class="s2">.</span><span class="s1">bind</span><span class="s2">.</span><span class="s1">annotation</span><span class="s2">.*;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">List</span><span class="s2">;</span>
+
+<span class="s1">@RestController</span>
+<span class="s1">@RequestMapping</span><span class="s2">(</span><span class="s3">&quot;/admin&quot;</span><span class="s2">)</span>
+<span class="s1">@RequiredArgsConstructor</span>
+<span class="s0">public class </span><span class="s1">KullaniciController </span><span class="s2">{</span>
+
+    <span class="s0">private final </span><span class="s1">KullaniciService kullaniciService</span><span class="s2">;</span>
+
+    <span class="s1">@PostMapping</span>
+    <span class="s1">@PreAuthorize</span><span class="s2">(</span><span class="s3">&quot;hasRole('ADMIN')&quot;</span><span class="s2">) </span><span class="s4">// Sadece ADMIN rolü kullanıcı ekleyebilir</span>
+    <span class="s0">public </span><span class="s1">ResponseEntity</span><span class="s2">&lt;</span><span class="s1">KullaniciDto</span><span class="s2">&gt; </span><span class="s1">kaydet</span><span class="s2">(</span><span class="s1">@RequestBody KullaniciDto kullaniciDto</span><span class="s2">) {</span>
+        <span class="s0">return </span><span class="s1">ResponseEntity</span><span class="s2">.</span><span class="s1">ok</span><span class="s2">(</span><span class="s1">kullaniciService</span><span class="s2">.</span><span class="s1">save</span><span class="s2">(</span><span class="s1">kullaniciDto</span><span class="s2">));</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@GetMapping</span>
+    <span class="s1">@PreAuthorize</span><span class="s2">(</span><span class="s3">&quot;hasAnyRole('ADMIN')&quot;</span><span class="s2">) </span><span class="s4">// ADMIN ve MUSTERI kullanıcıları listeleyebilir</span>
+    <span class="s0">public </span><span class="s1">ResponseEntity</span><span class="s2">&lt;</span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">KullaniciDto</span><span class="s2">&gt;&gt; </span><span class="s1">tumunuListele</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">ResponseEntity</span><span class="s2">.</span><span class="s1">ok</span><span class="s2">(</span><span class="s1">kullaniciService</span><span class="s2">.</span><span class="s1">getAll</span><span class="s2">());</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@PutMapping</span><span class="s2">(</span><span class="s3">&quot;guncelle/{kullaniciId}&quot;</span><span class="s2">)</span>
+    <span class="s1">@PreAuthorize</span><span class="s2">(</span><span class="s3">&quot;hasRole('ADMIN')&quot;</span><span class="s2">) </span><span class="s4">// Sadece ADMIN güncelleyebilir</span>
+    <span class="s0">public </span><span class="s1">ResponseEntity</span><span class="s2">&lt;</span><span class="s1">KullaniciDto</span><span class="s2">&gt; </span><span class="s1">guncelle</span><span class="s2">(</span><span class="s1">@PathVariable Long kullaniciId</span><span class="s2">, </span><span class="s1">@RequestBody KullaniciDto kullaniciDto</span><span class="s2">) {</span>
+        <span class="s0">return </span><span class="s1">ResponseEntity</span><span class="s2">.</span><span class="s1">ok</span><span class="s2">(</span><span class="s1">kullaniciService</span><span class="s2">.</span><span class="s1">update</span><span class="s2">(</span><span class="s1">kullaniciId</span><span class="s2">, </span><span class="s1">kullaniciDto</span><span class="s2">));</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@DeleteMapping</span><span class="s2">(</span><span class="s3">&quot;sil/{kullaniciId}&quot;</span><span class="s2">)</span>
+    <span class="s1">@PreAuthorize</span><span class="s2">(</span><span class="s3">&quot;hasRole('ADMIN')&quot;</span><span class="s2">) </span><span class="s4">// Sadece ADMIN silebilir</span>
+    <span class="s0">public </span><span class="s1">ResponseEntity</span><span class="s2">&lt;</span><span class="s1">Void</span><span class="s2">&gt; </span><span class="s1">sil</span><span class="s2">(</span><span class="s1">@PathVariable Long kullaniciId</span><span class="s2">) {</span>
+        <span class="s1">kullaniciService</span><span class="s2">.</span><span class="s1">delete</span><span class="s2">(</span><span class="s1">kullaniciId</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s1">ResponseEntity</span><span class="s2">.</span><span class="s1">noContent</span><span class="s2">().</span><span class="s1">build</span><span class="s2">();</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

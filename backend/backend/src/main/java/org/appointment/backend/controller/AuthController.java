@@ -5,9 +5,11 @@ import org.appointment.backend.dto.RegisterRequest;
 import org.appointment.backend.dto.KullaniciDto;
 import org.appointment.backend.dto.KullaniciUpdateRequest;
 import org.appointment.backend.entity.Cinsiyet;
+import org.appointment.backend.entity.Kuafor;
 import org.appointment.backend.entity.Kullanici;
 import org.appointment.backend.entity.Rol;
 import org.appointment.backend.security.JwtUtil;
+import org.appointment.backend.service.KuaforService;
 import org.appointment.backend.service.KullaniciService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -16,13 +18,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 @RestController
 @Slf4j
@@ -33,51 +32,87 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final KullaniciService kullaniciService;
     private final PasswordEncoder passwordEncoder;
+    private final KuaforService kuaforService;
 
     @Value("${admin.key}")
-    private String adminKey;
+    private String VALID_ADMIN_KEY;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, KullaniciService kullaniciService, PasswordEncoder passwordEncoder) {
+    @Value("${kuafor.key}")
+    private String VALID_KUAFOR_KEY;
+
+    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, KullaniciService kullaniciService, PasswordEncoder passwordEncoder, KuaforService kuaforService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.kullaniciService = kullaniciService;
         this.passwordEncoder = passwordEncoder;
+        this.kuaforService = kuaforService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
-            log.debug("Kayıt işlemi başladı. Gelen bilgiler: {}", registerRequest);
+            log.info("Kayıt işlemi başlatıldı: {}", request);
 
+            // Rolü belirle
+            Rol rol = determineRole(request.getAdminKey(), request.getKuaforKey());
+            log.info("Rol belirlendi: {}", rol);
+
+            // Kullanıcıyı DTO'ya dönüştür
             KullaniciDto kullaniciDto = new KullaniciDto();
-            kullaniciDto.setAd(registerRequest.getAd());
-            kullaniciDto.setSoyad(registerRequest.getSoyad());
-            kullaniciDto.setEmail(registerRequest.getEmail());
-            kullaniciDto.setTelefon(registerRequest.getTelefon());
-            kullaniciDto.setSifre(registerRequest.getSifre());
+            kullaniciDto.setAd(request.getAd());
+            kullaniciDto.setSoyad(request.getSoyad());
+            kullaniciDto.setEmail(request.getEmail());
+            kullaniciDto.setTelefon(request.getTelefon());
+            kullaniciDto.setSifre(request.getSifre());
+            kullaniciDto.setCinsiyet(Cinsiyet.valueOf(request.getCinsiyet().toUpperCase()));
+            kullaniciDto.setRol(rol);
 
-            if (registerRequest.getCinsiyet() != null) {
-                kullaniciDto.setCinsiyet(Cinsiyet.valueOf(registerRequest.getCinsiyet().toUpperCase()));
-            } else {
-                log.warn("Cinsiyet null, varsayılan olarak ERKEK atanıyor.");
-                kullaniciDto.setCinsiyet(Cinsiyet.ERKEK); // Varsayılan değer
+            log.info("Kullanıcı DTO hazırlandı: {}", kullaniciDto);
+
+            // Kullanıcıyı kaydet
+            KullaniciDto savedKullaniciDto = kullaniciService.save(kullaniciDto);
+            log.info("Kullanıcı kaydedildi: {}", savedKullaniciDto);
+
+            // Eğer rol KUAFOR ise Kuaför detaylarını ekle
+            if (rol == Rol.KUAFOR) {
+                log.info("Rol KUAFOR, Kuaför detayları ekleniyor...");
+                String hashedPassword = passwordEncoder.encode(request.getSifre()); // Şifreyi hashle
+                Kuafor kuafor = Kuafor.builder()
+                        .ad(request.getAd())
+                        .soyad(request.getSoyad())
+                        .sifre(hashedPassword)
+                        .telefon(request.getTelefon())
+                        .email(request.getEmail())
+                        .cinsiyet(Cinsiyet.valueOf(request.getCinsiyet().toUpperCase()))
+                        .kullanici(new Kullanici(savedKullaniciDto.getKullaniciId())) // Kullanıcı ID ile ilişkilendir
+                        .kuaforKey(request.getKuaforKey()) // Kuafor key'i ayarla
+                        .build();
+
+                kuaforService.save(kuafor);
+                log.info("Kuaför başarıyla kaydedildi: {}", kuafor);
             }
 
-            // Rol ataması
-            if (adminKey.equals(registerRequest.getAdminKey())) {
-                kullaniciDto.setRol(Rol.ADMIN);
-            } else {
-                kullaniciDto.setRol(Rol.MUSTERI);
-            }
-
-            KullaniciDto savedUser = kullaniciService.save(kullaniciDto);
-            log.debug("Kayıt işlemi başarılı. Kaydedilen kullanıcı: {}", savedUser);
-
-            return ResponseEntity.ok("Kayıt başarılı: " + savedUser.getEmail());
+            log.info("Kayıt başarılı: {}", savedKullaniciDto.getEmail());
+            return ResponseEntity.ok("Kayıt başarılı: " + savedKullaniciDto.getEmail());
         } catch (Exception e) {
-            log.error("Kayıt sırasında hata oluştu: ", e);
-            return ResponseEntity.status(400).body("Kayıt sırasında hata oluştu: " + e.getMessage());
+            log.error("Kayıt sırasında hata oluştu: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Kayıt işlemi başarısız: " + e.getMessage());
         }
+    }
+
+    // Rol belirleme metodu
+    private Rol determineRole(String adminKey, String kuaforKey) {
+        log.info("Admin key: {}, Kuaför key: {}", adminKey, kuaforKey);
+        if (VALID_ADMIN_KEY.equals(adminKey)) {
+            log.info("Admin rolü atanıyor.");
+            return Rol.ADMIN;
+        } else if (VALID_KUAFOR_KEY.equals(kuaforKey)) {
+            log.info("Kuaför rolü atanıyor.");
+            return Rol.KUAFOR;
+        }
+        log.info("Varsayılan olarak Müşteri rolü atanıyor.");
+        return Rol.MUSTERI;
     }
 
 
@@ -92,9 +127,6 @@ public class AuthController {
                             loginRequest.getPassword()
                     )
             );
-
-            // Kimlik doğrulama başarılıysa kullanıcıyı al
-            Kullanici kullanici = kullaniciService.findEntityByEmail(loginRequest.getEmail());
 
             // JWT Token oluşturma
             String token = jwtUtil.generateToken(authentication);
@@ -111,12 +143,6 @@ public class AuthController {
         }
     }
 
-
-
-
-
-
-
     @PutMapping("/update")
     public ResponseEntity<?> updateUser(@RequestBody KullaniciUpdateRequest updateRequest, Authentication authentication) {
         try {
@@ -125,7 +151,6 @@ public class AuthController {
             KullaniciDto kullanici = kullaniciService.findByEmail(email);
 
             if (kullanici == null) {
-                System.out.println("Güncelleme sırasında kullanıcı bulunamadı: " + email);
                 return ResponseEntity.status(404).body("Kullanıcı bulunamadı!");
             }
 
@@ -139,13 +164,12 @@ public class AuthController {
             if (updateRequest.getTelefon() != null) {
                 kullanici.setTelefon(updateRequest.getTelefon());
             }
-            if (updateRequest.getSifre() != null) {
+            if (updateRequest.getSifre() != null && !updateRequest.getSifre().trim().isEmpty()) {
                 String hashedPassword = passwordEncoder.encode(updateRequest.getSifre());
-                System.out.println("Güncellenen hashlenmiş şifre: " + hashedPassword);
                 kullanici.setSifre(hashedPassword);
             }
+
             if (updateRequest.getEmail() != null) {
-                System.out.println("Güncellenen e-mail: " + updateRequest.getEmail());
                 kullanici.setEmail(updateRequest.getEmail());
             }
 
@@ -162,12 +186,17 @@ public class AuthController {
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteOwnAccount() {
         try {
-            // JWT'den kullanıcı adını (email) al
+            // JWT'den mevcut kullanıcının email bilgisini al
             String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+            // Kullanıcıyı sil
             kullaniciService.deleteByEmail(currentUserEmail);
+
             return ResponseEntity.ok("Hesap başarıyla silindi.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Kullanıcı bulunamadı: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(400).body("Hesap silinirken bir hata oluştu: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Hesap silinirken hata oluştu: " + e.getMessage());
         }
     }
 }

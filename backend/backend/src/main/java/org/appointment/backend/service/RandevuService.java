@@ -1,20 +1,33 @@
 package org.appointment.backend.service;
 
 import org.appointment.backend.dto.RandevuDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface RandevuService {
 
-    RandevuDto save(RandevuDto randevuDto);
+    RandevuDto alRandevu(RandevuDto randevuDto);
 
-    void delete(Long randevuId);
+    RandevuDto getRandevu(Long randevuId);
 
-   RandevuDto update(Long randevuId, RandevuDto randevuDto);
+    List<RandevuDto> getAllRandevular();
 
-    List<RandevuDto> getAll();
+    List<RandevuDto> getRandevularByKuaforId(Long kuaforId);
 
-    Page<RandevuDto> getAll(Pageable pageable);
+
+    List<RandevuDto> getPastRandevular(Long kullaniciId);
+
+    List<RandevuDto> getFutureRandevular(Long kullaniciId);
+
+    public List<RandevuDto> getRandevularByKullaniciId(Long kullaniciId);
+
+    RandevuDto guncelleRandevu(Long randevuId, RandevuDto randevuDto, Long kullaniciId);
+
+    void iptalRandevu(Long randevuId, Long kullaniciId);
+
+
+
+
+
+
 }

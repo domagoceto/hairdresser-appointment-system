@@ -37,7 +37,7 @@ public class Hizmet {
     @OneToMany(mappedBy = "hizmet")
     private List<Randevu> randevular;
 
-    @ManyToMany(mappedBy = "yapabilecegiHizmetler", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(mappedBy = "yapabilecegiHizmetler", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Kuafor> kuaforler = new HashSet<>();
 }
 

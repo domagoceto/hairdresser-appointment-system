@@ -11,5 +11,6 @@ public class RegisterRequest {
     private String sifre;
     private String cinsiyet;   // Kullanıcı cinsiyeti (ERKEK, KADIN vb.)
     private String adminKey;   // Admin anahtarı
+    private String kuaforKey;
 }
 

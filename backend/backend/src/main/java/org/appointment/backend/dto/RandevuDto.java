@@ -1,16 +1,14 @@
 package org.appointment.backend.dto;
 
+import lombok.Builder;
 import lombok.Data;
-import org.appointment.backend.entity.Hizmet;
-import org.appointment.backend.entity.Kuafor;
-import org.appointment.backend.entity.Kullanici;
-import org.appointment.backend.entity.RandevuDurum;
+import org.appointment.backend.entity.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-
 @Data
+@Builder
 public class RandevuDto {
     private Long randevuId;
     private LocalDate tarih;
@@ -24,4 +22,24 @@ public class RandevuDto {
     private String sure;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    // Açık yapıcı
+    public RandevuDto(Long randevuId, LocalDate tarih, LocalTime saat, Long kuaforId, Long hizmetId, Long kullaniciId,
+                      RandevuDurum durum, String notlar, Double ucret, String sure,
+                      LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.randevuId = randevuId;
+        this.tarih = tarih;
+        this.saat = saat;
+        this.kuaforId = kuaforId;
+        this.hizmetId = hizmetId;
+        this.kullaniciId = kullaniciId;
+        this.durum = durum;
+        this.notlar = notlar;
+        this.ucret = ucret;
+        this.sure = sure;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
 }
+

@@ -7,6 +7,9 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Kullanici {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,21 +22,29 @@ public class Kullanici {
     private String soyad;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 10 ,name="cinsiyet" )
+    @Column(length = 10, name = "cinsiyet")
     private Cinsiyet cinsiyet;
 
     @Column(length = 15, name = "telefon")
     private String telefon;
 
-    @Column (length = 100,name="email",unique = true)
+    @Column(length = 100, name = "email", unique = true)
     private String email;
 
-    @Column (length = 100,name="sifre")
+    @Column(length = 100, name = "sifre")
     private String sifre;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20, name = "rol")
     private Rol rol;
+
+    public Kullanici(Long kullaniciId) {
+        this.kullaniciId = kullaniciId;
+    }
+
+
 }
+
+
 
 

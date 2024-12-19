@@ -22,23 +22,23 @@ public class Kuafor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long kuaforId;
 
-    @Column(nullable = false)
+    @Column(length = 100, name = "ad")
     private String ad;
 
-    @Column(nullable = false)
+    @Column(length = 100, name = "soyad")
     private String soyad;
 
-    @Column(nullable = false)
+    @Column(length = 100, name = "sifre")
     private String sifre;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 10, name = "cinsiyet")
     private Cinsiyet cinsiyet;
 
-    @Column(nullable = false)
+    @Column(length = 15, name = "telefon")
     private String telefon;
 
-    @Column(nullable = false,unique = true)
+    @Column(length = 100, name = "email", unique = true)
     private String email;
 
     @OneToMany(mappedBy = "kuafor")
@@ -51,5 +51,15 @@ public class Kuafor {
             inverseJoinColumns = @JoinColumn(name = "hizmet_id")
     )
     private Set<Hizmet> yapabilecegiHizmetler = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "kullanici_id", referencedColumnName = "kullaniciId")
+    private Kullanici kullanici;
+
+    private String kuaforKey;
+
+
+
+
 }
 
