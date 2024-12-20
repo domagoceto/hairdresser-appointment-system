@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from '../services/api'; // Backend API istekleri için axios kullanımı
 import './Login.css';
-
-// Geçici kullanıcı verileri
-const users = [
-  { email: 'admin@example.com', password: 'admin123', role: 'admin' },
-  { email: 'kuafor@example.com', password: 'kuafor123', role: 'kuafor' },
-  { email: 'musteri@example.com', password: 'musteri123', role: 'musteri' },
-];
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -15,14 +9,14 @@ function Login() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
+    // Validation
     if (!email.trim()) {
       newErrors.email = 'E-posta adresi boş bırakılamaz.';
     }
-
     if (!password.trim()) {
       newErrors.password = 'Şifre alanı boş bırakılamaz.';
     }
@@ -30,23 +24,40 @@ function Login() {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      // Kullanıcıyı geçici kullanıcı listesinde kontrol et
-      const user = users.find(
-        (user) => user.email === email && user.password === password
-      );
+      try {
+        // Backend'e login isteği gönderme
+        const response = await axios.post('/auth/login', {
+          email,
+          password,
+        });
 
-      if (user) {
-        // Kullanıcı türüne göre yönlendirme
-        if (user.role === 'admin') {
-          navigate('/admin');
-        } else if (user.role === 'kuafor') {
-          navigate('/kuafor');
-        } else if (user.role === 'musteri') {
-          navigate('/musteri');
+        const token = response.data.split(" ")[1]; // "Bearer token" formatında gelir
+        localStorage.setItem('authToken', token); // Token'ı localStorage'a kaydetme
+
+        // Token'dan payload'ı decode etme
+        const base64Payload = token.split('.')[1]; // JWT payload kısmını al
+        const payload = JSON.parse(atob(base64Payload)); // Decode et
+        const userRole = payload.roles ? payload.roles[0] : 'undefined'; // Kullanıcı rolünü al
+
+        console.log('Token:', token);
+        console.log('Decoded Payload:', payload);
+        console.log('User Role:', userRole);
+
+        // Role göre yönlendirme
+        if (userRole === 'ROLE_ADMIN') {
+          navigate('/admin'); // Admin paneline yönlendir
+        } else if (userRole === 'ROLE_KUAFOR') {
+          navigate('/kuafor'); // Kuaför paneline yönlendir
+        } else if (userRole === 'ROLE_MUSTERI') {
+          navigate('/musteri'); // Müşteri paneline yönlendir
         }
-      } else {
-        // Hatalı giriş
-        setErrors({ general: 'E-posta veya şifre hatalı.' });
+      } catch (error) {
+        // Hatalı giriş durumunda hata mesajını göster
+        if (error.response && error.response.status === 401) {
+          setErrors({ general: 'E-posta veya şifre hatalı.' });
+        } else {
+          setErrors({ general: 'Beklenmeyen bir hata oluştu.' });
+        }
       }
     }
   };

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios'; // Axios import edildi
 import './Register.css';
 
 function Register() {
@@ -16,6 +17,8 @@ function Register() {
     gender: '',
   });
   const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleUserTypeChange = (e) => {
     const value = e.target.value;
@@ -36,31 +39,37 @@ function Register() {
     if (!formData.surname) newErrors.surname = 'Soyad alanı boş bırakılamaz.';
     if (!formData.email) newErrors.email = 'E-posta alanı boş bırakılamaz.';
     if (!formData.phone) newErrors.phone = 'Telefon alanı boş bırakılamaz.';
-    if (!formData.password) {
-      newErrors.password = 'Şifre alanı boş bırakılamaz.';
-    } else if (
-      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-        formData.password
-      )
-    ) {
-      newErrors.password =
-        'Şifre en az 8 karakter, bir büyük harf, bir küçük harf, bir sayı ve bir özel karakter içermelidir.';
-    }
-    if (showAdminKey && !formData.adminKey)
-      newErrors.adminKey = 'AdminKey zorunludur.';
-    if (showKuaforKey && !formData.kuaforKey)
-      newErrors.kuaforKey = 'KuaförKey zorunludur.';
+    if (!formData.password) newErrors.password = 'Şifre alanı boş bırakılamaz.';
+    if (showAdminKey && !formData.adminKey) newErrors.adminKey = 'AdminKey zorunludur.';
+    if (showKuaforKey && !formData.kuaforKey) newErrors.kuaforKey = 'KuaförKey zorunludur.';
     if (!formData.gender) newErrors.gender = 'Cinsiyet seçiniz.';
 
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = validateForm();
     if (Object.keys(formErrors).length === 0) {
-      alert('Form başarıyla gönderildi!');
-      console.log(formData);
+      try {
+        const requestBody = {
+          ad: formData.name,
+          soyad: formData.surname,
+          email: formData.email,
+          telefon: formData.phone,
+          sifre: formData.password,
+          adminKey: formData.adminKey,
+          kuaforKey: formData.kuaforKey,
+          cinsiyet: formData.gender,
+        };
+
+        const response = await axios.post('http://localhost:8080/auth/register', requestBody);
+        setSuccessMessage(response.data); // Başarılı mesajı göster
+        setErrorMessage('');
+      } catch (error) {
+        setSuccessMessage('');
+        setErrorMessage(error.response?.data || 'Kayıt işlemi sırasında bir hata oluştu.');
+      }
     } else {
       setErrors(formErrors);
     }
@@ -82,6 +91,9 @@ function Register() {
           </a>
         </p>
 
+        {successMessage && <p className="success">{successMessage}</p>}
+        {errorMessage && <p className="error">{errorMessage}</p>}
+
         <form onSubmit={handleSubmit}>
           <div className="user-gender-row">
             <select name="userType" value={userType} onChange={handleUserTypeChange}>
@@ -92,8 +104,8 @@ function Register() {
             </select>
             <select name="gender" value={formData.gender} onChange={handleChange}>
               <option value="">Cinsiyet Seçiniz</option>
-              <option value="kadin">Kadın</option>
-              <option value="erkek">Erkek</option>
+              <option value="KADIN">Kadın</option>
+              <option value="ERKEK">Erkek</option>
             </select>
           </div>
           {errors.gender && <span className="error">{errors.gender}</span>}

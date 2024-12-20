@@ -9,40 +9,37 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Login from './components/Login';
 import Register from './components/Register';
-import AdminPage from './components/AdminPage'; // Admin ekranı
-import KuaforPage from './components/KuaforPage'; // Kuaför ekranı
-import MusteriPage from './components/MusteriPage'; // Müşteri ekranı
+import AdminPage from './components/AdminPage';
+import KuaforPage from './components/KuaforPage';
+import MusteriPage from './components/MusteriPage';
+import Unauthorized from './components/Unauthorized';
+import ProtectedRoute from './routes/ProtectedRoute';
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Ana Sayfa */}
-        <Route
-          path="/"
-          element={
-            <>
-              <Navbar />
-              <Header />
-              <Services />
-              <Team />
-              <Gallery />
-              <Contact />
-              <Footer />
-            </>
-          }
-        />
-
-        {/* Giriş Ekranı */}
+        <Route path="/" element={<><Navbar /><Header /><Services /><Team /><Gallery /><Contact /><Footer /></>} />
         <Route path="/login" element={<Login />} />
-
-        {/* Kayıt Ol Ekranı */}
         <Route path="/register" element={<Register />} />
 
-        {/* Rol Bazlı Ekranlar */}
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/kuafor" element={<KuaforPage />} />
-        <Route path="/musteri" element={<MusteriPage />} />
+        {/* Admin Paneli */}
+        <Route element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']} />}>
+          <Route path="/admin" element={<AdminPage />} />
+        </Route>
+
+        {/* Kuaför Paneli */}
+        <Route element={<ProtectedRoute allowedRoles={['ROLE_KUAFOR']} />}>
+          <Route path="/kuafor" element={<KuaforPage />} />
+        </Route>
+
+        {/* Müşteri Paneli */}
+        <Route element={<ProtectedRoute allowedRoles={['ROLE_MUSTERI']} />}>
+          <Route path="/musteri" element={<MusteriPage />} />
+        </Route>
+
+        {/* Yetkisiz Erişim */}
+        <Route path="/unauthorized" element={<Unauthorized />} />
       </Routes>
     </Router>
   );
