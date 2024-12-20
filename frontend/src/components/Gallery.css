@@ -1,0 +1,78 @@
+.gallery {
+  min-height: 100vh; /* Tam ekran yüksekliği */
+  padding: 50px 0; /* Üst ve alt boşluk */
+  background-color: #111;
+  color: white;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.gallery h2 {
+  margin-bottom: 10px; /* Alt boşluk azaltıldı */
+  font-size: 2rem; /* Daha küçük başlık boyutu */
+  color: white; /* Beyaz renk */
+  font-weight: bold; /* Kalın yazı */
+}
+
+.gallery-container {
+  display: flex;
+  overflow-x: scroll; /* Yatay kaydırma */
+  scrollbar-width: none; /* Firefox'ta scrollbar gizle */
+  width: 100%;
+}
+
+.gallery-container::-webkit-scrollbar {
+  display: none; /* Chrome/Safari scrollbar gizle */
+}
+
+.gallery-list {
+  display: flex;
+  gap: 20px; /* Görseller arasındaki boşluk */
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.gallery img {
+  width: 350px; /* Görsel genişliği */
+  height: 350px; /* Görsel yüksekliği */
+  object-fit: cover;
+  border-radius: 10px; /* Köşe yuvarlatma */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Gölge efekti */
+  transition: transform 0.3s;
+}
+
+.gallery img:hover {
+  transform: scale(1.1); /* Hover büyütme efekti */
+}
+
+.gallery-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  font-size: 1.5rem;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.gallery-button.left {
+  left: 20px;
+}
+
+.gallery-button.right {
+  right: 20px;
+}
+
+.gallery-button:hover {
+  background-color: rgba(255, 255, 255, 0.7);
+  color: black;
+  transform: scale(1.1);
+}

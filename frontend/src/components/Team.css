@@ -1,0 +1,45 @@
+.team {
+  min-height: 100vh; /* Tam ekran yükseklik */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #111; /* Alternatif arkaplan rengi */
+  color: #fff;
+}
+
+.team-list {
+  display: flex;
+  justify-content: center;
+  gap: 40px; /* Kartlar arası boşluk */
+  flex-wrap: wrap;
+}
+
+.team-member {
+  text-align: center;
+  background-color: #222; /* Kart arkaplan rengi */
+  padding: 20px;
+  border-radius: 10px;
+  width: 240px; /* Kart genişliği */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Hafif gölge efekti */
+  transition: transform 0.3s ease-in-out;
+}
+
+.team-member:hover {
+  transform: translateY(-10px); /* Hover'da yukarı kayma efekti */
+}
+
+.team-member img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%; /* Görsel yuvarlak */
+  border: 3px solid #fff; /* Beyaz kenarlık */
+}
+
+.team-member h3 {
+  margin-top: 15px;
+  font-size: 18px;
+  color: #fff;
+}

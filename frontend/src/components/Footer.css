@@ -1,0 +1,7 @@
+.footer {
+    background-color: #111; /* Arka plan rengi */
+    color: #fff; /* Yazı rengi */
+    text-align: center; /* Metni yatayda ortalar */
+    padding: 15px 0; /* Üst ve alt boşluk */
+    font-size: 14px; /* Yazı boyutu */
+  }
