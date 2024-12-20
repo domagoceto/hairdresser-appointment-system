@@ -9,10 +9,14 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
@@ -39,25 +43,57 @@ public class SecurityConfig {
         DaoAuthenticationProvider musteriProvider = musteriAuthenticationProvider();
         DaoAuthenticationProvider kuaforProvider = kuaforAuthenticationProvider();
 
-        return new ProviderManager(List.of(musteriProvider, kuaforProvider));
+        ProviderManager providerManager = new ProviderManager(List.of(musteriProvider, kuaforProvider));
+
+        // Test amaçlı loglama
+        providerManager.getProviders().forEach(provider -> System.out.println("Provider: " + provider.getClass().getName()));
+
+        return providerManager;
     }
+
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtUtil);
+    }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // CSRF korumasını devre dışı bırak
+                .csrf(csrf -> csrf.disable()) // CSRF'yi devre dışı bırak
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS yapılandırması
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/auth/login").permitAll() // Genel erişim
-                        .requestMatchers("/kuafor/register", "/kuafor/login").permitAll() // Kuaför login ve register erişimi
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // Sadece admin erişimi
+                        .requestMatchers("/auth/register", "/auth/login").permitAll()
+                        .requestMatchers("/kuafor/register", "/kuafor/login").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/hizmetler/ekle").hasRole("ADMIN")
-                        .requestMatchers("/kuafor/**").hasRole("KUAFOR") // Sadece kuaför erişimi
-                        .requestMatchers("/user/**").hasRole("MUSTERI") // Sadece müşteri erişimi
-                        .anyRequest().authenticated() // Diğer tüm endpoint'ler için yetkilendirme
+                        .requestMatchers("/api/kuaforler/**").hasRole("KUAFOR")
+                        .requestMatchers("/kuafor/**").hasRole("KUAFOR")
+                        .requestMatchers("/kuafor/me").hasRole("KUAFOR") // Sadece 'KUAFOR' rolü
+                        .requestMatchers("/user/**").hasRole("MUSTERI")
+                        .requestMatchers("/favicon.ico", "/logo192.png", "/error").permitAll()
+                        .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                .cors(cors -> cors.disable()); // CORS yapılandırmasını devre dışı bırak
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // JWT doğrulama filtresi
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // Stateless oturum
         return http.build();
+    }
+    
+
+
+
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setExposedHeaders(List.of("Authorization"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 

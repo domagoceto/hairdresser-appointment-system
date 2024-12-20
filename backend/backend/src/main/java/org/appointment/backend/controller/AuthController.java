@@ -23,6 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
+
 @RestController
 @Slf4j
 @RequestMapping("/auth")
@@ -132,8 +134,8 @@ public class AuthController {
             String token = jwtUtil.generateToken(authentication);
             log.info("Oluşturulan token: {}", token);
 
-            // Bearer token'ı response ile döndürme
-            return ResponseEntity.ok("Bearer " + token);
+            // JSON formatında token döndürme
+            return ResponseEntity.ok(Map.of("token", token));
         } catch (BadCredentialsException e) {
             log.error("Hatalı giriş: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Giriş başarısız: " + e.getMessage());
@@ -142,6 +144,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Beklenmeyen bir hata oluştu.");
         }
     }
+
 
     @PutMapping("/update")
     public ResponseEntity<?> updateUser(@RequestBody KullaniciUpdateRequest updateRequest, Authentication authentication) {

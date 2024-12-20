@@ -31,7 +31,12 @@ function Login() {
           password,
         });
 
-        const token = response.data.split(" ")[1]; // "Bearer token" formatında gelir
+        // Yanıt JSON formatında ise doğrudan token'i alıyoruz
+        const token = response.data.token; // Örnek yanıt: { "token": "eyJhbGc..." }
+        if (!token) {
+          throw new Error('Giriş işlemi sırasında beklenmeyen bir hata oluştu.');
+        }
+
         localStorage.setItem('authToken', token); // Token'ı localStorage'a kaydetme
 
         // Token'dan payload'ı decode etme
@@ -50,9 +55,11 @@ function Login() {
           navigate('/kuafor'); // Kuaför paneline yönlendir
         } else if (userRole === 'ROLE_MUSTERI') {
           navigate('/musteri'); // Müşteri paneline yönlendir
+        } else {
+          throw new Error('Geçersiz kullanıcı rolü.');
         }
       } catch (error) {
-        // Hatalı giriş durumunda hata mesajını göster
+        console.error('Login hatası:', error.response || error);
         if (error.response && error.response.status === 401) {
           setErrors({ general: 'E-posta veya şifre hatalı.' });
         } else {

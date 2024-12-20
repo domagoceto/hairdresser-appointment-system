@@ -14,6 +14,8 @@ public interface KuaforService {
     Kuafor save(Kuafor kuafor);
     Kuafor findKuaforByEmail(String email);
     List<KuaforRandevuResponseDto> getKuaforRandevular(String email, Long kuaforId, LocalDate tarih);
+    KuaforDetailsResponse getKuaforByEmailForDetails(String email);
+
 
 
 

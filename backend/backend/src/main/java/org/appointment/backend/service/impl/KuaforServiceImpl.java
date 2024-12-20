@@ -50,6 +50,16 @@ public class KuaforServiceImpl implements KuaforService {
     }
 
     @Override
+    public KuaforDetailsResponse getKuaforByEmailForDetails(String email) {
+        Kuafor kuafor = kuaforRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı: " + email));
+
+        // Kuaförü DTO'ya dönüştür ve döndür
+        return toDto(kuafor);
+    }
+
+
+    @Override
     public Kuafor save(Kuafor kuafor) {
         return kuaforRepository.save(kuafor);
     }

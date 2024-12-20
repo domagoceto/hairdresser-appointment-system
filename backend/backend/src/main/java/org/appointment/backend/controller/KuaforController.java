@@ -48,6 +48,16 @@ public class KuaforController {
         return ResponseEntity.ok(kuaforDetails);
     }
 
+    // Kuaför kendi bilgilerini görüntüleyebilir
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('KUAFOR')") // Sadece 'KUAFOR' rolüne sahip kullanıcılar erişebilir
+    public ResponseEntity<KuaforDetailsResponse> getCurrentKuafor(Authentication authentication) {
+        String email = authentication.getName(); // Giriş yapan kullanıcının email'ini al
+        KuaforDetailsResponse kuaforDetails = kuaforService.getKuaforByEmailForDetails(email); // Servis çağrısı
+        return ResponseEntity.ok(kuaforDetails);
+    }
+
+
     // Kuaför bilgilerini güncelleyebilir
     @PutMapping("/update/{kuaforId}")
     @PreAuthorize("hasRole('KUAFOR')")

@@ -1,0 +1,111 @@
+.kuafor-page {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #1e1e1e;
+    color: #f5f5f5;
+  }
+  
+  .kuafor-page h1 {
+    font-size: 24px;
+    color: #ffd700;
+    margin-bottom: 20px;
+  }
+  
+  .container {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .randevular-container,
+  .hizmetler-container {
+    flex: 1;
+    padding: 15px;
+    border: 1px solid #ffd700;
+    border-radius: 10px;
+  }
+  
+  .randevular-container h2,
+  .hizmetler-container h2 {
+    color: #ffd700;
+    margin-bottom: 15px;
+  }
+  
+  .date-picker {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .date-picker input {
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .date-picker button {
+    padding: 8px 15px;
+    font-size: 16px;
+    background-color: #ffd700;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #1e1e1e;
+  }
+  
+  .date-picker button:hover {
+    background-color: #e5c100;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  table th,
+  table td {
+    border: 1px solid #ffd700;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .delete-button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .delete-button:hover {
+    background-color: darkred;
+  }
+  
+  .hizmetler-container input {
+    padding: 8px;
+    margin-right: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .hizmetler-container button {
+    padding: 8px 15px;
+    background-color: #ffd700;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .hizmetler-container button:hover {
+    background-color: #e5c100;
+  }
+  
+  .hizmetler-container p {
+    margin-top: 10px;
+    color: lightgreen;
+  }
+  
