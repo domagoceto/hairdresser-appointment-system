@@ -1,0 +1,104 @@
+/* Ana konteyner */
+.register-container {
+  display: flex;
+  height: 100vh;
+  background-color: #222;
+}
+
+/* Sol taraftaki görsel */
+.register-image {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Sağ taraftaki form */
+.register-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px;
+  background-color: #111;
+  color: white;
+}
+
+.register-form h2 {
+  font-size: 2rem;
+  text-align: center;
+  color: gold;
+  margin-bottom: 20px;
+}
+
+.register-form p {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.link {
+  color: gold;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Tüm input ve select kutuları için ortak stiller */
+.input-row input,
+.input-row select,
+.user-gender-row select {
+  width: 100%; /* Genişlik eşit olacak */
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #333;
+  color: white;
+  box-sizing: border-box; /* Padding dahil genişlik hesaplaması */
+}
+
+/* Input alanlarını hizalama */
+.input-row,
+.user-gender-row {
+  display: flex;
+  gap: 20px; /* Kutucuklar arası boşluk */
+  margin-bottom: 15px;
+}
+
+/* Sağ tarafta formun tamamını hizala */
+.register-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* Ortaya hizala */
+  padding: 40px;
+  background-color: #111;
+  color: white;
+}
+
+.register-form > div {
+  width: 100%; /* Her satır tam genişliği kaplasın */
+  max-width: 500px; /* Maksimum genişlik */
+}
+
+.register-btn {
+  width: 100%; /* Buton tam genişlikte */
+  max-width: 500px;
+  padding: 10px;
+  background-color: gold;
+  border: none;
+  color: black;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.register-btn:hover {
+  background-color: #ffd700;
+}
+.error {
+  color: red;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  display: block;
+}

@@ -1,0 +1,20 @@
+header {
+    text-align: center;
+    padding: 100px 20px 300px; /* Üst boşluk artırıldı */
+    color: white;
+    background: url("/images/a.png") no-repeat center center/cover;
+    min-height: 100vh; /* Tam ekran görünümü */
+    box-sizing: border-box;
+  }
+  header h1 {
+    font-size: 6rem; /* Daha büyük font */
+    font-style: italic;
+    margin: 0;
+  }
+  
+  header p {
+    font-size: 1.5rem; /* Alt yazı font büyüklüğü */
+   
+    margin: 10px 0;
+    
+  }

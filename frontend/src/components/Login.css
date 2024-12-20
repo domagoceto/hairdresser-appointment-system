@@ -1,0 +1,144 @@
+/* Ana konteyner */
+.login-container {
+  display: flex;
+  height: 100vh; /* Tam ekran yüksekliği */
+  background-color: #222; /* Arkaplan rengi */
+}
+
+/* Sol taraftaki görsel */
+.login-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black; /* Opsiyonel */
+}
+
+.login-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Sağ taraftaki giriş formu */
+.login-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px;
+  background-color: #111;
+  color: white;
+  align-items: center; /* Merkezi hizalama */
+}
+
+.login-form h2 {
+  font-size: 2.5rem;
+  color: gold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-form p {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.link {
+  color: gold;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Input alanları */
+.input-field {
+  width: 200%; /* %100 genişlik */
+  max-width: 600px; /* Maksimum genişliği artırın */
+  padding: 15px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #333;
+  color: white;
+  font-size: 1rem;
+  box-sizing: border-box; /* Padding dahil genişlik hesaplaması */
+}
+
+.input-field::placeholder {
+  color: #ccc;
+}
+
+/* Hata durumu için input alanı */
+.input-field.error-input {
+  border: 2px solid red; /* Kırmızı border */
+}
+
+/* Hata mesajı */
+.error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: -10px; /* Kutucuk ile arası dar */
+  margin-bottom: 10px;
+  text-align: left;
+  width: 80%; /* Input genişliği ile eşit */
+  max-width: 400px; /* Maksimum genişlik */
+  box-sizing: border-box;
+}
+
+/* Giriş butonu */
+.submit-btn {
+  width: 200%;
+  max-width: 600px;
+  padding: 15px;
+  background-color: gold;
+  border: none;
+  color: black;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #ffd700;
+}
+
+/* Butonlar ve ek hizalama */
+.buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.role-button {
+  background-color: gold;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: black;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.role-button:hover {
+  background-color: #ffd700;
+}
+
+/* Responsive ayarlar */
+@media (max-width: 768px) {
+  .login-form {
+    padding: 20px;
+  }
+
+  .input-field {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+}

@@ -1,0 +1,56 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Dikeyde ortalama */
+  background-color: rgba(0, 0, 0, 0.9); /* Hafif şeffaf siyah */
+  padding: 15px 30px; /* Daha fazla boşluk */
+  position: fixed; /* Sabit konum */
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Hafif gölge efekti */
+}
+
+.logo {
+  font-size: 28px; /* Daha büyük yazı */
+  font-weight: bold;
+  color: gold;
+   /* Logoyu vurgulamak için renk */
+}
+
+.menu {
+  display: flex;
+  list-style: none;
+  gap: 30px; /* Menü elemanları arasında boşluk */
+}
+
+.menu li a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 18px;
+  transition: color 0.3s ease; /* Renk değişimi için animasyon */
+}
+
+.menu li a:hover {
+  color: gold; /* Hover'da renk değişsin */
+}
+
+.randevu-button {
+  background-color: gold;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px; /* Daha yuvarlak görünüm */
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-right: 60px; /* Daha fazla sola kaydırır */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Hover efekti */
+}
+
+.randevu-button:hover {
+  background-color: #fff; /* Hover'da açık sarı */
+  transform: scale(1.1); /* Hafif büyütme */
+  color: gold;
+}
+
