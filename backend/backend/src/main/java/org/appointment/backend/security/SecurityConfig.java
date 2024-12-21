@@ -69,10 +69,12 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/hizmetler/ekle").hasRole("ADMIN")
                         .requestMatchers("/api/kuaforler/**").hasRole("KUAFOR")
+                        .requestMatchers("/admin/me").hasRole("ADMIN")
                         .requestMatchers("/kuafor/**").hasRole("KUAFOR")
                         .requestMatchers("/kuafor/me").hasRole("KUAFOR") // Sadece 'KUAFOR' rolü
                         .requestMatchers("/user/**").hasRole("MUSTERI")
                         .requestMatchers("/favicon.ico", "/logo192.png", "/error").permitAll()
+                        .requestMatchers("/odeme/yontemler", "/odeme/durumlar").hasRole("ADMIN") // Admin yetkisi gerekiyor
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // JWT doğrulama filtresi

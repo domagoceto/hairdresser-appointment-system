@@ -28,7 +28,7 @@ public class Odeme {
     @JoinColumn(name = "kullanici_id", nullable = false)
     private Kullanici kullanici;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "randevu_id", nullable = false)
     private Randevu randevu;
 

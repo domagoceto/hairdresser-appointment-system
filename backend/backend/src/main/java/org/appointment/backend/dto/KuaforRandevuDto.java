@@ -11,5 +11,6 @@ public class KuaforRandevuDto {
     private String adSoyad;
     private String telefon;
     private String islem;
+    private Double ucret;
     private RandevuDurum durum;
 }

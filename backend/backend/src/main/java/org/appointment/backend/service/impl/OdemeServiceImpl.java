@@ -78,10 +78,22 @@ public class OdemeServiceImpl implements OdemeService {
 
     @Override
     public List<OdemeDto> getAll() {
-        return odemeRepository.findAll().stream()
-                .map(this::convertOdemeToDto)
+        List<Odeme> odemeler = odemeRepository.findAll();
+
+        return odemeler.stream()
+                .map(odeme -> new OdemeDto(
+                        odeme.getKullanici().getAd() + " " + odeme.getKullanici().getSoyad(), // Kullanıcı adı ve soyadı
+                        odeme.getRandevu().getHizmet().getAd(),                              // İşlem bilgisi
+                        odeme.getTutar()                                                    // Ücret bilgisi
+                ))
                 .collect(Collectors.toList());
     }
+
+
+
+
+
+
 
     private OdemeDto convertOdemeToDto(Odeme odeme) {
         OdemeDto odemeDto = new OdemeDto();

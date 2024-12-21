@@ -12,5 +12,7 @@ import java.util.List;
 public interface HizmetService {
     Hizmet getHizmetById(Long id);
     HizmetDto hizmetEkle(HizmetDto hizmetDto);
+    void hizmetSil(Long id); // Silme metodu tanımlandı
+    List<Hizmet> getAllHizmetler();
 }
 

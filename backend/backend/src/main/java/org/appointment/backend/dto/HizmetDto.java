@@ -18,6 +18,16 @@ public class HizmetDto {
     private Integer sure;
     private Double fiyat;
     private List<Long> randevuIds;    // Randevuların ID'leri
-    private List<Long> kuaforIds;     // Kuaforlerin ID'leri
+    private List<Long> kuaforIds;// Kuaforlerin ID'leri
+
+    public HizmetDto(Long hizmetId, String ad, String aciklama, Double fiyat, Integer sure) {
+        this.hizmetId = hizmetId;
+        this.ad = ad;
+        this.aciklama = aciklama;
+        this.fiyat = fiyat;
+        this.sure = sure;
+    }
+
+
 }
 

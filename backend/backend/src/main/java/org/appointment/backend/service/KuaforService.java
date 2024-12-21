@@ -18,4 +18,5 @@ public interface KuaforService {
 
     // Yeni eklenen metot: Kuaförün hizmetlerini almak için
     List<String> getKuaforHizmetler(String email, Long kuaforId);
+    List<KuaforDto> getAllKuaforler();
 }

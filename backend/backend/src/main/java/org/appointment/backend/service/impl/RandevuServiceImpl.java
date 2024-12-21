@@ -165,10 +165,12 @@ public class RandevuServiceImpl implements RandevuService {
             dto.setAdSoyad(randevu.getKullanici().getAd() + " " + randevu.getKullanici().getSoyad());
             dto.setTelefon(randevu.getKullanici().getTelefon());
             dto.setIslem(randevu.getHizmet().getAd());
+            dto.setUcret(randevu.getUcret()); // Ücret ekleniyor
             dto.setDurum(randevu.getDurum());
             return dto;
         }).collect(Collectors.toList());
     }
+
 
 
 

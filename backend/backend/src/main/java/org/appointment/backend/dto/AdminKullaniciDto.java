@@ -15,4 +15,5 @@ public class AdminKullaniciDto {
     private String cinsiyet; // Enum ise String'e çeviriyoruz
     private String telefon;
     private String email;
+    private String rol;
 }

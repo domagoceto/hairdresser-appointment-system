@@ -171,6 +171,22 @@ public class KuaforServiceImpl implements KuaforService {
         return kuafor;
     }
 
+    @Override
+    public List<KuaforDto> getAllKuaforler() {
+        return kuaforRepository.findAll().stream()
+                .map(kuafor -> KuaforDto.builder()
+                        .kuaforId(kuafor.getKuaforId())
+                        .ad(kuafor.getKullanici().getAd())
+                        .soyad(kuafor.getKullanici().getSoyad())
+                        .email(kuafor.getKullanici().getEmail())
+                        .telefon(kuafor.getTelefon())
+                        .cinsiyet(kuafor.getKullanici().getCinsiyet())
+                        .build()
+                )
+                .collect(Collectors.toList());
+    }
+
+
 
     // Helper method for converting Kuafor entity to DTO
     private KuaforDetailsResponse toDto(Kuafor kuafor) {

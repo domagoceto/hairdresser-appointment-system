@@ -56,5 +56,19 @@ public class HizmetServiceImpl implements HizmetService {
                 .orElseThrow(() -> new RuntimeException("Hizmet bulunamadı: " + id));
     }
 
+    @Override
+    public void hizmetSil(Long id) {
+        if (hizmetRepository.existsById(id)) {
+            hizmetRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("Hizmet bulunamadı. ID: " + id);
+        }
+    }
+
+    @Override
+    public List<Hizmet> getAllHizmetler() {
+        return hizmetRepository.findAll();
+    }
+
 }
 

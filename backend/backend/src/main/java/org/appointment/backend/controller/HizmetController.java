@@ -29,6 +29,31 @@ public class HizmetController {
             return ResponseEntity.status(400).body("Hizmet eklenirken hata oluştu: " + e.getMessage());
         }
     }
+
+    @DeleteMapping("/sil/{id}")
+    @PreAuthorize("hasRole('ADMIN')") // Sadece ADMIN rolüne izin
+    public ResponseEntity<?> hizmetSil(@PathVariable Long id) {
+        try {
+            hizmetService.hizmetSil(id);
+            return ResponseEntity.ok("Hizmet başarıyla silindi.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body("Hizmet bulunamadı: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Hizmet silinirken hata oluştu: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/list")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<HizmetDto>> getAllHizmetler() {
+        List<Hizmet> hizmetler = hizmetService.getAllHizmetler();
+        List<HizmetDto> hizmetDTOList = hizmetler.stream()
+                .map(h -> new HizmetDto(h.getHizmetId(), h.getAd(), h.getAciklama(), h.getFiyat(), h.getSure()))
+                .toList();
+        return ResponseEntity.ok(hizmetDTOList);
+    }
+
+
 }
 
 
