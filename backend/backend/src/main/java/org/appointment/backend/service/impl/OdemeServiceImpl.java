@@ -85,9 +85,11 @@ public class OdemeServiceImpl implements OdemeService {
                 odeme.getRandevu().getHizmet().getAd(),                               // İşlem bilgisi
                 odeme.getTutar(),                                                    // Ücret bilgisi
                 odeme.getDurum() != null ? odeme.getDurum().name() : "Durum Eksik",   // Ödeme durumu
-                odeme.getOdemeYontemi() != null ? odeme.getOdemeYontemi().name() : "Yöntem Eksik" // Ödeme yöntemi
+                odeme.getOdemeYontemi() != null ? odeme.getOdemeYontemi().name() : "Yöntem Eksik", // Ödeme yöntemi
+                odeme.getAciklama() != null ? odeme.getAciklama() : "Açıklama Yok"    // Açıklama
         )).collect(Collectors.toList());
     }
+
 
 
 

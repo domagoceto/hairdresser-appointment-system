@@ -22,12 +22,13 @@ public class OdemeDto {
     private String islem;           // İşlem bilgisi
 
     // Ekstra constructor: Basit veri çekimi için
-    public OdemeDto(String adSoyad, String islem, Double tutar, String durum, String odemeYontemi) {
+    public OdemeDto(String adSoyad, String islem, Double tutar, String durum, String odemeYontemi,String aciklama) {
         this.adSoyad = adSoyad;
         this.islem = islem;
         this.tutar = tutar;
         this.durum = durum;
         this.odemeYontemi = odemeYontemi;
+        this.aciklama=aciklama;
     }
 
 }
