@@ -1,111 +1,189 @@
 .kuafor-page {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background-color: #1e1e1e;
-    color: #f5f5f5;
-  }
-  
-  .kuafor-page h1 {
-    font-size: 24px;
-    color: #ffd700;
-    margin-bottom: 20px;
-  }
-  
-  .container {
-    display: flex;
-    gap: 20px;
-  }
-  
-  .randevular-container,
-  .hizmetler-container {
-    flex: 1;
-    padding: 15px;
-    border: 1px solid #ffd700;
-    border-radius: 10px;
-  }
-  
-  .randevular-container h2,
-  .hizmetler-container h2 {
-    color: #ffd700;
-    margin-bottom: 15px;
-  }
-  
-  .date-picker {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-  }
-  
-  .date-picker input {
-    padding: 8px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-  
-  .date-picker button {
-    padding: 8px 15px;
-    font-size: 16px;
-    background-color: #ffd700;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    color: #1e1e1e;
-  }
-  
-  .date-picker button:hover {
-    background-color: #e5c100;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-  
-  table th,
-  table td {
-    border: 1px solid #ffd700;
-    padding: 10px;
-    text-align: left;
-  }
-  
-  .delete-button {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  .delete-button:hover {
-    background-color: darkred;
-  }
-  
-  .hizmetler-container input {
-    padding: 8px;
-    margin-right: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .hizmetler-container button {
-    padding: 8px 15px;
-    background-color: #ffd700;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  .hizmetler-container button:hover {
-    background-color: #e5c100;
-  }
-  
-  .hizmetler-container p {
-    margin-top: 10px;
-    color: lightgreen;
-  }
-  
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #1e1e1e;
+  color: #f5f5f5;
+}
+
+.kuafor-page h1 {
+  font-size: 24px;
+  color: #ffd700;
+  margin-bottom: 20px;
+}
+
+.container {
+  display: flex;
+  gap: 20px;
+}
+
+.randevular-container,
+.hizmetler-container {
+  flex: 1;
+  padding: 15px;
+  border: 1px solid #ffd700;
+  border-radius: 10px;
+}
+
+.randevular-container h2,
+.hizmetler-container h2 {
+  color: #ffd700;
+  margin-bottom: 15px;
+  text-align: center; /* Hizmetler başlığını ortalar */
+}
+
+.date-picker {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.date-picker input {
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.date-picker button {
+  padding: 8px 15px;
+  font-size: 16px;
+  background-color: #ffd700;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #1e1e1e;
+}
+
+.date-picker button:hover {
+  background-color: #e5c100;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table th,
+table td {
+  border: 1px solid #ffd700;
+  padding: 10px;
+  text-align: left;
+}
+
+.delete-button {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.delete-button:hover {
+  background-color: darkred;
+}
+
+.hizmetler-container input {
+  padding: 8px;
+  margin-right: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Hizmetlerim ve Hizmet Ekle butonlarının düzenlenmesi */
+.hizmetler-buttons {
+  display: flex;
+  justify-content: center; /* Butonları ortaya hizalar */
+  gap: 20px; /* Butonlar arası boşluk bırakır */
+  margin-top: 20px; /* Başlık ile butonlar arasına daha fazla boşluk ekler */
+}
+
+.left-button,
+.right-button {
+  padding: 8px 20px;
+  font-size: 16px;
+  background-color: #ffd700;
+  color: #1e1e1e;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Geçiş efekti ekler */
+}
+
+.left-button:hover,
+.right-button:hover {
+  background-color: #e5c100;
+}
+
+.hizmetler-list {
+  margin-top: 15px;
+  list-style: none;
+  padding: 0;
+  text-align: center; /* Liste elemanlarını ortaya hizalar */
+}
+
+.hizmetler-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #ffd700;
+}
+
+/* Modal stilleri */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Saydam arka plan */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #2c2c2c;
+  color: #f5f5f5;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 400px;
+  max-width: 90%;
+}
+
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.modal-content button {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #ffd700;
+  color: #1e1e1e;
+  transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+  background-color: #e5c100;
+}
+
+.modal-content button:last-child {
+  background-color: red;
+  color: white;
+}
+
+.modal-content button:last-child:hover {
+  background-color: darkred;
+}

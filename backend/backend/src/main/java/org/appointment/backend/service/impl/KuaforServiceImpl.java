@@ -95,7 +95,22 @@ public class KuaforServiceImpl implements KuaforService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    @Override
+    public List<String> getKuaforHizmetler(String email, Long kuaforId) {
+        Kuafor kuafor = kuaforRepository.findWithHizmetlerByKuaforId(kuaforId)
+                .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı."));
 
+        // Email doğrulaması
+        if (!kuafor.getKullanici().getEmail().equals(email)) {
+            throw new RuntimeException("Bu kuaföre erişim yetkiniz yok.");
+        }
+
+        // Kuaförün hizmetlerini listele
+        return kuafor.getYapabilecegiHizmetler().stream() // Burada düzeltme yaptık
+                .map(Hizmet::getAd)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public KuaforDetailsResponse getKuaforDetails(Long kuaforId, String currentUserEmail) {

@@ -2,7 +2,9 @@ package org.appointment.backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.appointment.backend.dto.*;
+import org.appointment.backend.entity.Hizmet;
 import org.appointment.backend.entity.Kuafor;
+import org.appointment.backend.repo.HizmetRepository;
 import org.appointment.backend.service.KuaforService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +21,7 @@ import java.util.List;
 public class KuaforController {
 
     private final KuaforService kuaforService;
+    private final HizmetRepository hizmetRepository;
 
     // Kuaför kaydını sadece ADMIN rolü yapabilir
     @PostMapping("/register")
@@ -112,6 +115,31 @@ public class KuaforController {
         } catch (Exception e) {
             return ResponseEntity.status(400).body("Hizmet eklenirken hata oluştu: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/hizmetler")
+    @PreAuthorize("hasRole('KUAFOR')")
+    public ResponseEntity<List<Hizmet>> getAllHizmetler() {
+        try {
+            List<Hizmet> hizmetler = hizmetRepository.findAll();
+            return ResponseEntity.ok(hizmetler);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+
+
+    // Yeni endpoint: Kuaförün hizmetlerini getir
+    @GetMapping("/{kuaforId}/hizmetler")
+    @PreAuthorize("hasRole('KUAFOR')")
+    public ResponseEntity<List<String>> getKuaforHizmetler(
+            @PathVariable Long kuaforId,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+        List<String> hizmetler = kuaforService.getKuaforHizmetler(email, kuaforId);
+        return ResponseEntity.ok(hizmetler);
     }
 
 
