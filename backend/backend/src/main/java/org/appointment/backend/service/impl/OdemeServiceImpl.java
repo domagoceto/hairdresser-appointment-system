@@ -80,16 +80,14 @@ public class OdemeServiceImpl implements OdemeService {
     public List<OdemeDto> getAll() {
         List<Odeme> odemeler = odemeRepository.findAll();
 
-        return odemeler.stream()
-                .map(odeme -> new OdemeDto(
-                        odeme.getKullanici().getAd() + " " + odeme.getKullanici().getSoyad(), // Kullanıcı adı ve soyadı
-                        odeme.getRandevu().getHizmet().getAd(),                              // İşlem bilgisi
-                        odeme.getTutar()                                                    // Ücret bilgisi
-                ))
-                .collect(Collectors.toList());
+        return odemeler.stream().map(odeme -> new OdemeDto(
+                odeme.getKullanici().getAd() + " " + odeme.getKullanici().getSoyad(), // Müşteri adı ve soyadı
+                odeme.getRandevu().getHizmet().getAd(),                               // İşlem bilgisi
+                odeme.getTutar(),                                                    // Ücret bilgisi
+                odeme.getDurum() != null ? odeme.getDurum().name() : "Durum Eksik",   // Ödeme durumu
+                odeme.getOdemeYontemi() != null ? odeme.getOdemeYontemi().name() : "Yöntem Eksik" // Ödeme yöntemi
+        )).collect(Collectors.toList());
     }
-
-
 
 
 

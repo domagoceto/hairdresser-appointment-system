@@ -10,22 +10,24 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OdemeDto {
-    private Long odemeId;          // Ödeme ID'si
-    private Double tutar;          // Ücret bilgisi
+    private Long odemeId;           // Ödeme ID'si
+    private Double tutar;           // Ücret bilgisi
     private LocalDateTime odemeTarihi; // Ödeme tarihi
-    private String durum;          // Ödeme durumu (ODENDI, ODENMEDI, BEKLIYOR)
-    private Long kullaniciId;      // Kullanıcı ID'si
-    private String adSoyad;        // Kullanıcı adı ve soyadı
-    private Long randevuId;        // Randevu ID'si
-    private String odemeYontemi;   // Ödeme yöntemi
-    private String aciklama;
-    private String islem;
+    private String durum;           // Ödeme durumu (ODENDI, ODENMEDI, BEKLIYOR)
+    private Long kullaniciId;       // Kullanıcı ID'si
+    private String adSoyad;         // Kullanıcı adı ve soyadı
+    private Long randevuId;         // Randevu ID'si
+    private String odemeYontemi;    // Ödeme yöntemi
+    private String aciklama;        // Açıklama
+    private String islem;           // İşlem bilgisi
 
-
-    // Ekstra constructor: Basit veri çekim için
-    public OdemeDto(String adSoyad, String islem, Double tutar) {
+    // Ekstra constructor: Basit veri çekimi için
+    public OdemeDto(String adSoyad, String islem, Double tutar, String durum, String odemeYontemi) {
         this.adSoyad = adSoyad;
-        this.aciklama = aciklama; // "islem" bilgisi açıklama olarak atanıyor
+        this.islem = islem;
         this.tutar = tutar;
+        this.durum = durum;
+        this.odemeYontemi = odemeYontemi;
     }
+
 }

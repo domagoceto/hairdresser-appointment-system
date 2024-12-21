@@ -504,7 +504,6 @@ const AdminPage = () => {
     <thead>
       <tr>
         <th>Müşteri</th>
-        <th>Randevu ID</th>
         <th>İşlem</th>
         <th>Ücret</th>
         <th>Ödeme Yöntemi</th>
@@ -516,7 +515,6 @@ const AdminPage = () => {
       {payments.map((payment, index) => (
         <tr key={index}>
           <td>{payment.adSoyad || "Müşteri Bilgisi Eksik"}</td>
-          <td>{payment.randevuId}</td>
           <td>{payment.islem || "İşlem Bilgisi Eksik"}</td>
           <td>{payment.tutar ? `${payment.tutar} ₺` : "Ücret Bilgisi Eksik"}</td>
           <td>{payment.odemeYontemi || "Yöntem Bilgisi Eksik"}</td>
