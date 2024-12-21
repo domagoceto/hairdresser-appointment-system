@@ -13,151 +13,106 @@ const KuaforPage = () => {
   const [selectedHizmetId, setSelectedHizmetId] = useState(""); // Seçili hizmet ID
   const [isAddingHizmet, setIsAddingHizmet] = useState(false); // Hizmet ekleme modal durumu
 
-  // Kuaför bilgilerini yükleme
+  // Kuaför bilgilerini ve tüm hizmetleri yükleme
   useEffect(() => {
-    // Kuaför bilgilerini alma
-    axios
-      .get("/kuafor/me", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      })
-      .then((response) => {
-        setKuaforAd(response.data.ad);
-        setKuaforId(response.data.kuaforId);
-      })
-      .catch((error) => {
+    const fetchKuaforDetails = async () => {
+      try {
+        const kuaforResponse = await axios.get("/kuafor/me", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
+        });
+        setKuaforAd(kuaforResponse.data.ad);
+        setKuaforId(kuaforResponse.data.kuaforId);
+      } catch (error) {
         console.error("Kuaför bilgileri yüklenirken hata:", error);
         alert("Kuaför bilgileri alınırken bir hata oluştu.");
-      });
+      }
+    };
 
-    // Tüm hizmetleri yükleme
-    axios
-      .get("/hizmetler", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      })
-      .then((response) => {
-        setAllHizmetler(response.data); // Gelen hizmetleri kaydet
-      })
-      .catch((error) => {
+    const fetchAllHizmetler = async () => {
+      try {
+        const hizmetlerResponse = await axios.get("/kuafor/hizmetler", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
+        });
+        setAllHizmetler(hizmetlerResponse.data);
+      } catch (error) {
         console.error("Tüm hizmetler yüklenirken hata oluştu:", error);
         alert("Hizmetler yüklenirken bir hata oluştu.");
-      });
+      }
+    };
+
+    fetchKuaforDetails();
+    fetchAllHizmetler();
   }, []);
 
   const handleDateChange = (event) => {
     setSelectedDate(event.target.value);
   };
 
-  // Randevuları listeleme
-  const listRandevular = () => {
+  const listRandevular = async () => {
     if (!selectedDate) {
       alert("Lütfen bir tarih seçiniz.");
       return;
     }
-
-    if (!kuaforId) {
-      alert("Kuaför bilgileri yüklenemedi. Lütfen sayfayı yeniden yükleyin.");
-      return;
-    }
-
-    axios
-      .get(`/kuafor/${kuaforId}/randevular`, {
+    try {
+      const response = await axios.get(`/kuafor/${kuaforId}/randevular`, {
         params: { tarih: selectedDate },
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      })
-      .then((response) => {
-        setRandevular(response.data);
-      })
-      .catch((error) => {
-        console.error("Randevular yüklenirken hata:", error);
-        alert("Randevular yüklenirken bir hata oluştu.");
+        headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
       });
-  };
-
-  // Hizmetleri listeleme
-  const toggleHizmetler = () => {
-    if (!isHizmetlerVisible) {
-      if (!kuaforId) {
-        alert("Kuaför bilgileri yüklenemedi. Lütfen sayfayı yeniden yükleyin.");
-        return;
-      }
-
-      axios
-        .get(`/kuafor/${kuaforId}/hizmetler`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        })
-        .then((response) => {
-          setHizmetler(response.data);
-          setIsHizmetlerVisible(true); // Görünür yap
-        })
-        .catch((error) => {
-          console.error("Hizmetler yüklenirken hata:", error);
-          alert("Hizmetler yüklenirken bir hata oluştu.");
-        });
-    } else {
-      setIsHizmetlerVisible(false); // Gizle
+      setRandevular(response.data);
+    } catch (error) {
+      console.error("Randevular yüklenirken hata:", error);
+      alert("Randevular yüklenirken bir hata oluştu.");
     }
   };
 
-  // Hizmet ekleme modal'ını açma
-  const addHizmet = () => {
-    setIsAddingHizmet(true);
+  const toggleHizmetler = async () => {
+    if (!isHizmetlerVisible) {
+      try {
+        const response = await axios.get(`/kuafor/${kuaforId}/hizmetler`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
+        });
+        setHizmetler(response.data);
+        setIsHizmetlerVisible(true);
+      } catch (error) {
+        console.error("Hizmetler yüklenirken hata:", error);
+        alert("Hizmetler yüklenirken bir hata oluştu.");
+      }
+    } else {
+      setIsHizmetlerVisible(false);
+    }
   };
 
-  // Yeni hizmet ekleme işlemi
-  const handleAddHizmet = () => {
+  const handleAddHizmet = async () => {
     if (!selectedHizmetId) {
       alert("Lütfen bir hizmet seçiniz.");
       return;
     }
-
-    axios
-      .post(
+    try {
+      await axios.post(
         `/kuafor/${kuaforId}/hizmetler`,
-        selectedHizmetId, // Hizmet ID'sini gönderiyoruz
+        selectedHizmetId,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
+          headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
         }
-      )
-      .then(() => {
-        alert("Hizmet başarıyla eklendi!");
-        setSelectedHizmetId(""); // Dropdown'u temizle
-        setIsAddingHizmet(false); // Modal'ı kapat
-        toggleHizmetler(); // Yeni hizmetleri güncellemek için listeyi yenile
-      })
-      .catch((error) => {
-        console.error("Hizmet eklenirken hata oluştu:", error);
-        alert("Hizmet eklenirken bir hata oluştu.");
-      });
-  };
-
-  // Modal'ı kapatma
-  const closeAddHizmetModal = () => {
-    setIsAddingHizmet(false);
+      );
+      alert("Hizmet başarıyla eklendi!");
+      setSelectedHizmetId("");
+      setIsAddingHizmet(false);
+      toggleHizmetler();
+    } catch (error) {
+      console.error("Hizmet eklenirken hata oluştu:", error);
+      alert("Hizmet eklenirken bir hata oluştu.");
+    }
   };
 
   return (
     <div className="kuafor-page">
       <h1>Merhaba, {kuaforAd}</h1>
-
       <div className="container">
         <div className="randevular-container">
           <h2>Randevularım</h2>
           <div className="date-picker">
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={handleDateChange}
-            />
+            <input type="date" value={selectedDate} onChange={handleDateChange} />
             <button onClick={listRandevular}>Listele</button>
           </div>
           <table>
@@ -181,14 +136,13 @@ const KuaforPage = () => {
             </tbody>
           </table>
         </div>
-
         <div className="hizmetler-container">
           <h2>Hizmetler</h2>
           <div className="hizmetler-buttons">
             <button className="left-button" onClick={toggleHizmetler}>
               Hizmetlerim
             </button>
-            <button className="right-button" onClick={addHizmet}>
+            <button className="right-button" onClick={() => setIsAddingHizmet(true)}>
               Hizmet Ekle
             </button>
           </div>
@@ -206,19 +160,16 @@ const KuaforPage = () => {
         <div className="modal">
           <div className="modal-content">
             <h2>Yeni Hizmet Ekle</h2>
-            <select
-              value={selectedHizmetId}
-              onChange={(e) => setSelectedHizmetId(e.target.value)}
-            >
+            <select value={selectedHizmetId} onChange={(e) => setSelectedHizmetId(e.target.value)}>
               <option value="">Hizmet seçin</option>
               {allHizmetler.map((hizmet) => (
-                <option key={hizmet.id} value={hizmet.id}>
+                <option key={hizmet.hizmetId} value={hizmet.hizmetId}>
                   {hizmet.ad}
                 </option>
               ))}
             </select>
             <button onClick={handleAddHizmet}>Ekle</button>
-            <button onClick={closeAddHizmetModal}>İptal</button>
+            <button onClick={() => setIsAddingHizmet(false)}>İptal</button>
           </div>
         </div>
       )}

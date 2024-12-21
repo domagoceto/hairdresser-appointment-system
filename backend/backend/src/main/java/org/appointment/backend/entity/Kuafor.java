@@ -52,6 +52,7 @@ public class Kuafor {
     )
     private Set<Hizmet> yapabilecegiHizmetler = new HashSet<>();
 
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "kullanici_id", referencedColumnName = "kullaniciId")
     private Kullanici kullanici;

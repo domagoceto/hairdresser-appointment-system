@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/kuafor")
@@ -119,14 +120,25 @@ public class KuaforController {
 
     @GetMapping("/hizmetler")
     @PreAuthorize("hasRole('KUAFOR')")
-    public ResponseEntity<List<Hizmet>> getAllHizmetler() {
+    public ResponseEntity<List<HizmetDto>> getAllHizmetler() {
         try {
             List<Hizmet> hizmetler = hizmetRepository.findAll();
-            return ResponseEntity.ok(hizmetler);
+            // Hizmetleri DTO'ya dönüştür
+            List<HizmetDto> hizmetDtos = hizmetler.stream()
+                    .map(hizmet -> {
+                        HizmetDto dto = new HizmetDto();
+                        dto.setHizmetId(hizmet.getHizmetId());
+                        dto.setAd(hizmet.getAd());
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(hizmetDtos);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
         }
     }
+
 
 
 

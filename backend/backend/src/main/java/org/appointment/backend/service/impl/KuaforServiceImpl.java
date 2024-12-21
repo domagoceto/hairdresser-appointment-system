@@ -153,8 +153,8 @@ public class KuaforServiceImpl implements KuaforService {
         return kuafor;
     }
 
-    @Override
     @Transactional
+    @Override
     public Kuafor addServiceToKuafor(Long kuaforId, Long hizmetId) {
         Kuafor kuafor = kuaforRepository.findById(kuaforId)
                 .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı."));
@@ -164,11 +164,13 @@ public class KuaforServiceImpl implements KuaforService {
         kuafor.getYapabilecegiHizmetler().add(hizmet);
         hizmet.getKuaforler().add(kuafor);
 
+        // Her iki varlığı da açıkça kaydedin
         kuaforRepository.save(kuafor);
         hizmetRepository.save(hizmet);
 
         return kuafor;
     }
+
 
     // Helper method for converting Kuafor entity to DTO
     private KuaforDetailsResponse toDto(Kuafor kuafor) {
