@@ -15,6 +15,19 @@ public class KullaniciController {
 
     private final KullaniciService kullaniciService;
 
+    // Kullanıcının kendi bilgilerini görüntülemesi için endpoint
+    @GetMapping("/me")
+    public ResponseEntity<KullaniciDto> getAuthenticatedUser() {
+        // Kimlik doğrulanan kullanıcının email adresini al
+        String email = getAuthenticatedUserEmail();
+
+        // Kullanıcı bilgilerini bul
+        KullaniciDto existingUser = kullaniciService.findByEmail(email);
+
+        // Kullanıcı bilgilerini döndür
+        return ResponseEntity.ok(existingUser);
+    }
+
     // Müşteri kendi bilgilerini güncelleyebilir
     @PutMapping("/update")
     public ResponseEntity<KullaniciDto> updateUser(@RequestBody KullaniciDto kullaniciDto) {

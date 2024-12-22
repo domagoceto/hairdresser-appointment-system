@@ -22,11 +22,12 @@ public class RandevuDto {
     private String sure;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String hizmetAdi; // Yeni alan: Hizmet adı
 
     // Açık yapıcı
     public RandevuDto(Long randevuId, LocalDate tarih, LocalTime saat, Long kuaforId, Long hizmetId, Long kullaniciId,
                       RandevuDurum durum, String notlar, Double ucret, String sure,
-                      LocalDateTime createdAt, LocalDateTime updatedAt) {
+                      LocalDateTime createdAt, LocalDateTime updatedAt, String hizmetAdi) {
         this.randevuId = randevuId;
         this.tarih = tarih;
         this.saat = saat;
@@ -39,6 +40,7 @@ public class RandevuDto {
         this.sure = sure;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.hizmetAdi = hizmetAdi;
     }
 
 }

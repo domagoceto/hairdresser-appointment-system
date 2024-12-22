@@ -11,11 +11,7 @@ import java.time.LocalTime;
 public class RandevuRequest {
     private Long kuaforId;
     private Long hizmetId;
-    private Long kullaniciId;
     private LocalDate tarih;
     private LocalTime saat;
-    private String notlar;
-    private String durum; // RandevuDurum
-    private double ucret;
-    private String sure; // işlem süresi
+    private String notlar; // Kullanıcının isteğe bağlı notu
 }

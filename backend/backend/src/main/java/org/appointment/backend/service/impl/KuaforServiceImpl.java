@@ -1,5 +1,6 @@
 package org.appointment.backend.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.appointment.backend.dto.*;
@@ -13,11 +14,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class KuaforServiceImpl implements KuaforService {
 
     private final KullaniciRepository kullaniciRepository;
@@ -57,6 +62,39 @@ public class KuaforServiceImpl implements KuaforService {
         // Kuaförü DTO'ya dönüştür ve döndür
         return toDto(kuafor);
     }
+    @Transactional
+    @Override
+    public KuaforDto getHizmetlerByKuaforId(Long kuaforId) {
+        // Kuaförü ID'ye göre bul
+        Kuafor kuafor = kuaforRepository.findById(kuaforId)
+                .orElseThrow(() -> new EntityNotFoundException("Kuaför bulunamadı! ID: " + kuaforId));
+
+        // Kuaförün yapabileceği hizmetleri al
+        Set<Hizmet> hizmetler = kuafor.getYapabilecegiHizmetler();
+
+        // Hizmet ID'lerini listeye dönüştür
+        List<Long> hizmetlerIds = hizmetler.stream()
+                .map(Hizmet::getHizmetId)
+                .toList();
+
+        // Hizmet adlarını listeye dönüştür
+        List<String> hizmetlerAdlari = hizmetler.stream()
+                .map(Hizmet::getAd)
+                .toList();
+
+        // DTO'yu oluştur ve döndür
+        return KuaforDto.builder()
+                .kuaforId(kuafor.getKuaforId())
+                .ad(kuafor.getAd())
+                .soyad(kuafor.getSoyad())
+                .cinsiyet(kuafor.getCinsiyet())
+                .telefon(kuafor.getTelefon())
+                .email(kuafor.getEmail())
+                .yapabilecegiHizmetlerIds(hizmetlerIds)
+                .yapabilecegiHizmetlerAdlari(hizmetlerAdlari) // Yeni eklenen alan
+                .build();
+    }
+
 
 
     @Override

@@ -70,9 +70,14 @@ public class SecurityConfig {
                         .requestMatchers("/hizmetler/ekle").hasRole("ADMIN")
                         .requestMatchers("/api/kuaforler/**").hasRole("KUAFOR")
                         .requestMatchers("/admin/me").hasRole("ADMIN")
-                        .requestMatchers("/kuafor/**").hasRole("KUAFOR")
+                        .requestMatchers("/user/me").hasRole("MUSTERI")
+                        .requestMatchers("/kuafor/all").hasRole("MUSTERI")
+                        .requestMatchers("/kuafor/{kuaforId}/hizmetler/kullanici").hasRole("MUSTERI")
+                        .requestMatchers("/kuafor/**").hasAnyRole("KUAFOR", "ADMIN","MUSTERI")
+
                         .requestMatchers("/kuafor/me").hasRole("KUAFOR") // Sadece 'KUAFOR' rolü
                         .requestMatchers("/user/**").hasRole("MUSTERI")
+                        .requestMatchers("/hizmetler", "/randevu/kuaforler").hasRole("MUSTERI") // Müşteri erişimi
                         .requestMatchers("/favicon.ico", "/logo192.png", "/error").permitAll()
                         .requestMatchers("/odeme/yontemler", "/odeme/durumlar").hasRole("ADMIN") // Admin yetkisi gerekiyor
                         .anyRequest().authenticated()
@@ -81,7 +86,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // Stateless oturum
         return http.build();
     }
-    
+
+
 
 
 

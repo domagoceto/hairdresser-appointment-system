@@ -1,10 +1,12 @@
 package org.appointment.backend.service;
 
 import org.appointment.backend.dto.*;
+import org.appointment.backend.entity.Hizmet;
 import org.appointment.backend.entity.Kuafor;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public interface KuaforService {
     Kuafor registerKuafor(KuaforRegisterRequest request);
@@ -19,4 +21,5 @@ public interface KuaforService {
     // Yeni eklenen metot: Kuaförün hizmetlerini almak için
     List<String> getKuaforHizmetler(String email, Long kuaforId);
     List<KuaforDto> getAllKuaforler();
+    KuaforDto getHizmetlerByKuaforId(Long kuaforId);
 }

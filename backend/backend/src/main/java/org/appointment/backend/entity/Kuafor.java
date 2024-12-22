@@ -44,7 +44,7 @@ public class Kuafor {
     @OneToMany(mappedBy = "kuafor")
     private List<Randevu> randevular;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,},fetch = FetchType.EAGER)
     @JoinTable(
             name = "kuafor_hizmetler",
             joinColumns = @JoinColumn(name = "kuafor_id"),

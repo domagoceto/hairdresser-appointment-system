@@ -1,11 +1,13 @@
 package org.appointment.backend.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.appointment.backend.dto.*;
 import org.appointment.backend.entity.Hizmet;
 import org.appointment.backend.entity.Kuafor;
 import org.appointment.backend.repo.HizmetRepository;
 import org.appointment.backend.service.KuaforService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -51,6 +53,57 @@ public class KuaforController {
 
         return ResponseEntity.ok(kuaforDetails);
     }
+
+    // Müşteri kuaförleri görüntüleyebilir
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('MUSTERI')")
+    public ResponseEntity<List<KuaforDto>> getAllKuaforlerForMusteri() {
+        try {
+            // Kuaförleri al
+            List<KuaforDto> kuaforDtos = kuaforService.getAllKuaforler().stream()
+                    .map(kuafor -> KuaforDto.builder()
+                            .kuaforId(kuafor.getKuaforId())
+                            .ad(kuafor.getAd())
+                            .soyad(kuafor.getSoyad())
+                            .cinsiyet(kuafor.getCinsiyet())
+                            .telefon(kuafor.getTelefon())
+                            .email(kuafor.getEmail())
+                            .yapabilecegiHizmetlerIds(kuafor.getYapabilecegiHizmetlerIds())
+                            .build()
+                    )
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(kuaforDtos);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+
+    @GetMapping("/{kuaforId}/hizmetler/kullanici")
+    public ResponseEntity<KuaforDto> getHizmetlerByKuaforId(@PathVariable Long kuaforId) {
+        try {
+            // Servisten DTO'yu al
+            KuaforDto kuaforDto = kuaforService.getHizmetlerByKuaforId(kuaforId);
+
+            // DTO'yu yanıt olarak döndür
+            return ResponseEntity.ok(kuaforDto);
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null); // Kuaför bulunamadıysa 404
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null); // Genel hata
+        }
+    }
+
+
+
+
+
+
+
+
 
     // Kuaför kendi bilgilerini görüntüleyebilir
     @GetMapping("/me")

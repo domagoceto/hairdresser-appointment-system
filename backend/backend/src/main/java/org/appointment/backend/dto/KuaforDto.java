@@ -21,4 +21,5 @@ public class KuaforDto {
     private String email;
     private String sifre;
     private List<Long> yapabilecegiHizmetlerIds;
+    private List<String> yapabilecegiHizmetlerAdlari;
 }

@@ -5,10 +5,15 @@ import lombok.RequiredArgsConstructor;
 import org.appointment.backend.dto.KullaniciDto;
 import org.appointment.backend.dto.RandevuDto;
 
+import org.appointment.backend.dto.RandevuRequest;
+import org.appointment.backend.dto.RandevuResponse;
 import org.appointment.backend.entity.Kullanici;
+import org.appointment.backend.repo.KullaniciRepository;
+import org.appointment.backend.repo.RandevuRepository;
 import org.appointment.backend.service.RandevuService;
 import org.appointment.backend.service.KuaforService;
 import org.appointment.backend.service.KullaniciService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +30,8 @@ public class RandevuController {
     private final RandevuService randevuService;
     private final KuaforService kuaforService;
     private final KullaniciService kullaniciService;
+    private final KullaniciRepository kullaniciRepository;
+    private final RandevuRepository randevuRepository;
 
 
     // Müşteri randevu alabilir
@@ -53,6 +60,22 @@ public class RandevuController {
             return ResponseEntity.status(500).body("Randevu alınırken bir hata oluştu: " + e.getMessage());
         }
     }
+
+    @PostMapping("/randevu")
+    @PreAuthorize("hasRole('MUSTERI')") // Eğer rol bazlı bir yetkilendirme gerekiyorsa
+    public ResponseEntity<RandevuResponse> createRandevu(@RequestBody RandevuRequest request) {
+        try {
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            Kullanici kullanici = kullaniciRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+
+            RandevuResponse response = randevuService.createRandevu(request, kullanici.getKullaniciId());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
 
 
     // Müşteri randevu bilgilerini görüntüleyebilir
@@ -119,6 +142,27 @@ public class RandevuController {
             return ResponseEntity.status(400).body("Randevu iptal edilirken hata oluştu: " + e.getMessage());
         }
     }
+
+    @DeleteMapping("/randevu/{id}/sil")
+    public ResponseEntity<?> deleteRandevu(@PathVariable Long id) {
+        try {
+            if (!randevuRepository.existsById(id)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Silinmek istenen randevu bulunamadı.");
+            }
+
+            randevuRepository.deleteById(id);
+            return ResponseEntity.ok("Randevu başarıyla silindi.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Randevu silinirken bir hata oluştu: " + e.getMessage());
+        }
+    }
+
+
+
+
 
     // Admin tüm randevuları görüntüleyebilir
     @GetMapping("/admin/görüntüle")

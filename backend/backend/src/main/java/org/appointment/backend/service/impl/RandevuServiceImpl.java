@@ -2,9 +2,7 @@ package org.appointment.backend.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.appointment.backend.dto.KuaforRandevuDto;
-import org.appointment.backend.dto.KuaforRandevuResponseDto;
-import org.appointment.backend.dto.RandevuDto;
+import org.appointment.backend.dto.*;
 import org.appointment.backend.entity.*;
 import org.appointment.backend.repo.HizmetRepository;
 import org.appointment.backend.repo.KuaforRepository;
@@ -65,6 +63,77 @@ public class RandevuServiceImpl implements RandevuService {
 
         return toRandevuDto(savedRandevu);
     }
+
+    public RandevuResponse createRandevu(RandevuRequest request, Long kullaniciId) {
+        // Aynı tarih ve saatte randevu var mı kontrolü
+        boolean randevuVarMi = randevuRepository.existsByKuaforIdAndTarihAndSaat(
+                request.getKuaforId(),
+                request.getTarih(),
+                request.getSaat()
+        );
+
+        if (randevuVarMi) {
+            throw new RuntimeException("Bu tarih ve saatte zaten bir randevu mevcut.");
+        }
+
+        // Kuaför ve hizmeti doğrula
+        Kuafor kuafor = kuaforRepository.findById(request.getKuaforId())
+                .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı"));
+        Hizmet hizmet = hizmetRepository.findById(request.getHizmetId())
+                .orElseThrow(() -> new RuntimeException("Hizmet bulunamadı"));
+
+        // Fiyat kontrolü ve ücret tanımlama
+        Double fiyat = hizmet.getFiyat();
+        if (fiyat == null) {
+            throw new RuntimeException("Hizmetin fiyatı tanımlı değil.");
+        }
+        double ucret = fiyat; // Null değilse double olarak kullanılacak
+
+        // Kullanıcı bilgisi
+        Kullanici kullanici = kullaniciRepository.findById(kullaniciId)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+
+        // Hizmet süresi kontrolü
+        Integer sure = hizmet.getSure(); // Hizmet süresi dakika cinsinden
+        String sureString = (sure != null) ? String.valueOf(sure) : null; // Integer'ı String'e çevir
+
+        // Randevu durumunu belirle
+        RandevuDurum durum = RandevuDurum.AKTIF;
+
+        // Randevuyu oluşturma
+        Randevu randevu = new Randevu();
+        randevu.setKuafor(kuafor);
+        randevu.setHizmet(hizmet);
+        randevu.setKullanici(kullanici);
+        randevu.setTarih(request.getTarih());
+        randevu.setSaat(request.getSaat());
+        randevu.setNotlar(request.getNotlar());
+        randevu.setDurum(durum); // Enum tipi
+        randevu.setUcret(ucret); // Hizmetin fiyatını burada kullanıyoruz
+        randevu.setSure(sureString); // Hizmet süresi string olarak ayarlanıyor
+
+        // Randevuyu kaydet
+        Randevu savedRandevu = randevuRepository.save(randevu);
+
+        // Randevu yanıtını döndürme
+        return new RandevuResponse(
+                savedRandevu.getRandevuId(),
+                kuafor.getAd(),
+                kuafor.getSoyad(),
+                kullanici.getAd(),
+                kullanici.getSoyad(),
+                hizmet.getAd(),
+                savedRandevu.getTarih(),
+                savedRandevu.getSaat(),
+                savedRandevu.getDurum().name(),
+                savedRandevu.getUcret(),
+                savedRandevu.getNotlar(),
+                savedRandevu.getSure(),
+                hizmet.getAd()
+
+        );
+    }
+
     @Override
     public List<KuaforRandevuResponseDto> getKuaforRandevular(String email, Long kuaforId, LocalDate tarih) {
         // Kuaförü doğrula
@@ -220,11 +289,33 @@ public class RandevuServiceImpl implements RandevuService {
 
     @Override
     public List<RandevuDto> getRandevularByKullaniciId(Long kullaniciId) {
+        // Kullanıcı ID'sine göre randevuları alıyoruz
         List<Randevu> randevular = randevuRepository.findByKullanici_KullaniciId(kullaniciId);
-        return randevular.stream()
-                .map(this::toRandevuDto)
-                .collect(Collectors.toList());
+
+        // Randevuları DTO'ya mapliyoruz
+        return randevular.stream().map(randevu -> {
+            Hizmet hizmet = hizmetRepository.findById(randevu.getHizmet().getHizmetId())
+                    .orElseThrow(() -> new RuntimeException("Hizmet bulunamadı"));
+
+            return new RandevuDto(
+                    randevu.getRandevuId(),
+                    randevu.getTarih(),
+                    randevu.getSaat(),
+                    randevu.getKuafor().getKuaforId(), // Kuaför ID'si
+                    randevu.getHizmet().getHizmetId(), // Hizmet ID'si
+                    randevu.getKullanici().getKullaniciId(), // Kullanıcı ID'si
+                    randevu.getDurum(), // Randevu durumu
+                    randevu.getNotlar(), // Notlar
+                    randevu.getUcret(), // Ücret
+                    randevu.getSure(), // Süre
+                    randevu.getCreatedAt(), // Oluşturulma zamanı
+                    randevu.getUpdatedAt(), // Güncellenme zamanı
+                    hizmet.getAd() // Hizmet adı
+            );
+        }).collect(Collectors.toList());
     }
+
+
 
 
     private RandevuDto toRandevuDto(Randevu randevu) {

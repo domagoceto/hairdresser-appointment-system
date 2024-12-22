@@ -1,190 +1,126 @@
-body {
+body, html {
     margin: 0;
+    padding: 0;
+    background-color: #1f1f1f;
+    color: #ffcc00;
     font-family: Arial, sans-serif;
-    background-color: #111; /* Siyah tema */
-    color: white;
-  }
-  
-  .musteri-page {
-    height: 100vh;
+    height: 100%;
+}
+
+.musteri-container {
+    padding: 20px;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-  }
-  
-  .user-header {
-    background-color: #333;
-    padding: 20px;
-    text-align: center;
-    color: #ffd700; /* Altın rengi */
-  }
-  
-  .content-container {
-    flex: 1;
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-  }
-  
-  .appointments-section,
-  .reservation-section {
-    width: 48%;
-    background-color: #222;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-  }
-  
-  h3 {
-    color: #ffd700;
-    text-align: center;
-  }
-  
-  .form-group label,
-  .form-group select,
-  .form-group input {
-    display: block;
-    width: 100%;
-    margin-bottom: 10px;
-  }
-  
-  .form-input {
-    padding: 10px;
-    border: 1px solid #555;
-    border-radius: 5px;
-    background-color: #333;
-    color: white;
-    width: 100%;
-  }
-  
-  .reserve-button {
-    width: 100%;
-    padding: 15px;
-    background-color: #ffd700;
-    color: black;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .reserve-button:hover {
-    background-color: #ffcc33;
-  }
-  
-  .cancel-button {
-    background-color: #ff5f6d;
-    color: white;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    cursor: pointer;
-  }
-  
-  .cancel-button:hover {
-    background-color: #ff1c1c;
-  }
-  /* Saat Seçim Modülü */
-.time-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1000;
-  }
-  
-  .time-modal-content {
-    background-color: #f1c40f;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    width: 50%;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-  }
-  
-  .time-modal h4 {
-    font-size: 1.2rem;
-    color: black;
-    margin-bottom: 20px;
-  }
-  
-  .time-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-    margin-top: 10px;
-  }
-  
-  .time-slot {
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.randevularim-btn {
+  background-color: #ffcc00;
+  color: black;
+  padding: 10px 15px; /* Daha ince ve uzun yapmak için padding ayarlandı */
+  border: none;
+  border-radius: 5px;
+  font-size: 14px; /* Font boyutunu biraz küçült */
+  cursor: pointer;
+  align-self: flex-start;
+  margin-left: 20px; /* Sola boşluk bırak */
+  margin-bottom: 10px; /* Mesaj kısmıyla mesafeyi artır */
+  width: 120px; /* Sabit genişlik */
+  height: 40px; /* Sabit yükseklik */
+  text-align: center;
+}
+
+
+
+.randevular {
+  background-color: #292929;
+  padding: 15px;
+  border-radius: 10px;
+  width: 300px; /* Sabit genişlik */
+  margin-top: 10px; /* Üst boşluk ekle */
+  display: flex;
+  flex-direction: column; /* Mesajların dikey olarak sıralanmasını sağlar */
+}
+
+
+.randevu-card {
+  background-color: #e6b800;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px; /* Kartlar arasında boşluk */
+  width: 100%; /* Randevular kutusunun genişliğine göre otomatik ayarlanır */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Hafif bir gölge efekti */
+}
+
+
+.iptal-btn {
+    background-color: #ff6666;
+    border: none;
+    color: white;
     padding: 10px;
     border-radius: 5px;
-    border: none;
-    font-size: 14px;
     cursor: pointer;
-    background-color: white;
-    color: black;
-    transition: background-color 0.3s ease;
-    font-weight: bold;
-  }
-  
-  .time-slot.booked {
-    background-color: gray;
-    color: white;
-    cursor: not-allowed;
-  }
-  
-  .time-slot.selected {
-    background-color: red;
-    color: white;
-  }
-  
-  .time-slot:hover:not(.booked) {
-    background-color: yellow;
-  }
-  
-  .close-modal-button {
-    margin-top: 20px;
-    background-color: #e74c3c;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
-  .close-modal-button:hover {
-    background-color: #c0392b;
-  }
-  /* Saat Seçim Butonu Uyumu */
-.time-select-button {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #555;
-    border-radius: 5px;
-    background-color: #333;
-    color: white;
-    text-align: left;
-    cursor: pointer;
-    margin-bottom: 20px;
-  }
-  
-  .time-select-button:hover {
-    background-color: #444;
-  }
-  /* Tarih seçici (Date Input) için özel stil */
-input[type="date"] {
-    padding: 10px; /* Diğer kutucuklarla aynı padding */
-    border: 1px solid #555;
-    border-radius: 5px;
-    background-color: #333;
-    color: white;
-    width: 100%; /* Genişliği diğer kutucuklarla eşitle */
-    box-sizing: border-box; /* Kenarlıkları dahil et */
-    font-size: 16px; /* Yazı boyutunu diğer kutucuklarla aynı yap */
+    text-align: center;
+}
+
+.iptal-btn:hover {
+    background-color: #ff3333;
+}
+.randevu-al {
+  background-color: #292929;
+  padding: 20px;
+  border-radius: 10px;
+  width: 45%;
+  margin-left: 20px; /* Kutucuğu sola kaydırmak için margin ekledik */
+}
+
+.form select, .form input {
+  width: calc(100% - 20px); /* Tüm kutucukların eşit genişlikte olması */
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+}
+
+.form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #ffcc00;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.form button:hover {
+  background-color: #e6b800;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.notlar-textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
 }
