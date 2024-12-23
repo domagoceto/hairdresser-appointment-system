@@ -6,6 +6,7 @@ import org.appointment.backend.dto.*;
 import org.appointment.backend.entity.Hizmet;
 import org.appointment.backend.entity.Kuafor;
 import org.appointment.backend.repo.HizmetRepository;
+import org.appointment.backend.repo.KuaforRepository;
 import org.appointment.backend.service.KuaforService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class KuaforController {
 
     private final KuaforService kuaforService;
     private final HizmetRepository hizmetRepository;
+    private final KuaforRepository kuaforRepository;
 
     // Kuaför kaydını sadece ADMIN rolü yapabilir
     @PostMapping("/register")
@@ -37,6 +39,30 @@ public class KuaforController {
             return ResponseEntity.status(400).body("Kuaför kaydedilirken hata oluştu: " + e.getMessage());
         }
     }
+
+    @GetMapping("/tumKuaforler")
+    public ResponseEntity<List<KuaforDto>> getAllKuaforler() {
+        List<KuaforDto> kuaforler = kuaforRepository.findAll().stream()
+                .map(kuafor -> KuaforDto.builder()
+                        .kuaforId(kuafor.getKuaforId())
+                        .ad(kuafor.getAd())
+                        .soyad(kuafor.getSoyad())
+                        .cinsiyet(kuafor.getCinsiyet())
+                        .telefon(kuafor.getTelefon()) // Kuafor entity'sinden telefon alanını ekleyin
+                        .email(kuafor.getEmail())     // Kuafor entity'sinden email alanını ekleyin
+                        .sifre(null)                 // Güvenlik açısından şifreyi DTO'ya dahil etmeyebilirsiniz
+                        .yapabilecegiHizmetlerIds(kuafor.getYapabilecegiHizmetler().stream()
+                                .map(hizmet -> hizmet.getHizmetId())
+                                .collect(Collectors.toList()))
+                        .yapabilecegiHizmetlerAdlari(kuafor.getYapabilecegiHizmetler().stream()
+                                .map(hizmet -> hizmet.getAd())
+                                .collect(Collectors.toList()))
+                        .build())
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(kuaforler);
+    }
+
+
 
     // Kuaför, sadece kendi detaylarını görüntüleyebilir
     @GetMapping("/{kuaforId}")

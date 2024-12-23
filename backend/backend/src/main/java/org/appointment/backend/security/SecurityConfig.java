@@ -66,6 +66,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/register", "/auth/login").permitAll()
                         .requestMatchers("/kuafor/register", "/kuafor/login").permitAll()
+                        .requestMatchers("/kuafor/tumKuaforler").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/hizmetler/ekle").hasRole("ADMIN")
                         .requestMatchers("/api/kuaforler/**").hasRole("KUAFOR")
@@ -74,7 +75,6 @@ public class SecurityConfig {
                         .requestMatchers("/kuafor/all").hasRole("MUSTERI")
                         .requestMatchers("/kuafor/{kuaforId}/hizmetler/kullanici").hasRole("MUSTERI")
                         .requestMatchers("/kuafor/**").hasAnyRole("KUAFOR", "ADMIN","MUSTERI")
-
                         .requestMatchers("/kuafor/me").hasRole("KUAFOR") // Sadece 'KUAFOR' rolü
                         .requestMatchers("/user/**").hasRole("MUSTERI")
                         .requestMatchers("/hizmetler", "/randevu/kuaforler").hasRole("MUSTERI") // Müşteri erişimi
