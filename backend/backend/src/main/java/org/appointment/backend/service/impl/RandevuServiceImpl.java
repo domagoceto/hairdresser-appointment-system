@@ -72,9 +72,12 @@ public class RandevuServiceImpl implements RandevuService {
                 request.getSaat()
         );
 
+        System.out.println("Randevu mevcut mu? " + randevuVarMi);
+
         if (randevuVarMi) {
             throw new RuntimeException("Bu tarih ve saatte zaten bir randevu mevcut.");
         }
+
 
         // Kuaför ve hizmeti doğrula
         Kuafor kuafor = kuaforRepository.findById(request.getKuaforId())

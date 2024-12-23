@@ -26,6 +26,7 @@ public interface RandevuRepository extends JpaRepository<Randevu, Long> {
     boolean existsByKuaforIdAndTarihAndSaat(@Param("kuaforId") Long kuaforId,
                                             @Param("tarih") LocalDate tarih,
                                             @Param("saat") LocalTime saat);
+
 }
 
 

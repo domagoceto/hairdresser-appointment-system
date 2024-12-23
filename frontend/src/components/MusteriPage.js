@@ -116,28 +116,47 @@ const MusteriPage = () => {
 
   const handleRandevuAl = async () => {
     const token = localStorage.getItem("authToken");
-    if (!token) return console.error("JWT token eksik.");
+    if (!token) {
+        alert("Lütfen giriş yapınız.");
+        return;
+    }
+
+    // Ön kontrol: Tarih ve saat için mevcut randevuları kontrol et
+    const existingRandevu = randevular.find(
+        (randevu) =>
+            randevu.tarih === formData.tarih && randevu.saat === formData.saat
+    );
+
+    if (existingRandevu) {
+        alert("Bu tarih ve saatte zaten bir randevunuz var.");
+        return;
+    }
 
     try {
         const response = await axios.post(
             "/randevu/randevu",
             {
-                kuaforId: formData.kuafor, // Kuaför ID
-                hizmetId: formData.hizmet, // Hizmet ID (id olarak gidiyor)
-                tarih: formData.tarih, // Tarih
-                saat: formData.saat, // Saat
-                notlar: formData.notlar || "", // Notlar (opsiyonel)
+                kuaforId: formData.kuafor,
+                hizmetId: formData.hizmet,
+                tarih: formData.tarih,
+                saat: formData.saat,
+                notlar: formData.notlar || "",
             },
             { headers: { Authorization: `Bearer ${token}` } }
         );
 
         alert("Randevu başarıyla alındı!");
-        setFormData({ hizmet: "", kuafor: "", tarih: "", saat: "" });
+        setFormData({ hizmet: "", kuafor: "", tarih: "", saat: "", notlar: "" });
+        fetchRandevular(); // Yeni randevuları yükle
     } catch (error) {
-        console.error("Randevu alınırken hata oluştu:", error.response || error.message);
-        alert("Randevu alınırken hata oluştu.");
+        if (error.response && error.response.status === 409) {
+            alert(error.response.data || "Bu tarih ve saatte zaten bir randevu mevcut.");
+        } else {
+            alert("Randevu alınırken bir hata oluştu.");
+        }
     }
 };
+
 
   
 
@@ -173,95 +192,112 @@ const handleRandevuIptal = async (randevuId) => {
 
     return (
         <div className="musteri-container">
-            <h1>👋 Merhaba, {kullaniciAdi || "Kullanıcı"}</h1>
-            <div className="content">
-                <button
-                    className="randevularim-btn"
-                    onClick={() => {
-                        setShowRandevular(!showRandevular);
-                        if (!showRandevular) fetchRandevular();
+    <h1>👋 Merhaba, {kullaniciAdi || "Kullanıcı"}</h1>
+    <div className="content">
+        <button
+            className="randevularim-btn"
+            onClick={() => {
+                setShowRandevular(!showRandevular);
+                if (!showRandevular) fetchRandevular();
+            }}
+        >
+            Randevularım
+        </button>
+        {showRandevular && (
+            <div className="randevular">
+                {randevular.length === 0 ? (
+                    <p>Henüz bir randevunuz bulunmamaktadır.</p>
+                ) : (
+                    randevular.map((randevu) => (
+                        <div key={randevu.randevuId} className="randevu-card">
+                            <p>{randevu.tarih} {randevu.saat}</p>
+                            <p>İşlem: {randevu.hizmetAdi || "Belirtilmemiş"}</p>
+                            <button className="iptal-btn" onClick={() => handleRandevuIptal(randevu.randevuId)}>
+                                Randevuyu İptal Et
+                            </button>
+                        </div>
+                    ))
+                )}
+            </div>
+        )}
+        <div className="randevu-al">
+            <h2>Randevu Al</h2>
+            <div className="form">
+                <select name="kuafor" value={formData.kuafor} onChange={handleKuaforChange}>
+                    <option value="">Kuaför Seçiniz</option>
+                    {kuaforler.map((kuafor) => (
+                        <option key={kuafor.kuaforId} value={kuafor.kuaforId}>
+                            {kuafor.ad} {kuafor.soyad}
+                        </option>
+                    ))}
+                </select>
+
+                <select
+                    name="hizmet"
+                    value={formData.hizmet}
+                    onChange={(e) => {
+                        const selectedHizmetId = e.target.value;
+                        setFormData({ ...formData, hizmet: selectedHizmetId }); // ID'yi set ediyoruz
                     }}
                 >
-                    Randevularım
-                </button>
-                {showRandevular && (
-                    <div className="randevular">
-                        {randevular.length === 0 ? (
-                            <p>Henüz bir randevunuz bulunmamaktadır.</p>
-                        ) : (
-                            randevular.map((randevu) => (
-                              <div key={randevu.randevuId} className="randevu-card">
-                                    <p>{randevu.tarih} {randevu.saat}</p>
-                                    <p>İşlem: {randevu.hizmetAdi || "Belirtilmemiş"}</p>
-                                    <button className="iptal-btn" onClick={() => handleRandevuIptal(randevu.randevuId)}>
-                                      Randevuyu İptal Et
-                                  </button>
+                    <option value="">Hizmet Seçiniz</option>
+                    {hizmetler.map((hizmet) => (
+                        <option key={hizmet.hizmetId} value={hizmet.hizmetId}>
+                            {hizmet.ad}
+                        </option>
+                    ))}
+                </select>
 
-                                </div>
-                            ))
-                        )}
-                    </div>
-                )}
-                <div className="randevu-al">
-                    <h2>Randevu Al</h2>
-                    <div className="form">
+                <input
+                    type="date"
+                    name="tarih"
+                    value={formData.tarih}
+                    onChange={handleFormChange}
+                />
 
-                        <select name="kuafor" value={formData.kuafor} onChange={handleKuaforChange}>
-                          <option value="">Kuaför Seçiniz</option>
-                          {kuaforler.map((kuafor) => (
-                              <option key={kuafor.kuaforId} value={kuafor.kuaforId}>
-                                  {kuafor.ad} {kuafor.soyad}
-                              </option>
-                          ))}
-                      </select>
-
-                      <select
-                      name="hizmet"
-                      value={formData.hizmet}
-                      onChange={(e) => {
-                          const selectedHizmetId = e.target.value;
-                          setFormData({ ...formData, hizmet: selectedHizmetId }); // ID'yi set ediyoruz
-                      }}
-                >
-                      <option value="">Hizmet Seçiniz</option>
-                      {hizmetler.map((hizmet) => (
-                          <option key={hizmet.hizmetId} value={hizmet.hizmetId}>
-                              {hizmet.ad} {/* Kullanıcıya hizmet adı gösteriliyor */}
-                          </option>
-                      ))}
-                  </select>
-
-                        <input
-                            type="date"
-                            name="tarih"
-                            value={formData.tarih}
-                            onChange={handleFormChange}
-                        />
-                        <input
-                            type="time"
-                            name="saat"
-                            value={formData.saat}
-                            onChange={handleFormChange}
-                        />
-                        <div className="form-group">
-        <label htmlFor="notlar">Notlar</label>
-        <textarea
-            id="notlar"
-            name="notlar"
-            placeholder="Notlarınızı buraya yazabilirsiniz (isteğe bağlı)."
-            value={formData.notlar || ""}
-            onChange={handleFormChange}
-            rows="3"
-            className="notlar-textarea"
-        />
-    </div>
-    <button className="randevu-al-btn" onClick={handleRandevuAl}>
-        Randevu Al
-    </button>
-                    </div>
+                <div className="form-group">
+                    <label htmlFor="saat">Saat Seçiniz</label>
+                    <select
+                        id="saat"
+                        name="saat"
+                        value={formData.saat}
+                        onChange={handleFormChange}
+                        className="saat-select"
+                    >
+                        <option value="">Saat Seçiniz</option>
+                        {Array.from({ length: 11 }, (_, index) => {
+                            const hour = 9 + index; // 09:00'dan 19:00'a kadar saatler
+                            const formattedHour = hour.toString().padStart(2, "0") + ":00"; // Saatleri formatla
+                            return (
+                                <option key={hour} value={formattedHour}>
+                                    {formattedHour}
+                                </option>
+                            );
+                        })}
+                    </select>
                 </div>
+
+                <div className="form-group">
+                    <label htmlFor="notlar">Notlar</label>
+                    <textarea
+                        id="notlar"
+                        name="notlar"
+                        placeholder="Notlarınızı buraya yazabilirsiniz (isteğe bağlı)."
+                        value={formData.notlar || ""}
+                        onChange={handleFormChange}
+                        rows="3"
+                        className="notlar-textarea"
+                    />
+                </div>
+                <button className="randevu-al-btn" onClick={handleRandevuAl}>
+                    Randevu Al
+                </button>
             </div>
         </div>
+    </div>
+</div>
+
+
     );
 };
 
