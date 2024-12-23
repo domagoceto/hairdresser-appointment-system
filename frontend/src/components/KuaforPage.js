@@ -107,7 +107,7 @@ const KuaforPage = () => {
 
   return (
     <div className="kuafor-page">
-      <h1>Merhaba, {kuaforAd}</h1>
+      <h1>👋Merhaba, {kuaforAd}</h1>
       <div className="container">
         <div className="randevular-container">
           <h2>Randevularım</h2>

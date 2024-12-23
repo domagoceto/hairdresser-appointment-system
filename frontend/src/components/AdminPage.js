@@ -254,7 +254,7 @@ const AdminPage = () => {
   return (
     <div className="admin-page">
       <header>
-        <h1>Merhaba, {adminName || "Admin"}</h1>
+        <h1>👋Merhaba, {adminName || "Admin"}</h1>
       </header>
       <div className="button-container">
         <button onClick={() => setSelectedFunction("appointments")}>
