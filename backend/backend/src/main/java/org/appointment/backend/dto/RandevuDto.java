@@ -23,11 +23,13 @@ public class RandevuDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String hizmetAdi; // Yeni alan: Hizmet adı
+    private String kuaforAd;  // Yeni alan: Kuaför adı
+    private String kuaforSoyad;
 
     // Açık yapıcı
     public RandevuDto(Long randevuId, LocalDate tarih, LocalTime saat, Long kuaforId, Long hizmetId, Long kullaniciId,
                       RandevuDurum durum, String notlar, Double ucret, String sure,
-                      LocalDateTime createdAt, LocalDateTime updatedAt, String hizmetAdi) {
+                      LocalDateTime createdAt, LocalDateTime updatedAt, String hizmetAdi,String kuaforAd, String kuaforSoyad) {
         this.randevuId = randevuId;
         this.tarih = tarih;
         this.saat = saat;
@@ -41,6 +43,8 @@ public class RandevuDto {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.hizmetAdi = hizmetAdi;
+        this.kuaforAd = kuaforAd;
+        this.kuaforSoyad = kuaforSoyad;
     }
 
 }

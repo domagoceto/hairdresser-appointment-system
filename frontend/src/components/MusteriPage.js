@@ -212,6 +212,7 @@ const handleRandevuIptal = async (randevuId) => {
                         <div key={randevu.randevuId} className="randevu-card">
                             <p>{randevu.tarih} {randevu.saat}</p>
                             <p>İşlem: {randevu.hizmetAdi || "Belirtilmemiş"}</p>
+                            <p>Kuaför: {randevu.kuaforAd} {randevu.kuaforSoyad}</p>
                             <button className="iptal-btn" onClick={() => handleRandevuIptal(randevu.randevuId)}>
                                 Randevuyu İptal Et
                             </button>

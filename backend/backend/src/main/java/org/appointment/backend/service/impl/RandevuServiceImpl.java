@@ -292,31 +292,28 @@ public class RandevuServiceImpl implements RandevuService {
 
     @Override
     public List<RandevuDto> getRandevularByKullaniciId(Long kullaniciId) {
-        // Kullanıcı ID'sine göre randevuları alıyoruz
-        List<Randevu> randevular = randevuRepository.findByKullanici_KullaniciId(kullaniciId);
-
-        // Randevuları DTO'ya mapliyoruz
-        return randevular.stream().map(randevu -> {
-            Hizmet hizmet = hizmetRepository.findById(randevu.getHizmet().getHizmetId())
-                    .orElseThrow(() -> new RuntimeException("Hizmet bulunamadı"));
-
-            return new RandevuDto(
-                    randevu.getRandevuId(),
-                    randevu.getTarih(),
-                    randevu.getSaat(),
-                    randevu.getKuafor().getKuaforId(), // Kuaför ID'si
-                    randevu.getHizmet().getHizmetId(), // Hizmet ID'si
-                    randevu.getKullanici().getKullaniciId(), // Kullanıcı ID'si
-                    randevu.getDurum(), // Randevu durumu
-                    randevu.getNotlar(), // Notlar
-                    randevu.getUcret(), // Ücret
-                    randevu.getSure(), // Süre
-                    randevu.getCreatedAt(), // Oluşturulma zamanı
-                    randevu.getUpdatedAt(), // Güncellenme zamanı
-                    hizmet.getAd() // Hizmet adı
-            );
-        }).collect(Collectors.toList());
+        return randevuRepository.findByKullanici_KullaniciId(kullaniciId)
+                .stream()
+                .map(randevu -> RandevuDto.builder()
+                        .randevuId(randevu.getRandevuId())
+                        .tarih(randevu.getTarih())
+                        .saat(randevu.getSaat())
+                        .kuaforId(randevu.getKuafor().getKuaforId())
+                        .hizmetId(randevu.getHizmet().getHizmetId())
+                        .kullaniciId(randevu.getKullanici().getKullaniciId())
+                        .durum(randevu.getDurum())
+                        .notlar(randevu.getNotlar())
+                        .ucret(randevu.getUcret())
+                        .sure(randevu.getSure())
+                        .createdAt(randevu.getCreatedAt())
+                        .updatedAt(randevu.getUpdatedAt())
+                        .hizmetAdi(randevu.getHizmet().getAd())
+                        .kuaforAd(randevu.getKuafor().getAd())       // Kuaför adı
+                        .kuaforSoyad(randevu.getKuafor().getSoyad()) // Kuaför soyadı
+                        .build())
+                .collect(Collectors.toList());
     }
+
 
 
 
