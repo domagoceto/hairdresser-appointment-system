@@ -57,11 +57,6 @@ const MusteriPage = () => {
       }
   };
   
-  
-  
-  
-  
-
     const fetchKuaforler = async () => {
         const token = localStorage.getItem("authToken");
         if (!token) return console.error("JWT token eksik.");
@@ -112,8 +107,26 @@ const MusteriPage = () => {
       setFormData({ ...formData, kuafor: selectedKuaforId });
       fetchHizmetler(selectedKuaforId); // Seçilen kuaförün hizmetlerini getir
   };
-  
 
+  const handleDeleteAccount = async () => {
+    if (!window.confirm("Hesabınızı silmek istediğinize emin misiniz? Bu işlem geri alınamaz!")) {
+        return;
+    }
+    try {
+        const token = localStorage.getItem("authToken");
+        if (!token) return console.error("JWT token eksik.");
+        await axios.delete("/user/delete", {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        alert("Hesabınız başarıyla silindi. Hoşça kalın!");
+        localStorage.removeItem("authToken");
+        window.location.href = "/login";
+    } catch (error) {
+        console.error("Hesap silinirken hata oluştu:", error.response || error.message);
+        alert("Hesap silinirken bir hata oluştu.");
+    }
+};
+  
   const handleRandevuAl = async () => {
     const token = localStorage.getItem("authToken");
     if (!token) {
@@ -221,6 +234,13 @@ const handleRandevuIptal = async (randevuId) => {
                 )}
             </div>
         )}
+
+<button
+        className="delete-account-btn"
+        onClick={handleDeleteAccount}
+    >
+        Hesabımı Sil
+    </button>
         <div className="randevu-al">
             <h2>Randevu Al</h2>
             <div className="form">

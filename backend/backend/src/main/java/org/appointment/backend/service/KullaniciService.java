@@ -14,6 +14,7 @@ public interface KullaniciService {
     List<AdminKullaniciDto> getAll();
     Kullanici findEntityByEmail(String email);
     void deleteByEmail(String email);
+    boolean existsByEmail(String email);
 
 
 }

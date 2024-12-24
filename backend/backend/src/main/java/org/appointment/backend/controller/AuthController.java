@@ -55,6 +55,12 @@ public class AuthController {
         try {
             log.info("Kayıt işlemi başlatıldı: {}", request);
 
+            // E-posta kontrolü
+            if (kullaniciService.existsByEmail(request.getEmail())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Bu e-posta adresi ile zaten kayıt yapılmış.");
+            }
+
             // Rolü belirle
             Rol rol = determineRole(request.getAdminKey(), request.getKuaforKey());
             log.info("Rol belirlendi: {}", rol);

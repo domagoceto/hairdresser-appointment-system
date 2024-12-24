@@ -62,7 +62,7 @@ function Register() {
           kuaforKey: formData.kuaforKey,
           cinsiyet: formData.gender,
         };
-
+  
         const response = await axios.post('http://localhost:8080/auth/register', requestBody);
         setSuccessMessage(response.data); // Başarılı mesajı göster
         setErrorMessage('');
@@ -74,6 +74,7 @@ function Register() {
       setErrors(formErrors);
     }
   };
+  
 
   return (
     <div className="register-container">

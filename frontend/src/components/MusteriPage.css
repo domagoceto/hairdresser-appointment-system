@@ -133,4 +133,27 @@ label {
   font-size: 16px;
 }
 
+.delete-account-btn {
+  display: block;
+  width: 10%;
+  padding: 10px 15px;
+  margin-left: 20px; /* Sola boşluk bırak */
+  margin-bottom: 10px; /* Mesaj kısmıyla mesafeyi artır */
+  width: 120px; /* Sabit genişlik */
+  height: 40px;
+  background-color: #ff4d4d; /* Kırmızı renk */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 10px 0; /* Arada boşluk bırak */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-account-btn:hover {
+  background-color: #ff0000; /* Daha koyu kırmızı */
+}
 

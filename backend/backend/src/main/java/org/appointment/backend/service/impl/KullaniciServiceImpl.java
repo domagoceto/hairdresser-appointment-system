@@ -71,6 +71,11 @@ public class KullaniciServiceImpl implements KullaniciService {
         return KullaniciDto.fromEntity(mevcutKullanici); // DTO'ya dönüştürüp döner.
     }
 
+    @Override
+    public boolean existsByEmail(String email) {
+        return kullaniciRepository.existsByEmail(email);
+    }
+
 
     @Override
     public void delete(Long kullaniciId) {
