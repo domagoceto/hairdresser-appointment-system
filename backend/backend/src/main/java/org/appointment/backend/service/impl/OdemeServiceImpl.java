@@ -78,17 +78,21 @@ public class OdemeServiceImpl implements OdemeService {
 
     @Override
     public List<OdemeDto> getAll() {
-        List<Odeme> odemeler = odemeRepository.findAll();
-
+        List<Odeme> odemeler = odemeRepository.findAllWithDetails(); // JOIN FETCH kullanılan method
         return odemeler.stream().map(odeme -> new OdemeDto(
-                odeme.getKullanici().getAd() + " " + odeme.getKullanici().getSoyad(), // Müşteri adı ve soyadı
-                odeme.getRandevu().getHizmet().getAd(),                               // İşlem bilgisi
-                odeme.getTutar(),                                                    // Ücret bilgisi
-                odeme.getDurum() != null ? odeme.getDurum().name() : "Durum Eksik",   // Ödeme durumu
-                odeme.getOdemeYontemi() != null ? odeme.getOdemeYontemi().name() : "Yöntem Eksik", // Ödeme yöntemi
-                odeme.getAciklama() != null ? odeme.getAciklama() : "Açıklama Yok"    // Açıklama
+                odeme.getKullanici() != null
+                        ? odeme.getKullanici().getAd() + " " + odeme.getKullanici().getSoyad()
+                        : "Müşteri Bilgisi Eksik",
+                odeme.getRandevu() != null && odeme.getRandevu().getHizmet() != null
+                        ? odeme.getRandevu().getHizmet().getAd()
+                        : "İşlem Bilgisi Eksik",
+                odeme.getTutar(),
+                odeme.getDurum() != null ? odeme.getDurum().name() : "Durum Eksik",
+                odeme.getOdemeYontemi() != null ? odeme.getOdemeYontemi().name() : "Yöntem Eksik",
+                odeme.getAciklama() != null ? odeme.getAciklama() : "Açıklama Yok"
         )).collect(Collectors.toList());
     }
+
 
 
 

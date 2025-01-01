@@ -10,7 +10,6 @@ import java.time.LocalTime;
 @Table(name = "randevular")
 @Data
 @Entity
-
 public class Randevu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
