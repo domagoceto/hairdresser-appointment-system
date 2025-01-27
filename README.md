@@ -32,12 +32,9 @@ Frontend: React.js
 Backend: Spring Boot
 Veritabanı: PostgreSQL
 API: RESTful API ile frontend ve backend iletişimi sağlanır.
-
-Kullanım![Uploading Ekran görüntüsü 2025-01-27 235137.png…]()
-
 Kullanıcı, kayıt ekranında giriş yapar. Eğer AdminKey veya KuaforKey belirtilmeden kayıt olunursa kullanıcı rolü otomatik olarak Kullanıcı olarak atanır.
 Admin ya da Kuaför yetkisine sahip kişiler doğru anahtarlarla kayıt olabilir.
 Kullanıcılar sisteme giriş yaptıktan sonra kuaför ve hizmet seçerek randevu oluşturabilir.
 Admin ve kuaförler, kendilerine özel panellerden işlemlerini yönetebilir.
 
-![Görsel Açıklaması]("C:\Users\bjkka\OneDrive\Resimler\Screenshots\Ekran görüntüsü 2025-01-27 235137.png")
+![Ekran görüntüsü 2025-01-27 235137](https://github.com/user-attachments/assets/0ec1caf1-d3f5-4d09-b307-303a308c7400)
