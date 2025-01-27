@@ -28,6 +28,7 @@ Randevu durumlarını (örneğin: onaylandı, iptal edildi) güncelleyebilir.
 Sistemdeki tüm kullanıcıları, kuaförleri ve hizmetleri yönetebilir.
 Kuaförlerin ve kullanıcıların hesaplarını düzenleyebilir veya silebilir.
 Hizmet ve randevu yönetimi yapabilir.
+![Ekran görüntüsü 2025-01-27 235203](https://github.com/user-attachments/assets/934399d7-a354-4d47-a8ab-d07799f9aaa8)
 📦 Teknolojiler
 Frontend: React.js
 Backend: Spring Boot
