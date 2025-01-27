@@ -20,10 +20,12 @@ Sisteme kaydolabilir ve giriş yapabilir.
 Kuaförleri ve sunulan hizmetleri görüntüleyebilir.
 Kuaför ve hizmet seçerek randevu oluşturabilir.
 Kendi randevularını görüntüleyebilir ve gerekirse iptal edebilir.
+![Ekran görüntüsü 2025-01-27 235326](https://github.com/user-attachments/assets/a16b3455-fb1e-4dad-853e-502004f7e67f)
 2. Kuaför
 Kendi hizmetlerini ekleyebilir ve düzenleyebilir.
 Randevularını görüntüleyebilir ve yönetebilir.
 Randevu durumlarını (örneğin: onaylandı, iptal edildi) güncelleyebilir.
+![Ekran görüntüsü 2025-01-27 235230](https://github.com/user-attachments/assets/5f6b8dad-a00a-4a79-98a6-81c8fe90696e)
 3. Admin
 Sistemdeki tüm kullanıcıları, kuaförleri ve hizmetleri yönetebilir.
 Kuaförlerin ve kullanıcıların hesaplarını düzenleyebilir veya silebilir.
