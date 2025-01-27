@@ -15,10 +15,9 @@ Hizmet Yönetimi: Kuaförler, sistemde sunacakları hizmetleri tanımlayabilir (
 Randevu Sistemi: Kullanıcılar, kuaför ve hizmet seçerek uygun tarih ve saat için randevu alabilir.
 Ödeme Yönetimi: Randevu oluşturma sırasında ödeme bilgileri kaydedilir ve randevu iptal edilirse ödeme kaydı tamamen silinir.
 Güvenli Giriş ve Kayıt: Kullanıcı, Kuaför veya Admin rolleri için ayrı giriş ekranları bulunmaktadır.
-
+![Ekran görüntüsü 2025-01-27 235155](https://github.com/user-attachments/assets/fafe4292-9b55-4228-95df-db24ebb79973)
 🚀 Kullanıcı Rolleri ve İşlevler
 
-![Ekran görüntüsü 2025-01-27 235155](https://github.com/user-attachments/assets/fafe4292-9b55-4228-95df-db24ebb79973)
 1. Kullanıcı
 Sisteme kaydolabilir ve giriş yapabilir.
 Kuaförleri ve sunulan hizmetleri görüntüleyebilir.
