@@ -29,20 +29,21 @@ Kendi randevularını görüntüleyebilir ve gerekirse iptal edebilir.
 Kendi hizmetlerini ekleyebilir ve düzenleyebilir.
 Randevularını görüntüleyebilir ve yönetebilir.
 Randevu durumlarını (örneğin: onaylandı, iptal edildi) güncelleyebilir.
-
-![Ekran görüntüsü 2025-01-27 235230](https://github.com/user-attachments/assets/5f6b8dad-a00a-4a79-98a6-81c8fe90696e)
+![Ekran görüntüsü 2025-01-27 235344](https://github.com/user-attachments/assets/50160710-9e14-4bbe-b75c-243d24236e20)
 4. Admin
 Sistemdeki tüm kullanıcıları, kuaförleri ve hizmetleri yönetebilir.
 Kuaförlerin ve kullanıcıların hesaplarını düzenleyebilir veya silebilir.
 Hizmet ve randevu yönetimi yapabilir.
-
-![Ekran görüntüsü 2025-01-27 235203](https://github.com/user-attachments/assets/934399d7-a354-4d47-a8ab-d07799f9aaa8)
+![Ekran görüntüsü 2025-01-27 235230](https://github.com/user-attachments/assets/5f6b8dad-a00a-4a79-98a6-81c8fe90696e)
 
 📦 Teknolojiler
 Frontend: React.js
 Backend: Spring Boot
 Veritabanı: PostgreSQL
 API: RESTful API ile frontend ve backend iletişimi sağlanır.
+
+![Ekran görüntüsü 2025-01-27 235203](https://github.com/user-attachments/assets/934399d7-a354-4d47-a8ab-d07799f9aaa8)
+
 Kullanıcı, kayıt ekranında giriş yapar. Eğer AdminKey veya KuaforKey belirtilmeden kayıt olunursa kullanıcı rolü otomatik olarak Kullanıcı olarak atanır.
 Admin ya da Kuaför yetkisine sahip kişiler doğru anahtarlarla kayıt olabilir.
 Kullanıcılar sisteme giriş yaptıktan sonra kuaför ve hizmet seçerek randevu oluşturabilir.
