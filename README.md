@@ -1,6 +1,6 @@
 
 Hairdresser Appointment System
-
+![Ekran görüntüsü 2025-01-27 235137](https://github.com/user-attachments/assets/0ec1caf1-d3f5-4d09-b307-303a308c7400)
 Bu proje, bir kuaför randevu sistemi olup, kullanıcıların kuaför hizmetlerini kolayca planlamasını, yönetmesini ve rezervasyon yapmasını sağlayan bir web tabanlı uygulamadır.
 
 🛠️ Proje Özellikleri
@@ -13,6 +13,7 @@ Hizmet Yönetimi: Kuaförler, sistemde sunacakları hizmetleri tanımlayabilir (
 Randevu Sistemi: Kullanıcılar, kuaför ve hizmet seçerek uygun tarih ve saat için randevu alabilir.
 Ödeme Yönetimi: Randevu oluşturma sırasında ödeme bilgileri kaydedilir ve randevu iptal edilirse ödeme kaydı tamamen silinir.
 Güvenli Giriş ve Kayıt: Kullanıcı, Kuaför veya Admin rolleri için ayrı giriş ekranları bulunmaktadır.
+![Ekran görüntüsü 2025-01-27 235155](https://github.com/user-attachments/assets/fafe4292-9b55-4228-95df-db24ebb79973)
 🚀 Kullanıcı Rolleri ve İşlevler
 1. Kullanıcı
 Sisteme kaydolabilir ve giriş yapabilir.
@@ -37,4 +38,3 @@ Admin ya da Kuaför yetkisine sahip kişiler doğru anahtarlarla kayıt olabilir
 Kullanıcılar sisteme giriş yaptıktan sonra kuaför ve hizmet seçerek randevu oluşturabilir.
 Admin ve kuaförler, kendilerine özel panellerden işlemlerini yönetebilir.
 
-![Ekran görüntüsü 2025-01-27 235137](https://github.com/user-attachments/assets/0ec1caf1-d3f5-4d09-b307-303a308c7400)
