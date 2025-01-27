@@ -1,7 +1,6 @@
-# 
-Aşağıda sisteminiz için örnek bir README dosyası içeriği hazırladım. Bu, sistemi, işlevlerini ve kullanıcı rolleri ile ilgili açıklamaları içerir:
 
 Hairdresser Appointment System
+
 Bu proje, bir kuaför randevu sistemi olup, kullanıcıların kuaför hizmetlerini kolayca planlamasını, yönetmesini ve rezervasyon yapmasını sağlayan bir web tabanlı uygulamadır.
 
 🛠️ Proje Özellikleri
@@ -34,7 +33,8 @@ Backend: Spring Boot
 Veritabanı: PostgreSQL
 API: RESTful API ile frontend ve backend iletişimi sağlanır.
 
-Kullanım
+Kullanım![Uploading Ekran görüntüsü 2025-01-27 235137.png…]()
+
 Kullanıcı, kayıt ekranında giriş yapar. Eğer AdminKey veya KuaforKey belirtilmeden kayıt olunursa kullanıcı rolü otomatik olarak Kullanıcı olarak atanır.
 Admin ya da Kuaför yetkisine sahip kişiler doğru anahtarlarla kayıt olabilir.
 Kullanıcılar sisteme giriş yaptıktan sonra kuaför ve hizmet seçerek randevu oluşturabilir.
