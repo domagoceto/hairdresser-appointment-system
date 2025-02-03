@@ -1,6 +1,5 @@
 
-![image](https://github.com/user-attachments/assets/b4f50d8e-36fa-4244-b101-334c672540c0)
-Hairdresser Appointment System
+💇‍♂️ Hairdresser Appointment System
 
 ![Ekran görüntüsü 2025-01-27 235137](https://github.com/user-attachments/assets/0ec1caf1-d3f5-4d09-b307-303a308c7400)
 
