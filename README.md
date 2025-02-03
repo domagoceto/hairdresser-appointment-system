@@ -49,3 +49,8 @@ Admin ya da Kuaför yetkisine sahip kişiler doğru anahtarlarla kayıt olabilir
 Kullanıcılar sisteme giriş yaptıktan sonra kuaför ve hizmet seçerek randevu oluşturabilir.
 Admin ve kuaförler, kendilerine özel panellerden işlemlerini yönetebilir.
 
+Proje güncellenmeye devam edecektir...
+
+@kadircetin.inu@gmail.com
+@turelhaticezehra@gmail.com
+
