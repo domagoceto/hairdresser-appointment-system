@@ -1,4 +1,5 @@
 
+![image](https://github.com/user-attachments/assets/b4f50d8e-36fa-4244-b101-334c672540c0)
 Hairdresser Appointment System
 
 ![Ekran görüntüsü 2025-01-27 235137](https://github.com/user-attachments/assets/0ec1caf1-d3f5-4d09-b307-303a308c7400)
@@ -16,21 +17,24 @@ Randevu Sistemi: Kullanıcılar, kuaför ve hizmet seçerek uygun tarih ve saat 
 Ödeme Yönetimi: Randevu oluşturma sırasında ödeme bilgileri kaydedilir ve randevu iptal edilirse ödeme kaydı tamamen silinir.
 Güvenli Giriş ve Kayıt: Kullanıcı, Kuaför veya Admin rolleri için ayrı giriş ekranları bulunmaktadır.
 ![Ekran görüntüsü 2025-01-27 235155](https://github.com/user-attachments/assets/fafe4292-9b55-4228-95df-db24ebb79973)
+
 🚀 Kullanıcı Rolleri ve İşlevler
 
-1. Kullanıcı
+1️⃣ Kullanıcı
 Sisteme kaydolabilir ve giriş yapabilir.
 Kuaförleri ve sunulan hizmetleri görüntüleyebilir.
 Kuaför ve hizmet seçerek randevu oluşturabilir.
 Kendi randevularını görüntüleyebilir ve gerekirse iptal edebilir.
 
 ![Ekran görüntüsü 2025-01-27 235326](https://github.com/user-attachments/assets/a16b3455-fb1e-4dad-853e-502004f7e67f)
-3. Kuaför
+
+2️⃣  Kuaför
 Kendi hizmetlerini ekleyebilir ve düzenleyebilir.
 Randevularını görüntüleyebilir ve yönetebilir.
 Randevu durumlarını (örneğin: onaylandı, iptal edildi) güncelleyebilir.
 ![Ekran görüntüsü 2025-01-27 235344](https://github.com/user-attachments/assets/50160710-9e14-4bbe-b75c-243d24236e20)
-4. Admin
+
+3️⃣ Admin
 Sistemdeki tüm kullanıcıları, kuaförleri ve hizmetleri yönetebilir.
 Kuaförlerin ve kullanıcıların hesaplarını düzenleyebilir veya silebilir.
 Hizmet ve randevu yönetimi yapabilir.
@@ -51,6 +55,8 @@ Admin ve kuaförler, kendilerine özel panellerden işlemlerini yönetebilir.
 
 Proje güncellenmeye devam edecektir...
 
-@kadircetin.inu@gmail.com
-@turelhaticezehra@gmail.com
+📩 İletişim
+
+@kadircetin.inu@gmail.com @turelhaticezehra@gmail.com
+
 
