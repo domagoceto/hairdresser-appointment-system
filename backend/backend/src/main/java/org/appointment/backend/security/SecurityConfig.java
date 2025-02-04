@@ -80,6 +80,7 @@ public class SecurityConfig {
                         .requestMatchers("/hizmetler", "/randevu/kuaforler").hasRole("MUSTERI") // Müşteri erişimi
                         .requestMatchers("/favicon.ico", "/logo192.png", "/error").permitAll()
                         .requestMatchers("/odeme/yontemler", "/odeme/durumlar").hasRole("ADMIN") // Admin yetkisi gerekiyor
+                        .requestMatchers("/uploads/**").permitAll()  // **Resimlere erişim izni veriyoruz**
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // JWT doğrulama filtresi

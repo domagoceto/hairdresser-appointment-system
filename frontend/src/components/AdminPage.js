@@ -23,6 +23,7 @@ const AdminPage = () => {
     aciklama: "",
     fiyat: "",
     sure: "",
+    image: null,
   });
   const [payments, setPayments] = useState([]);
   const [newPayment, setNewPayment] = useState({
@@ -171,6 +172,8 @@ const AdminPage = () => {
       console.error("Hizmetler alınamadı:", error);
     }
   };
+  
+
 
   const fetchPayments = async () => {
     const token = localStorage.getItem("authToken");
@@ -184,21 +187,45 @@ const AdminPage = () => {
       console.error("Ödemeler alınamadı:", error);
     }
   };
+
+  const handleFileChange = (e) => {
+    setNewService({ ...newService, image: e.target.files[0] });
+  };
+
+  const handleChange = (e) => {
+    setNewService({ ...newService, [e.target.name]: e.target.value });
+  };
   
 
   const addService = async () => {
     const token = localStorage.getItem("authToken");
     if (!token) return console.error("JWT token eksik.");
+    
     try {
-      await axios.post("/hizmet/ekle", newService, {
-        headers: { Authorization: `Bearer ${token}` },
+      const formData = new FormData();
+      formData.append("ad", newService.ad);
+      formData.append("aciklama", newService.aciklama);
+      formData.append("fiyat", newService.fiyat); // **parseFloat kaldırıldı!**
+      formData.append("sure", newService.sure);   // **parseInt kaldırıldı!**
+      if (newService.image) {
+        formData.append("image", newService.image);
+      }
+  
+      await axios.post("http://localhost:8080/hizmet/ekle", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          // "Content-Type": "multipart/form-data" **Bunu YORUMA AL!**
+        },
       });
+  
       await fetchServices();
-      setNewService({ ad: "", aciklama: "", fiyat: "", sure: "" });
+      setNewService({ ad: "", aciklama: "", fiyat: "", sure: "", image: null });
     } catch (error) {
       console.error("Hizmet eklenirken hata oluştu:", error);
     }
   };
+  
+  
 
   const deleteService = async (id) => {
     const token = localStorage.getItem("authToken");
@@ -361,69 +388,59 @@ const AdminPage = () => {
 
       {selectedFunction === "services" && (
         <div className="service-container">
-          <h2>Hizmetler</h2>
-          <div className="service-form">
-            <input
-              type="text"
-              placeholder="Hizmet Adı"
-              value={newService.ad}
-              onChange={(e) =>
-                setNewService({ ...newService, ad: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="Açıklama"
-              value={newService.aciklama}
-              onChange={(e) =>
-                setNewService({ ...newService, aciklama: e.target.value })
-              }
-            />
-            <input
-              type="number"
-              placeholder="Fiyat"
-              value={newService.fiyat}
-              onChange={(e) =>
-                setNewService({ ...newService, fiyat: e.target.value })
-              }
-            />
-            <input
-              type="number"
-              placeholder="Süre (dk)"
-              value={newService.sure}
-              onChange={(e) =>
-                setNewService({ ...newService, sure: e.target.value })
-              }
-            />
-            <button onClick={addService}>Hizmet Ekle</button>
-          </div>
-          <div className="list-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Ad</th>
-                  <th>Açıklama</th>
-                  <th>Fiyat</th>
-                  <th>Süre</th>
-                  <th>Sil</th>
-                </tr>
-              </thead>
-              <tbody>
-                {services.map((service) => (
-                  <tr key={service.hizmetId}>
-                    <td>{service.ad}</td>
-                    <td>{service.aciklama}</td>
-                    <td>{service.fiyat} ₺</td>
-                    <td>{service.sure} dk</td>
-                    <td>
-                      <button onClick={() => deleteService(service.hizmetId)}>🗑️</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+           <h2>Hizmetler</h2>
+      <div className="service-form">
+        <input type="text" name="ad" placeholder="Hizmet Adı" onChange={handleChange} />
+        <input type="text" name="aciklama" placeholder="Açıklama" onChange={handleChange} />
+        <input type="number" name="fiyat" placeholder="Fiyat" onChange={handleChange} />
+        <input type="number" name="sure" placeholder="Süre (dk)" onChange={handleChange} />
+        <input type="file" accept="image/*" onChange={handleFileChange} />
+        <button onClick={addService}>Hizmet Ekle</button>
+      </div>
+
+      <div className="list-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Ad</th>
+            <th>Açıklama</th>
+            <th>Fiyat</th>
+            <th>Süre</th>
+            <th>Resim</th>
+            <th>Sil</th>
+          </tr>
+        </thead>
+        <tbody>
+            {services.map((service) => (
+              <tr key={service.hizmetId}>
+                <td>{service.ad}</td>
+                <td>{service.aciklama}</td>
+                <td>{service.fiyat} ₺</td>
+                <td>{service.sure} dk</td>
+                <td>
+                  {service.imageUrl ? (
+                    <>
+                      <img 
+                        src={`http://localhost:8080${service.imageUrl}`} 
+                        alt={service.ad} 
+                        width="50" height="50"
+                        onError={(e) => { e.target.src = "/images/default_service.jpg"; }} 
+                      />
+                      <p>{service.imageUrl.split('/').pop()}</p> {/* Resim adı */}
+                    </>
+                  ) : (
+                    "Resim Yok"
+                  )}
+                </td>
+                <td>
+                  <button onClick={() => deleteService(service.hizmetId)}>🗑️</button> {/* Silme butonu */}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+      </table>
+    </div>
+    </div>
       )}
 
 {selectedFunction === "payments" && (

@@ -17,15 +17,17 @@ public class HizmetDto {
     private String aciklama;
     private Integer sure;
     private Double fiyat;
+    private String imageUrl;
     private List<Long> randevuIds;    // Randevuların ID'leri
     private List<Long> kuaforIds;// Kuaforlerin ID'leri
 
-    public HizmetDto(Long hizmetId, String ad, String aciklama, Double fiyat, Integer sure) {
+    public HizmetDto(Long hizmetId, String ad, String aciklama, Double fiyat, Integer sure,String imageUrl) {
         this.hizmetId = hizmetId;
         this.ad = ad;
         this.aciklama = aciklama;
         this.fiyat = fiyat;
         this.sure = sure;
+        this.imageUrl = imageUrl;
     }
 
 

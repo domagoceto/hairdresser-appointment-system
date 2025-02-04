@@ -37,6 +37,9 @@ public class Hizmet {
     @OneToMany(mappedBy = "hizmet")
     private List<Randevu> randevular;
 
+    @Column
+    private String imageUrl;
+
     @ManyToMany(mappedBy = "yapabilecegiHizmetler", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     private Set<Kuafor> kuaforler = new HashSet<>();
 
