@@ -399,6 +399,22 @@ button:hover img {
   .payments-container tr:nth-child(even) {
     background-color: #333;
   }
+
+  .custom-file-upload {
+    background-color: #ffd700; /* Arka plan rengi */
+    color: black; /* Yazı rengi */
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+    display: inline-block;
+  }
+  
+  .custom-file-upload:hover {
+    background-color: #ffcc00; /* Hover efekti */
+  }
+  
   
   
   

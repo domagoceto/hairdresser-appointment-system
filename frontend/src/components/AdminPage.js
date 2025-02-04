@@ -386,19 +386,54 @@ const AdminPage = () => {
         </div>
       )}
 
-      {selectedFunction === "services" && (
-        <div className="service-container">
-           <h2>Hizmetler</h2>
-      <div className="service-form">
-        <input type="text" name="ad" placeholder="Hizmet Adı" onChange={handleChange} />
-        <input type="text" name="aciklama" placeholder="Açıklama" onChange={handleChange} />
-        <input type="number" name="fiyat" placeholder="Fiyat" onChange={handleChange} />
-        <input type="number" name="sure" placeholder="Süre (dk)" onChange={handleChange} />
-        <input type="file" accept="image/*" onChange={handleFileChange} />
-        <button onClick={addService}>Hizmet Ekle</button>
-      </div>
+{selectedFunction === "services" && (
+  <div className="service-container">
+    <h2>Hizmetler</h2>
 
-      <div className="list-container">
+    {/* Hizmet Ekleme Formu */}
+    <div className="service-form">
+      <input 
+        type="text" 
+        name="ad" 
+        placeholder="Hizmet Adı" 
+        onChange={handleChange} 
+      />
+      <input 
+        type="text" 
+        name="aciklama" 
+        placeholder="Açıklama" 
+        onChange={handleChange} 
+      />
+      <input 
+        type="number" 
+        name="fiyat" 
+        placeholder="Fiyat" 
+        onChange={handleChange} 
+      />
+      <input 
+        type="number" 
+        name="sure" 
+        placeholder="Süre (dk)" 
+        onChange={handleChange} 
+      />
+
+      {/* Özelleştirilmiş Dosya Seçme Butonu */}
+      <label htmlFor="fileUpload" className="custom-file-upload">
+        Dosya Seç
+      </label>
+      <input 
+        type="file" 
+        id="fileUpload"
+        accept="image/*"
+        onChange={handleFileChange}
+        style={{ display: "none" }} 
+      />
+
+      <button onClick={addService}>Hizmet Ekle</button>
+    </div>
+
+    {/* Hizmet Listesi */}
+    <div className="list-container">
       <table>
         <thead>
           <tr>
@@ -411,37 +446,44 @@ const AdminPage = () => {
           </tr>
         </thead>
         <tbody>
-            {services.map((service) => (
-              <tr key={service.hizmetId}>
-                <td>{service.ad}</td>
-                <td>{service.aciklama}</td>
-                <td>{service.fiyat} ₺</td>
-                <td>{service.sure} dk</td>
-                <td>
-                  {service.imageUrl ? (
-                    <>
-                      <img 
-                        src={`http://localhost:8080${service.imageUrl}`} 
-                        alt={service.ad} 
-                        width="50" height="50"
-                        onError={(e) => { e.target.src = "/images/default_service.jpg"; }} 
-                      />
-                      <p>{service.imageUrl.split('/').pop()}</p> {/* Resim adı */}
-                    </>
-                  ) : (
-                    "Resim Yok"
-                  )}
-                </td>
-                <td>
-                  <button onClick={() => deleteService(service.hizmetId)}>🗑️</button> {/* Silme butonu */}
-                </td>
-              </tr>
-            ))}
-          </tbody>
+          {services.map((service) => (
+            <tr key={service.hizmetId}>
+              <td>{service.ad}</td>
+              <td>{service.aciklama}</td>
+              <td>{service.fiyat} ₺</td>
+              <td>{service.sure} dk</td>
+              <td>
+                {service.imageUrl ? (
+                  <>
+                    <img 
+                      src={`http://localhost:8080${service.imageUrl}`} 
+                      alt={service.ad} 
+                      width="50" 
+                      height="50"
+                      onError={(e) => { e.target.src = "/images/default_service.jpg"; }} 
+                    />
+                    <p>{service.imageUrl.split('/').pop()}</p> {/* Resim adı */}
+                  </>
+                ) : (
+                  "Resim Yok"
+                )}
+              </td>
+              <td>
+                <button 
+                  className="delete-button" 
+                  onClick={() => deleteService(service.hizmetId)}
+                >
+                  🗑️
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
       </table>
     </div>
-    </div>
-      )}
+  </div>
+)}
+
 
 {selectedFunction === "payments" && (
   <div className="payments-container">
