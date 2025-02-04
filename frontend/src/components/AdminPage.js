@@ -17,6 +17,8 @@ const AdminPage = () => {
   const [services, setServices] = useState([]);
   const [odemeYontemleri, setOdemeYontemleri] = useState([]); // Ödeme Yöntemleri için state
   const [odemeDurumlari, setOdemeDurumlari] = useState([]); // Ödeme Durumları için state
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const [newService, setNewService] = useState({
     ad: "",
@@ -54,8 +56,9 @@ const AdminPage = () => {
       fetchServices();
     } else if (selectedFunction === "payments") {
       fetchPayments();
-    }
-  }, [selectedFunction]);
+    } else if (selectedFunction === "gallery") {
+      fetchGalleryImages();
+  }}, [selectedFunction]);
 
   const fetchAdminInfo = async () => {
     const token = localStorage.getItem("authToken");
@@ -69,6 +72,46 @@ const AdminPage = () => {
       console.error("Admin bilgileri alınamadı:", error);
     }
   };
+
+  const fetchGalleryImages = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/gallery/list");
+      setGalleryImages(response.data);
+    } catch (error) {
+      console.error("Galeri resimleri yüklenemedi:", error);
+    }
+  };
+
+  const uploadImage = async () => {
+    if (!selectedImage) return alert("Lütfen bir resim seçin.");
+    
+    const formData = new FormData();
+    formData.append("file", selectedImage);
+
+    try {
+      await axios.post("http://localhost:8080/gallery/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      fetchGalleryImages();
+      setSelectedImage(null);
+      alert("Resim başarıyla yüklendi!");
+    } catch (error) {
+      console.error("Resim yükleme hatası:", error);
+    }
+  };
+
+  const deleteImage = async (imagePath) => {
+    const confirmDelete = window.confirm("Bu resmi silmek istediğinizden emin misiniz?");
+    if (!confirmDelete) return;
+  
+    try {
+      await axios.delete("http://localhost:8080/gallery/delete", { data: { path: imagePath } });
+      fetchGalleryImages(); // Resimleri yeniden yükleyerek güncelliyoruz
+    } catch (error) {
+      console.error("Resim silme hatası:", error);
+    }
+  };
+  
 
   const fetchOdemeYontemleri = async () => {
     const token = localStorage.getItem("authToken");
@@ -276,7 +319,6 @@ const AdminPage = () => {
       console.error("Ödeme eklenirken hata oluştu:", error);
     }
   };
-  
 
   return (
     <div className="admin-page">
@@ -290,6 +332,7 @@ const AdminPage = () => {
         <button onClick={() => setSelectedFunction("users")}>Kullanıcılar</button>
         <button onClick={() => setSelectedFunction("services")}>Hizmetler</button>
         <button onClick={() => setSelectedFunction("payments")}>Ödemeler</button>
+        <button onClick={() => setSelectedFunction("gallery")}>Galeri</button>
       </div>
 
       {selectedFunction === "appointments" && (
@@ -591,6 +634,39 @@ const AdminPage = () => {
   </table>
 </div>
 
+  </div>
+)}
+{selectedFunction === "gallery" && (
+  <div className="gallery-container">
+    <h2 className="gallery-title">📸 Galeri Yönetimi</h2>
+    
+    {/* Resim Yükleme Alanı */}
+    <div className="upload-section">
+      <label htmlFor="galleryUpload" className="custom-file-upload">
+        Dosya Seç
+      </label>
+      <input
+        type="file"
+        id="galleryUpload"
+        accept="image/*"
+        onChange={(e) => setSelectedImage(e.target.files[0])}
+        style={{ display: "none" }}
+      />
+      <button className="upload-button" onClick={uploadImage}>Resim Yükle</button>
+    </div>
+
+    {/* Galeri Resimleri */}
+    <div className="gallery-list">
+      {galleryImages.length > 0 ? (
+        galleryImages.map((image, index) => (
+          <div key={index} className="gallery-item">
+            <img src={`http://localhost:8080${image}`} alt={`Galeri ${index}`} width="150" />
+          </div>
+        ))
+      ) : (
+        <p>Henüz galeriye resim eklenmedi.</p>
+      )}
+    </div>
   </div>
 )}
 

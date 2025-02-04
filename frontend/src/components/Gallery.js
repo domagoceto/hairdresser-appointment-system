@@ -1,17 +1,32 @@
-import React, { useRef } from 'react';
-import './Gallery.css';
+import React, { useRef, useEffect, useState } from "react";
+import axios from "axios";
+import "./Gallery.css";
 
 function Gallery() {
   const scrollRef = useRef(null);
+  const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    fetchGalleryImages();
+  }, []);
+
+  const fetchGalleryImages = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/gallery/list");
+      setImages(response.data);
+    } catch (error) {
+      console.error("Galeri yüklenemedi:", error);
+    }
+  };
 
   const scrollLeft = () => {
     const container = scrollRef.current;
-    container.scrollBy({ left: -300, behavior: 'smooth' }); // 300px sola kaydır
+    container.scrollBy({ left: -300, behavior: "smooth" }); // 300px sola kaydır
   };
 
   const scrollRight = () => {
     const container = scrollRef.current;
-    container.scrollBy({ left: 300, behavior: 'smooth' }); // 300px sağa kaydır
+    container.scrollBy({ left: 300, behavior: "smooth" }); // 300px sağa kaydır
   };
 
   return (
@@ -22,12 +37,17 @@ function Gallery() {
       </button>
       <div className="gallery-container" ref={scrollRef}>
         <div className="gallery-list">
-          <img src="/images/galeri1.jpg" alt="Galeri 1" />
-          <img src="/images/galeri2.jpg" alt="Galeri 2" />
-          <img src="/images/galeri3.jpg" alt="Galeri 3" />
-          <img src="/images/galeri4.jpg" alt="Galeri 4" />
-          <img src="/images/galeri5.jpg" alt="Galeri 5" />
-          <img src="/images/galeri6.jpg" alt="Galeri 6" />
+          {images.length > 0 ? (
+            images.map((image, index) => (
+              <img
+                key={index}
+                src={`http://localhost:8080${image}`}
+                alt={`Galeri ${index + 1}`}
+              />
+            ))
+          ) : (
+            <p>Henüz galeriye resim eklenmedi.</p>
+          )}
         </div>
       </div>
       <button className="gallery-button right" onClick={scrollRight}>

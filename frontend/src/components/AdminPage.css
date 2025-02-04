@@ -400,19 +400,51 @@ button:hover img {
     background-color: #333;
   }
 
-  .custom-file-upload {
-    background-color: #ffd700; /* Arka plan rengi */
-    color: black; /* Yazı rengi */
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
+  .gallery-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* İçeriği ortalar */
     text-align: center;
-    display: inline-block;
+    margin-top: 20px;
   }
   
-  .custom-file-upload:hover {
-    background-color: #ffcc00; /* Hover efekti */
+  .gallery-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px; /* Başlık ile butonlar arasında boşluk */
+  }
+  
+  .upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* Butonlar arasında boşluk bırakır */
+    margin-bottom: 15px;
+  }
+  
+  .custom-file-upload {
+    background-color: #333;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .upload-button {
+    background-color: #ffcc00;
+    color: black;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .gallery-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 15px;
   }
   
   
