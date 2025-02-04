@@ -469,13 +469,19 @@ const AdminPage = () => {
                 )}
               </td>
               <td>
-                <button 
-                  className="delete-button" 
-                  onClick={() => deleteService(service.hizmetId)}
-                >
-                  🗑️
-                </button>
-              </td>
+              <button 
+                className="delete-button" 
+                onClick={() => {
+                  const confirmed = window.confirm("Bu hizmeti silmek istediğinize emin misiniz?");
+                  if (confirmed) {
+                    deleteService(service.hizmetId);
+                  }
+                }}
+              >
+                🗑️
+              </button>
+            </td>
+
             </tr>
           ))}
         </tbody>
