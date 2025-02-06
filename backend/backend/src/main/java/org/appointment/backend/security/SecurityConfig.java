@@ -81,6 +81,9 @@ public class SecurityConfig {
                         .requestMatchers("/favicon.ico", "/logo192.png", "/error").permitAll()
                         .requestMatchers("/gallery/upload", "/gallery/delete/**").hasRole("ADMIN")
                         .requestMatchers("/gallery/list").permitAll() // Galeri herkese açık
+                        .requestMatchers("/contact/update").hasRole("ADMIN")
+                        .requestMatchers("/contact/info").permitAll()
+
 
                         .requestMatchers("/odeme/yontemler", "/odeme/durumlar").hasRole("ADMIN") // Admin yetkisi gerekiyor
                         .requestMatchers("/uploads/**").permitAll()  // **Resimlere erişim izni veriyoruz**

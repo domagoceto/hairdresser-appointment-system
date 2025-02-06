@@ -41,6 +41,44 @@ const AdminPage = () => {
     odemeTarihi: ""
   });
 
+  const [contactInfo, setContactInfo] = useState({
+    adres: "",
+    email: "",
+    telefon: "",
+  });
+
+  useEffect(() => {
+    if (selectedFunction === "contact") {
+      fetchContactInfo();
+    }
+  }, [selectedFunction]);
+
+  const fetchContactInfo = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/contact/info");
+      setContactInfo(response.data);
+    } catch (error) {
+      console.error("İletişim bilgileri alınamadı:", error);
+    }
+  };
+
+  // İletişim bilgilerini güncelle
+  const updateContactInfo = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      alert("Yetkilendirme hatası: Giriş yapmanız gerekiyor!");
+      return;
+    }
+
+    try {
+      await axios.post("http://localhost:8080/contact/update", contactInfo, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert("İletişim bilgileri başarıyla güncellendi!");
+    } catch (error) {
+      console.error("İletişim bilgileri güncellenirken hata oluştu:", error);
+    }
+  };
   
   
 
@@ -347,14 +385,26 @@ const AdminPage = () => {
         <h1>👋Merhaba, {adminName || "Admin"}</h1>
       </header>
       <div className="button-container">
-        <button onClick={() => setSelectedFunction("appointments")}>
-          Randevular
-        </button>
-        <button onClick={() => setSelectedFunction("users")}>Kullanıcılar</button>
-        <button onClick={() => setSelectedFunction("services")}>Hizmetler</button>
-        <button onClick={() => setSelectedFunction("payments")}>Ödemeler</button>
-        <button onClick={() => setSelectedFunction("gallery")}>Galeri</button>
-      </div>
+    <button onClick={() => setSelectedFunction("appointments")}>
+        Randevular
+    </button>
+    <button onClick={() => setSelectedFunction("users")}>
+        Kullanıcılar
+    </button>
+    <button onClick={() => setSelectedFunction("services")}>
+        Hizmetler
+    </button>
+    <button onClick={() => setSelectedFunction("payments")}>
+        Ödemeler
+    </button>
+    <button onClick={() => setSelectedFunction("gallery")}>
+        Galeri
+    </button>
+    <button onClick={() => setSelectedFunction("contact")}>
+        İletişim
+    </button> 
+</div>
+
 
       {selectedFunction === "appointments" && (
         <div className="appointments-container">
@@ -686,6 +736,40 @@ const AdminPage = () => {
       ) : (
         <p>Henüz galeriye resim eklenmedi.</p>
       )}
+    </div>
+  </div>
+)}
+
+
+{selectedFunction === "contact" && (
+  <div className="contact-container">
+    <h2>İletişim Bilgilerini Düzenle</h2>
+    <div className="contact-form">
+      <label>Adres:</label>
+      <input
+        type="text"
+        value={contactInfo.adres}
+        onChange={(e) => setContactInfo({ ...contactInfo, adres: e.target.value })}
+      />
+
+      <label>E-posta:</label>
+      <input
+        type="email"
+        value={contactInfo.email}
+        onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
+      />
+
+      <label>Telefon:</label>
+      <input
+        type="text"
+        value={contactInfo.telefon}
+        onChange={(e) => setContactInfo({ ...contactInfo, telefon: e.target.value })}
+      />
+
+      {/* Güncelle Butonu Burada Kalacak! */}
+      <button className="update-btn" onClick={updateContactInfo}>
+        Güncelle
+      </button>
     </div>
   </div>
 )}
