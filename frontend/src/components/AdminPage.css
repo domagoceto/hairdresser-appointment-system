@@ -69,9 +69,6 @@ header {
     color: #ffd700; /* Hücre içeriği sarı */
 }
 
-
-
-
 .search-container {
     margin-bottom: 20px;
     display: flex;
@@ -203,8 +200,6 @@ header {
 .filter-item input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
 }
-
-
 .service-container {
     margin-top: 20px;
     background-color: #333;
@@ -399,6 +394,154 @@ button:hover img {
   .payments-container tr:nth-child(even) {
     background-color: #333;
   }
+
+  .gallery-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* İçeriği ortalar */
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .gallery-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px; /* Başlık ile butonlar arasında boşluk */
+  }
+  
+  .upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* Butonlar arasında boşluk bırakır */
+    margin-bottom: 15px;
+  }
+  
+  .custom-file-upload {
+    background-color: #333;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .upload-btn {
+    background-color: red; /* Buton rengini belirgin yap */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block; /* Gizli değil! */
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  
+  .gallery-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .gallery-item {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .delete-btn:hover {
+    background-color: darkred;
+  }
+
+  .admin-page .contact-container {
+    background: #222;
+    padding: 30px;
+    text-align: center;
+    max-width: 600px; /* Admin paneli için genişliği büyüttüm */
+    margin: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contact-container h2 {
+    color: gold;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    align-self: flex-start; /* Üste hizalar */
+    text-align: left; /* Metni sola hizalar */
+    width: 100%; /* Tüm genişliği kaplamasını sağlar */
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.contact-form label {
+    font-weight: bold;
+    color: gold;
+    align-self: flex-start; /* Etiketleri sola hizalar */
+    margin-left: 5px; /* Küçük bir boşluk bırakır */
+}
+
+.contact-form input {
+    padding: 10px;
+    border: 2px solid gold;
+    border-radius: 5px;
+    width: 100%;
+    background: black;
+    color: white;
+    font-size: 1rem;
+}
+
+.contact-form input:focus {
+    border-color: #ffcc00;
+    outline: none;
+}
+
+  
+  .update-btn {
+    background-color: red !important; /* Kesin kırmızı arka plan */
+    color: white !important; /* Yazıyı beyaz yap */
+    font-weight: bold;
+    text-transform: uppercase; /* Büyük harf yap */
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    display: block; /* Butonu ortalamak için */
+    width: 100%; /* Tam genişlik kaplasın */
+    max-width: 200px; /* Çok geniş olmasın */
+    margin: 20px auto; /* Ortalamak için */
+    text-align: center;
+}
+
+.update-btn:hover {
+    background-color: darkred !important; /* Hover efekti */
+    transform: scale(1.05);
+}
+
+  
+  
   
   
   

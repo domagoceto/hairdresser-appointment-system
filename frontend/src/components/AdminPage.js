@@ -17,12 +17,15 @@ const AdminPage = () => {
   const [services, setServices] = useState([]);
   const [odemeYontemleri, setOdemeYontemleri] = useState([]); // Ödeme Yöntemleri için state
   const [odemeDurumlari, setOdemeDurumlari] = useState([]); // Ödeme Durumları için state
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const [newService, setNewService] = useState({
     ad: "",
     aciklama: "",
     fiyat: "",
     sure: "",
+    image: null,
   });
   const [payments, setPayments] = useState([]);
   const [newPayment, setNewPayment] = useState({
@@ -38,6 +41,44 @@ const AdminPage = () => {
     odemeTarihi: ""
   });
 
+  const [contactInfo, setContactInfo] = useState({
+    adres: "",
+    email: "",
+    telefon: "",
+  });
+
+  useEffect(() => {
+    if (selectedFunction === "contact") {
+      fetchContactInfo();
+    }
+  }, [selectedFunction]);
+
+  const fetchContactInfo = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/contact/info");
+      setContactInfo(response.data);
+    } catch (error) {
+      console.error("İletişim bilgileri alınamadı:", error);
+    }
+  };
+
+  // İletişim bilgilerini güncelle
+  const updateContactInfo = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      alert("Yetkilendirme hatası: Giriş yapmanız gerekiyor!");
+      return;
+    }
+
+    try {
+      await axios.post("http://localhost:8080/contact/update", contactInfo, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert("İletişim bilgileri başarıyla güncellendi!");
+    } catch (error) {
+      console.error("İletişim bilgileri güncellenirken hata oluştu:", error);
+    }
+  };
   
   
 
@@ -53,8 +94,9 @@ const AdminPage = () => {
       fetchServices();
     } else if (selectedFunction === "payments") {
       fetchPayments();
-    }
-  }, [selectedFunction]);
+    } else if (selectedFunction === "gallery") {
+      fetchGalleryImages();
+  }}, [selectedFunction]);
 
   const fetchAdminInfo = async () => {
     const token = localStorage.getItem("authToken");
@@ -68,6 +110,67 @@ const AdminPage = () => {
       console.error("Admin bilgileri alınamadı:", error);
     }
   };
+
+  const fetchGalleryImages = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/gallery/list");
+      setGalleryImages(response.data);
+    } catch (error) {
+      console.error("Galeri resimleri yüklenemedi:", error);
+    }
+  };
+
+  const uploadImage = async () => {
+    if (!selectedImage) return alert("Lütfen bir resim seçin.");
+  
+    const token = localStorage.getItem("authToken"); // 📌 Token'i localStorage'dan al
+    if (!token) {
+      alert("Yetkilendirme hatası: Giriş yapmanız gerekiyor!");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("file", selectedImage);
+  
+    try {
+      await axios.post("http://localhost:8080/gallery/upload", formData, {
+        headers: { 
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${token}`  // 📌 Token'i ekle
+        },
+      });
+      fetchGalleryImages();
+      setSelectedImage(null);
+      alert("Resim başarıyla yüklendi!");
+    } catch (error) {
+      console.error("Resim yükleme hatası:", error);
+      alert("Resim yüklenirken hata oluştu: " + (error.response?.data?.message || "Bilinmeyen hata"));
+    }
+  };
+  
+
+  const deleteImage = async (fileName) => {
+    const token = localStorage.getItem("authToken"); // 📌 Token ekle
+    if (!token) {
+      alert("Yetkilendirme hatası: Giriş yapmanız gerekiyor!");
+      return;
+    }
+  
+    const confirmed = window.confirm("Bu resmi silmek istediğinize emin misiniz?");
+    if (!confirmed) return;
+  
+    try {
+      await axios.delete(`http://localhost:8080/gallery/delete/${fileName}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert("Resim başarıyla silindi!");
+      fetchGalleryImages();
+    } catch (error) {
+      console.error("Resim silme hatası:", error);
+      alert("Resim silinirken hata oluştu!");
+    }
+  };
+  
 
   const fetchOdemeYontemleri = async () => {
     const token = localStorage.getItem("authToken");
@@ -171,6 +274,8 @@ const AdminPage = () => {
       console.error("Hizmetler alınamadı:", error);
     }
   };
+  
+
 
   const fetchPayments = async () => {
     const token = localStorage.getItem("authToken");
@@ -184,21 +289,45 @@ const AdminPage = () => {
       console.error("Ödemeler alınamadı:", error);
     }
   };
+
+  const handleFileChange = (e) => {
+    setNewService({ ...newService, image: e.target.files[0] });
+  };
+
+  const handleChange = (e) => {
+    setNewService({ ...newService, [e.target.name]: e.target.value });
+  };
   
 
   const addService = async () => {
     const token = localStorage.getItem("authToken");
     if (!token) return console.error("JWT token eksik.");
+    
     try {
-      await axios.post("/hizmet/ekle", newService, {
-        headers: { Authorization: `Bearer ${token}` },
+      const formData = new FormData();
+      formData.append("ad", newService.ad);
+      formData.append("aciklama", newService.aciklama);
+      formData.append("fiyat", newService.fiyat); // **parseFloat kaldırıldı!**
+      formData.append("sure", newService.sure);   // **parseInt kaldırıldı!**
+      if (newService.image) {
+        formData.append("image", newService.image);
+      }
+  
+      await axios.post("http://localhost:8080/hizmet/ekle", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          // "Content-Type": "multipart/form-data" **Bunu YORUMA AL!**
+        },
       });
+  
       await fetchServices();
-      setNewService({ ad: "", aciklama: "", fiyat: "", sure: "" });
+      setNewService({ ad: "", aciklama: "", fiyat: "", sure: "", image: null });
     } catch (error) {
       console.error("Hizmet eklenirken hata oluştu:", error);
     }
   };
+  
+  
 
   const deleteService = async (id) => {
     const token = localStorage.getItem("authToken");
@@ -249,7 +378,6 @@ const AdminPage = () => {
       console.error("Ödeme eklenirken hata oluştu:", error);
     }
   };
-  
 
   return (
     <div className="admin-page">
@@ -257,13 +385,26 @@ const AdminPage = () => {
         <h1>👋Merhaba, {adminName || "Admin"}</h1>
       </header>
       <div className="button-container">
-        <button onClick={() => setSelectedFunction("appointments")}>
-          Randevular
-        </button>
-        <button onClick={() => setSelectedFunction("users")}>Kullanıcılar</button>
-        <button onClick={() => setSelectedFunction("services")}>Hizmetler</button>
-        <button onClick={() => setSelectedFunction("payments")}>Ödemeler</button>
-      </div>
+    <button onClick={() => setSelectedFunction("appointments")}>
+        Randevular
+    </button>
+    <button onClick={() => setSelectedFunction("users")}>
+        Kullanıcılar
+    </button>
+    <button onClick={() => setSelectedFunction("services")}>
+        Hizmetler
+    </button>
+    <button onClick={() => setSelectedFunction("payments")}>
+        Ödemeler
+    </button>
+    <button onClick={() => setSelectedFunction("gallery")}>
+        Galeri
+    </button>
+    <button onClick={() => setSelectedFunction("contact")}>
+        İletişim
+    </button> 
+</div>
+
 
       {selectedFunction === "appointments" && (
         <div className="appointments-container">
@@ -359,72 +500,110 @@ const AdminPage = () => {
         </div>
       )}
 
-      {selectedFunction === "services" && (
-        <div className="service-container">
-          <h2>Hizmetler</h2>
-          <div className="service-form">
-            <input
-              type="text"
-              placeholder="Hizmet Adı"
-              value={newService.ad}
-              onChange={(e) =>
-                setNewService({ ...newService, ad: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="Açıklama"
-              value={newService.aciklama}
-              onChange={(e) =>
-                setNewService({ ...newService, aciklama: e.target.value })
-              }
-            />
-            <input
-              type="number"
-              placeholder="Fiyat"
-              value={newService.fiyat}
-              onChange={(e) =>
-                setNewService({ ...newService, fiyat: e.target.value })
-              }
-            />
-            <input
-              type="number"
-              placeholder="Süre (dk)"
-              value={newService.sure}
-              onChange={(e) =>
-                setNewService({ ...newService, sure: e.target.value })
-              }
-            />
-            <button onClick={addService}>Hizmet Ekle</button>
-          </div>
-          <div className="list-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Ad</th>
-                  <th>Açıklama</th>
-                  <th>Fiyat</th>
-                  <th>Süre</th>
-                  <th>Sil</th>
-                </tr>
-              </thead>
-              <tbody>
-                {services.map((service) => (
-                  <tr key={service.hizmetId}>
-                    <td>{service.ad}</td>
-                    <td>{service.aciklama}</td>
-                    <td>{service.fiyat} ₺</td>
-                    <td>{service.sure} dk</td>
-                    <td>
-                      <button onClick={() => deleteService(service.hizmetId)}>🗑️</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+{selectedFunction === "services" && (
+  <div className="service-container">
+    <h2>Hizmetler</h2>
+
+    {/* Hizmet Ekleme Formu */}
+    <div className="service-form">
+      <input 
+        type="text" 
+        name="ad" 
+        placeholder="Hizmet Adı" 
+        onChange={handleChange} 
+      />
+      <input 
+        type="text" 
+        name="aciklama" 
+        placeholder="Açıklama" 
+        onChange={handleChange} 
+      />
+      <input 
+        type="number" 
+        name="fiyat" 
+        placeholder="Fiyat" 
+        onChange={handleChange} 
+      />
+      <input 
+        type="number" 
+        name="sure" 
+        placeholder="Süre (dk)" 
+        onChange={handleChange} 
+      />
+
+      {/* Özelleştirilmiş Dosya Seçme Butonu */}
+      <label htmlFor="fileUpload" className="custom-file-upload">
+        Dosya Seç
+      </label>
+      <input 
+        type="file" 
+        id="fileUpload"
+        accept="image/*"
+        onChange={handleFileChange}
+        style={{ display: "none" }} 
+      />
+
+      <button onClick={addService}>Hizmet Ekle</button>
+    </div>
+
+    {/* Hizmet Listesi */}
+    <div className="list-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Ad</th>
+            <th>Açıklama</th>
+            <th>Fiyat</th>
+            <th>Süre</th>
+            <th>Resim</th>
+            <th>Sil</th>
+          </tr>
+        </thead>
+        <tbody>
+          {services.map((service) => (
+            <tr key={service.hizmetId}>
+              <td>{service.ad}</td>
+              <td>{service.aciklama}</td>
+              <td>{service.fiyat} ₺</td>
+              <td>{service.sure} dk</td>
+              <td>
+                {service.imageUrl ? (
+                  <>
+                    <img 
+                      src={`http://localhost:8080${service.imageUrl}`} 
+                      alt={service.ad} 
+                      width="50" 
+                      height="50"
+                      onError={(e) => { e.target.src = "/images/default_service.jpg"; }} 
+                    />
+                    <p>{service.imageUrl.split('/').pop()}</p> {/* Resim adı */}
+                  </>
+                ) : (
+                  "Resim Yok"
+                )}
+              </td>
+              <td>
+              <button 
+                className="delete-button" 
+                onClick={() => {
+                  const confirmed = window.confirm("Bu hizmeti silmek istediğinize emin misiniz?");
+                  if (confirmed) {
+                    deleteService(service.hizmetId);
+                  }
+                }}
+              >
+                🗑️
+              </button>
+            </td>
+
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+)}
+
 
 {selectedFunction === "payments" && (
   <div className="payments-container">
@@ -528,6 +707,73 @@ const AdminPage = () => {
 
   </div>
 )}
+{selectedFunction === "gallery" && (
+  <div className="gallery-container">
+    <h2>📸 Galeri Yönetimi</h2>
+    <div className="upload-section">
+      <label htmlFor="fileUpload" className="custom-file-upload">Dosya Seç</label>
+      <input 
+        type="file" 
+        id="fileUpload"
+        accept="image/*"
+        onChange={(e) => setSelectedImage(e.target.files[0])}
+        style={{ display: "none" }}
+      />
+      <button onClick={uploadImage} className="upload-btn">Resim Yükle</button>
+    </div>
+    
+    <div className="gallery-list">
+      {galleryImages.length > 0 ? (
+        galleryImages.map((image, index) => {
+          const fileName = image.split('/').pop(); // Dosya adını al
+          return (
+            <div key={index} className="gallery-item">
+              <img src={`http://localhost:8080${image}`} alt={`Galeri ${index}`} width="150" />
+              <button className="delete-btn" onClick={() => deleteImage(fileName)}>🗑️</button>
+            </div>
+          );
+        })
+      ) : (
+        <p>Henüz galeriye resim eklenmedi.</p>
+      )}
+    </div>
+  </div>
+)}
+
+
+{selectedFunction === "contact" && (
+  <div className="contact-container">
+    <h2>İletişim Bilgilerini Düzenle</h2>
+    <div className="contact-form">
+      <label>Adres:</label>
+      <input
+        type="text"
+        value={contactInfo.adres}
+        onChange={(e) => setContactInfo({ ...contactInfo, adres: e.target.value })}
+      />
+
+      <label>E-posta:</label>
+      <input
+        type="email"
+        value={contactInfo.email}
+        onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
+      />
+
+      <label>Telefon:</label>
+      <input
+        type="text"
+        value={contactInfo.telefon}
+        onChange={(e) => setContactInfo({ ...contactInfo, telefon: e.target.value })}
+      />
+
+      {/* Güncelle Butonu Burada Kalacak! */}
+      <button className="update-btn" onClick={updateContactInfo}>
+        Güncelle
+      </button>
+    </div>
+  </div>
+)}
+
 
     </div>
   );

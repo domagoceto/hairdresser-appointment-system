@@ -1,18 +1,38 @@
-import React, { useRef } from 'react';
-import './Services.css';
+import React, { useEffect, useState, useRef } from "react";
+import axios from "axios";
+import "./Services.css";
 
-function Services() {
+const Services = () => {
+  const [services, setServices] = useState([]);
   const scrollRef = useRef(null);
 
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) return console.error("JWT token eksik.");
+    
+    try {
+      const response = await axios.get("/hizmet/list", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("API'den Gelen Hizmetler:", response.data); // **EKLENDİ**
+      setServices(response.data);
+    } catch (error) {
+      console.error("Hizmetler alınamadı:", error);
+    }
+  };
   const scrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -450, behavior: 'smooth' }); // Kaydırma mesafesi artırıldı
+      scrollRef.current.scrollBy({ left: -450, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 450, behavior: 'smooth' }); // Kaydırma mesafesi artırıldı
+      scrollRef.current.scrollBy({ left: 450, behavior: "smooth" });
     }
   };
 
@@ -24,22 +44,16 @@ function Services() {
           &lt;
         </button>
         <div className="services-list" ref={scrollRef}>
-          <div className="service-card">
-            <img src="/images/hizmet1.jpg" alt="Saç Kesimi" />
-            <h3>Saç Kesimi</h3>
-          </div>
-          <div className="service-card">
-            <img src="/images/hizmet2.jpg" alt="Saç Boyama" />
-            <h3>Saç Boyama</h3>
-          </div>
-          <div className="service-card">
-            <img src="/images/hizmet3.jpg" alt="Makyaj" />
-            <h3>Makyaj</h3>
-          </div>
-          <div className="service-card">
-            <img src="/images/hizmet4.jpg" alt="Fön" />
-            <h3>Fön Çekimi</h3>
-          </div>
+          {services.map((service) => (
+            <div key={service.hizmetId} className="service-card">
+              {service.imageUrl ? (
+                <img src={service.imageUrl} alt={service.ad} />
+              ) : (
+                <img src="/images/default_service.jpg" alt="Varsayılan" />
+              )}
+              <h3>{service.ad}</h3>
+            </div>
+          ))}
         </div>
         <button className="scroll-btn right" onClick={scrollRight}>
           &gt;
@@ -47,6 +61,6 @@ function Services() {
       </div>
     </section>
   );
-}
+};
 
 export default Services;

@@ -1,49 +1,61 @@
-/* İletişim kısmı */
+/* İletişim Alanı */
 .contact {
   text-align: center;
-  padding: 40px 20px; /* Daha kısa yapı */
+  padding: 40px 20px;
   background-color: gold;
-  color: black;
 }
 
+/* Başlık */
 .contact h2 {
+  color: white; /* Yazıyı beyaz yap */
   font-size: 2.5rem;
-  margin-bottom: 30px;
-  font-weight: bold;
+  margin-bottom: 20px;
 }
 
+/* KARTLARI YAN YANA GETİRME */
 .contact-container {
   display: flex;
-  justify-content: center;
-  gap: 30px;
+  justify-content: center; /* Kartları ortala */
+  align-items: center;
+  gap: 20px; /* Kartlar arasındaki boşluk */
+  flex-wrap: nowrap; /* Küçük ekranda da yan yana kalsın */
 }
 
 .contact-card {
+  display: inline-block; /* Kartları yatay sıraya sok */
   background-color: #fff;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  flex: 1;
-  max-width: 300px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hover için animasyon */
+  width: 200px; /* Kart genişliği */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+
+/* İKONLAR */
 .contact-card .icon {
   font-size: 2.5rem;
   color: red;
   margin-bottom: 10px;
 }
 
+/* METİN */
 .contact-card p {
   margin: 0;
   font-size: 1.1rem;
   font-weight: bold;
 }
 
-/* Hover Efekti */
+/* HOVER EFEKTİ */
 .contact-card:hover {
-  transform: scale(1.05); /* Hafif büyütme */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Gölge efekti */
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
   cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .contact-container {
+    flex-direction: row; /* Küçük ekranlarda da yatay kalsın */
+    justify-content: center;
+  }
 }

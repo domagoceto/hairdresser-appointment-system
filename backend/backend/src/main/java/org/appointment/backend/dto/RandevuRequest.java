@@ -8,10 +8,10 @@ import java.time.LocalTime;
 
 @Getter
 @Setter
-public class RandevuRequest {
+public class RandevuRequest { //Randevu oluşturmak için gerekli verileri ileten Dto
     private Long kuaforId;
     private Long hizmetId;
     private LocalDate tarih;
     private LocalTime saat;
-    private String notlar; // Kullanıcının isteğe bağlı notu
+    private String notlar; //
 }

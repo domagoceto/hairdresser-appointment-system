@@ -61,7 +61,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // CSRF'yi devre dışı bırak
+                .csrf(csrf -> csrf.disable()) //
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS yapılandırması
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/register", "/auth/login").permitAll()
@@ -79,7 +79,14 @@ public class SecurityConfig {
                         .requestMatchers("/user/**").hasRole("MUSTERI")
                         .requestMatchers("/hizmetler", "/randevu/kuaforler").hasRole("MUSTERI") // Müşteri erişimi
                         .requestMatchers("/favicon.ico", "/logo192.png", "/error").permitAll()
+                        .requestMatchers("/gallery/upload", "/gallery/delete/**").hasRole("ADMIN")
+                        .requestMatchers("/gallery/list").permitAll() // Galeri herkese açık
+                        .requestMatchers("/contact/update").hasRole("ADMIN")
+                        .requestMatchers("/contact/info").permitAll()
+
+
                         .requestMatchers("/odeme/yontemler", "/odeme/durumlar").hasRole("ADMIN") // Admin yetkisi gerekiyor
+                        .requestMatchers("/uploads/**").permitAll()  // **Resimlere erişim izni veriyoruz**
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // JWT doğrulama filtresi

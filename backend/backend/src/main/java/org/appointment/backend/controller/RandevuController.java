@@ -62,7 +62,7 @@ public class RandevuController {
     }
 
     @PostMapping("/randevu")
-    @PreAuthorize("hasRole('MUSTERI')") // Eğer rol bazlı bir yetkilendirme gerekiyorsa
+    @PreAuthorize("hasRole('MUSTERI')") // Controller'da MUSTERI" rolü için randevu oluşturma kodlaması
     public ResponseEntity<RandevuResponse> createRandevu(@RequestBody RandevuRequest request) {
         try {
             String email = SecurityContextHolder.getContext().getAuthentication().getName();
