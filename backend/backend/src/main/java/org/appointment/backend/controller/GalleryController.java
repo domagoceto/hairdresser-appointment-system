@@ -2,6 +2,7 @@ package org.appointment.backend.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,6 +52,22 @@ public class GalleryController {
             return ResponseEntity.ok(imageUrls);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @DeleteMapping("/delete/{fileName}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> deleteImage(@PathVariable String fileName) {
+        try {
+            Path path = Paths.get(UPLOAD_DIR + fileName);
+            if (Files.exists(path)) {
+                Files.delete(path);
+                return ResponseEntity.ok("Resim başarıyla silindi.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resim bulunamadı.");
+            }
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Resim silinirken hata oluştu.");
         }
     }
 }

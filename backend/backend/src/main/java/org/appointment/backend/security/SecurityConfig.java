@@ -79,6 +79,9 @@ public class SecurityConfig {
                         .requestMatchers("/user/**").hasRole("MUSTERI")
                         .requestMatchers("/hizmetler", "/randevu/kuaforler").hasRole("MUSTERI") // Müşteri erişimi
                         .requestMatchers("/favicon.ico", "/logo192.png", "/error").permitAll()
+                        .requestMatchers("/gallery/upload", "/gallery/delete/**").hasRole("ADMIN")
+                        .requestMatchers("/gallery/list").permitAll() // Galeri herkese açık
+
                         .requestMatchers("/odeme/yontemler", "/odeme/durumlar").hasRole("ADMIN") // Admin yetkisi gerekiyor
                         .requestMatchers("/uploads/**").permitAll()  // **Resimlere erişim izni veriyoruz**
                         .anyRequest().authenticated()

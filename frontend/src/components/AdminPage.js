@@ -84,31 +84,52 @@ const AdminPage = () => {
 
   const uploadImage = async () => {
     if (!selectedImage) return alert("Lütfen bir resim seçin.");
-    
+  
+    const token = localStorage.getItem("authToken"); // 📌 Token'i localStorage'dan al
+    if (!token) {
+      alert("Yetkilendirme hatası: Giriş yapmanız gerekiyor!");
+      return;
+    }
+  
     const formData = new FormData();
     formData.append("file", selectedImage);
-
+  
     try {
       await axios.post("http://localhost:8080/gallery/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { 
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${token}`  // 📌 Token'i ekle
+        },
       });
       fetchGalleryImages();
       setSelectedImage(null);
       alert("Resim başarıyla yüklendi!");
     } catch (error) {
       console.error("Resim yükleme hatası:", error);
+      alert("Resim yüklenirken hata oluştu: " + (error.response?.data?.message || "Bilinmeyen hata"));
     }
   };
+  
 
-  const deleteImage = async (imagePath) => {
-    const confirmDelete = window.confirm("Bu resmi silmek istediğinizden emin misiniz?");
-    if (!confirmDelete) return;
+  const deleteImage = async (fileName) => {
+    const token = localStorage.getItem("authToken"); // 📌 Token ekle
+    if (!token) {
+      alert("Yetkilendirme hatası: Giriş yapmanız gerekiyor!");
+      return;
+    }
+  
+    const confirmed = window.confirm("Bu resmi silmek istediğinize emin misiniz?");
+    if (!confirmed) return;
   
     try {
-      await axios.delete("http://localhost:8080/gallery/delete", { data: { path: imagePath } });
-      fetchGalleryImages(); // Resimleri yeniden yükleyerek güncelliyoruz
+      await axios.delete(`http://localhost:8080/gallery/delete/${fileName}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert("Resim başarıyla silindi!");
+      fetchGalleryImages();
     } catch (error) {
       console.error("Resim silme hatası:", error);
+      alert("Resim silinirken hata oluştu!");
     }
   };
   
@@ -638,37 +659,37 @@ const AdminPage = () => {
 )}
 {selectedFunction === "gallery" && (
   <div className="gallery-container">
-    <h2 className="gallery-title">📸 Galeri Yönetimi</h2>
-    
-    {/* Resim Yükleme Alanı */}
+    <h2>📸 Galeri Yönetimi</h2>
     <div className="upload-section">
-      <label htmlFor="galleryUpload" className="custom-file-upload">
-        Dosya Seç
-      </label>
-      <input
-        type="file"
-        id="galleryUpload"
+      <label htmlFor="fileUpload" className="custom-file-upload">Dosya Seç</label>
+      <input 
+        type="file" 
+        id="fileUpload"
         accept="image/*"
         onChange={(e) => setSelectedImage(e.target.files[0])}
         style={{ display: "none" }}
       />
-      <button className="upload-button" onClick={uploadImage}>Resim Yükle</button>
+      <button onClick={uploadImage} className="upload-btn">Resim Yükle</button>
     </div>
-
-    {/* Galeri Resimleri */}
+    
     <div className="gallery-list">
       {galleryImages.length > 0 ? (
-        galleryImages.map((image, index) => (
-          <div key={index} className="gallery-item">
-            <img src={`http://localhost:8080${image}`} alt={`Galeri ${index}`} width="150" />
-          </div>
-        ))
+        galleryImages.map((image, index) => {
+          const fileName = image.split('/').pop(); // Dosya adını al
+          return (
+            <div key={index} className="gallery-item">
+              <img src={`http://localhost:8080${image}`} alt={`Galeri ${index}`} width="150" />
+              <button className="delete-btn" onClick={() => deleteImage(fileName)}>🗑️</button>
+            </div>
+          );
+        })
       ) : (
         <p>Henüz galeriye resim eklenmedi.</p>
       )}
     </div>
   </div>
 )}
+
 
     </div>
   );

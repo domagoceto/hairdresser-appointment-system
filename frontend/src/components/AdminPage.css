@@ -442,10 +442,32 @@ button:hover img {
   .gallery-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
     justify-content: center;
-    margin-top: 15px;
+    gap: 15px;
   }
+
+  .gallery-item {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .delete-btn:hover {
+    background-color: darkred;
+  }
+
+  
   
   
   
