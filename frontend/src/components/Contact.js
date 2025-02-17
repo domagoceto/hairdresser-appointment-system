@@ -17,6 +17,7 @@ function Contact() {
   const fetchContactInfo = async () => {
     try {
       const response = await axios.get("http://localhost:8080/contact/info");
+      console.log("Gelen İletişim Verisi:", response); // Log ekledik
       if (response.data) {
         setContactInfo(response.data);
       }
@@ -29,6 +30,7 @@ function Contact() {
       });
     }
   };
+  
 
   return (
     <section id="contact" className="contact">

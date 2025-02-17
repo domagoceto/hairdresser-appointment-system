@@ -15,25 +15,41 @@ header {
     font-weight: bold;
 }
 
-.button-container {
-    display: flex;
-    gap: 20px;
-    margin: 20px 0;
+.admin-button-container {
+  display: flex !important; /* Butonları yatay sırala */
+  flex-wrap: wrap !important; /* Ekrana sığmazsa alt satıra geçsin */
+  justify-content: center !important; /* Ortala */
+  align-items: center !important; /* Dikey hizala */
+  gap: 15px !important; /* Butonlar arasında boşluk */
+  width: 100% !important;
+  max-width: 1000px !important; /* Maksimum genişlik */
+  margin: 20px auto !important; /* Ortalamak için */
+  padding: 10px 0 !important; /* İç boşluk */
 }
 
-.button-container button {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    background-color: #333;
-    color: #ffd700;
-    cursor: pointer;
-    border-radius: 5px;
+.admin-button-container button {
+  padding: 15px 30px !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  border: none !important;
+  background-color: #333 !important;
+  color: #ffd700 !important;
+  cursor: pointer !important;
+  border-radius: 5px !important;
+  text-align: center !important;
+  min-width: 150px !important;
+  max-width: 200px !important;
+  transition: 0.3s ease-in-out !important;
+  display: inline-flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
 
-.button-container button:hover {
-    background-color: #555;
+.admin-button-container button:hover {
+  background-color: #555 !important;
+  transform: scale(1.05) !important;
 }
+
 
 .list-container {
     margin-top: 20px;

@@ -11,19 +11,15 @@ const Services = () => {
   }, []);
 
   const fetchServices = async () => {
-    const token = localStorage.getItem("authToken");
-    if (!token) return console.error("JWT token eksik.");
-    
     try {
-      const response = await axios.get("/hizmet/list", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log("API'den Gelen Hizmetler:", response.data); // **EKLENDİ**
+      const response = await axios.get("http://localhost:8080/hizmet/list"); // Token kontrolü kaldırıldı
+      console.log("API'den Gelen Hizmetler:", response.data);
       setServices(response.data);
     } catch (error) {
       console.error("Hizmetler alınamadı:", error);
     }
   };
+  
   const scrollLeft = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: -450, behavior: "smooth" });

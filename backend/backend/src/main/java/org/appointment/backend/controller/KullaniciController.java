@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.appointment.backend.dto.KullaniciDto;
 import org.appointment.backend.service.KullaniciService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ public class KullaniciController {
 
     private final KullaniciService kullaniciService;
 
+    @PreAuthorize("hasRole('MUSTERI')")
     // Kullanıcının kendi bilgilerini görüntülemesi için endpoint
     @GetMapping("/me")
     public ResponseEntity<KullaniciDto> getAuthenticatedUser() {

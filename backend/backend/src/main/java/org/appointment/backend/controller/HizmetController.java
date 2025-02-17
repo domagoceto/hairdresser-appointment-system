@@ -84,14 +84,14 @@ public class HizmetController {
     }
 
     @GetMapping("/list")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<HizmetDto>> getAllHizmetler() {
         List<Hizmet> hizmetler = hizmetService.getAllHizmetler();
         List<HizmetDto> hizmetDTOList = hizmetler.stream()
-                .map(h -> new HizmetDto(h.getHizmetId(), h.getAd(), h.getAciklama(), h.getFiyat(), h.getSure(),h.getImageUrl()))
+                .map(h -> new HizmetDto(h.getHizmetId(), h.getAd(), h.getAciklama(), h.getFiyat(), h.getSure(), h.getImageUrl()))
                 .toList();
         return ResponseEntity.ok(hizmetDTOList);
     }
+
 
 
 }

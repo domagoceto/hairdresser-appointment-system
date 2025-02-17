@@ -71,7 +71,7 @@ public class SecurityConfig {
                         .requestMatchers("/hizmetler/ekle").hasRole("ADMIN")
                         .requestMatchers("/api/kuaforler/**").hasRole("KUAFOR")
                         .requestMatchers("/admin/me").hasRole("ADMIN")
-                        .requestMatchers("/user/me").hasRole("MUSTERI")
+                        .requestMatchers("/user/me").authenticated() // Kullanıcı giriş yapmış olmalı
                         .requestMatchers("/kuafor/all").hasRole("MUSTERI")
                         .requestMatchers("/kuafor/{kuaforId}/hizmetler/kullanici").hasRole("MUSTERI")
                         .requestMatchers("/kuafor/**").hasAnyRole("KUAFOR", "ADMIN","MUSTERI")
@@ -83,10 +83,9 @@ public class SecurityConfig {
                         .requestMatchers("/gallery/list").permitAll() // Galeri herkese açık
                         .requestMatchers("/contact/update").hasRole("ADMIN")
                         .requestMatchers("/contact/info").permitAll()
-
-
                         .requestMatchers("/odeme/yontemler", "/odeme/durumlar").hasRole("ADMIN") // Admin yetkisi gerekiyor
                         .requestMatchers("/uploads/**").permitAll()  // **Resimlere erişim izni veriyoruz**
+                        .requestMatchers("/hizmet/list").permitAll() // Herkes erişebilir
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // JWT doğrulama filtresi

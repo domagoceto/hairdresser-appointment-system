@@ -168,28 +168,33 @@ public class KuaforServiceImpl implements KuaforService {
         Kuafor kuafor = kuaforRepository.findById(kuaforId)
                 .orElseThrow(() -> new RuntimeException("Kuaför bulunamadı: " + kuaforId));
 
-        // Kuaförün güncellenebilir bilgilerini alıyoruz
+        Kullanici kullanici = kuafor.getKullanici(); // Kuaför ile ilişkili kullanıcıyı al
+
+        // Güncellenebilir alanları kontrol et ve güncelle
         if (updateRequest.getAd() != null) {
-            kuafor.getKullanici().setAd(updateRequest.getAd());
+            kullanici.setAd(updateRequest.getAd());
         }
         if (updateRequest.getSoyad() != null) {
-            kuafor.getKullanici().setSoyad(updateRequest.getSoyad());
+            kullanici.setSoyad(updateRequest.getSoyad());
         }
         if (updateRequest.getTelefon() != null) {
             kuafor.setTelefon(updateRequest.getTelefon());
+            kullanici.setTelefon(updateRequest.getTelefon());
         }
         if (updateRequest.getEmail() != null) {
-            kuafor.getKullanici().setEmail(updateRequest.getEmail());
+            kullanici.setEmail(updateRequest.getEmail());
         }
         if (updateRequest.getSifre() != null && !updateRequest.getSifre().isEmpty()) {
-            kuafor.getKullanici().setSifre(updateRequest.getSifre());
+            kullanici.setSifre(updateRequest.getSifre());
         }
 
-        // Güncelleme işlemini kaydediyoruz
+        // Güncellemeleri kaydet
         kuaforRepository.save(kuafor);
+        kullaniciRepository.save(kullanici); // 📌 Kullanıcı tablosunda da değişiklikleri kaydet!
 
         return kuafor;
     }
+
 
     @Transactional
     @Override
