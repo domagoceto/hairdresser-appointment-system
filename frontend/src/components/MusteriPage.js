@@ -3,6 +3,10 @@ import "./MusteriPage.css";
 import axios from "axios";
 
 const MusteriPage = () => {
+    const [kullanici, setKullanici] = useState(null);
+    const [telefon, setTelefon] = useState("");
+    const [loading, setLoading] = useState(true);
+
     const [kullaniciAdi, setKullaniciAdi] = useState("");
     const [hizmetler, setHizmetler] = useState([]); // Sadece hizmet adlarını tutacak
     const [kuaforler, setKuaforler] = useState([]);
@@ -24,16 +28,57 @@ const MusteriPage = () => {
 
     const fetchKullanici = async () => {
         const token = localStorage.getItem("authToken");
-        if (!token) return console.error("JWT token eksik.");
+        console.log("Auth Token:", token); // ✅ Token kontrolü
+    
+        if (!token) {
+            console.error("JWT token eksik.");
+            return;
+        }
+    
         try {
             const response = await axios.get("/user/me", {
                 headers: { Authorization: `Bearer ${token}` },
             });
+    
+            console.log("Kullanıcı Bilgileri API Yanıtı:", response.data); // ✅ API yanıtını kontrol et
+            setKullanici(response.data);
+            setTelefon(response.data.telefon || "");
             setKullaniciAdi(response.data.ad);
+            setLoading(false);
         } catch (error) {
             console.error("Kullanıcı bilgisi alınamadı:", error);
+            setLoading(false);
         }
     };
+    
+    
+    
+
+    const handleUpdate = async () => {
+        try {
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                alert("Lütfen giriş yapınız.");
+                return;
+            }
+    
+            const response = await axios.put(
+                "/user/update",
+                { telefon }, // Güncellenecek alanları gönderiyoruz
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+    
+            console.log("Güncellenmiş Kullanıcı Bilgileri:", response.data);
+            setKullanici(response.data);
+            alert("Bilgiler başarıyla güncellendi!");
+        } catch (error) {
+            console.error("Bilgiler güncellenirken hata oluştu:", error);
+            alert("Bilgiler güncellenirken hata oluştu.");
+        }
+    };
+    
+
+    
 
     const fetchHizmetler = async (kuaforId) => {
       const token = localStorage.getItem("authToken");
@@ -199,48 +244,69 @@ const handleRandevuIptal = async (randevuId) => {
   }
 };
 
-
-
-
-
     return (
         <div className="musteri-container">
     <h1>👋 Merhaba, {kullaniciAdi || "Kullanıcı"}</h1>
+
     <div className="content">
-        <button
-            className="randevularim-btn"
-            onClick={() => {
-                setShowRandevular(!showRandevular);
-                if (!showRandevular) fetchRandevular();
-            }}
-        >
-            Randevularım
-        </button>
-        {showRandevular && (
-            <div className="randevular">
-                {randevular.length === 0 ? (
-                    <p>Henüz bir randevunuz bulunmamaktadır.</p>
-                ) : (
-                    randevular.map((randevu) => (
-                        <div key={randevu.randevuId} className="randevu-card">
-                            <p>{randevu.tarih} {randevu.saat}</p>
-                            <p>İşlem: {randevu.hizmetAdi || "Belirtilmemiş"}</p>
-                            <p>Kuaför: {randevu.kuaforAd} {randevu.kuaforSoyad}</p>
-                            <button className="iptal-btn" onClick={() => handleRandevuIptal(randevu.randevuId)}>
-                                Randevuyu İptal Et
-                            </button>
-                        </div>
-                    ))
-                )}
+        {/* ✅ Hesap Bilgileri Solda */}
+        {!loading && kullanici ? (
+            <div className="user-info">
+                <h2>Hesap Bilgilerim</h2>
+                <p><strong>Ad:</strong> {kullanici?.ad || "Bilinmiyor"}</p>
+                <p><strong>Soyad:</strong> {kullanici?.soyad || "Bilinmiyor"}</p>
+                <p><strong>E-posta:</strong> {kullanici?.email || "Bilinmiyor"}</p>
+                <label>Telefon:</label>
+                <input
+                    type="text"
+                    value={telefon}
+                    onChange={(e) => setTelefon(e.target.value)}
+                />
+                 <div className="button-container">
+                    <button className="update-btn" onClick={handleUpdate}>
+                        Güncelle
+                    </button>
+                    <button className="delete-btn" onClick={handleDeleteAccount}>
+                        Hesabımı Sil
+                    </button>
+                </div>
             </div>
+        ) : (
+            <p>Bilgiler yükleniyor...</p>
         )}
 
-<button
-        className="delete-account-btn"
-        onClick={handleDeleteAccount}
-    >
-        Hesabımı Sil
-    </button>
+        {/* ✅ Randevularım Ortada */}
+        <div className="randevularim-container">
+            <button
+                className="randevularim-btn"
+                onClick={() => {
+                    setShowRandevular(!showRandevular);
+                    if (!showRandevular) fetchRandevular();
+                }}
+            >
+                Randevularım
+            </button>
+            {showRandevular && (
+                <div className="randevular">
+                    {randevular.length === 0 ? (
+                        <p>Henüz bir randevunuz bulunmamaktadır.</p>
+                    ) : (
+                        randevular.map((randevu) => (
+                            <div key={randevu.randevuId} className="randevu-card">
+                                <p>{randevu.tarih} {randevu.saat}</p>
+                                <p>İşlem: {randevu.hizmetAdi || "Belirtilmemiş"}</p>
+                                <p>Kuaför: {randevu.kuaforAd} {randevu.kuaforSoyad}</p>
+                                <button className="iptal-btn" onClick={() => handleRandevuIptal(randevu.randevuId)}>
+                                    Randevuyu İptal Et
+                                </button>
+                            </div>
+                        ))
+                    )}
+                </div>
+            )}
+        </div>
+
+        {/* ✅ Randevu Al Sağda */}
         <div className="randevu-al">
             <h2>Randevu Al</h2>
             <div className="form">
@@ -258,7 +324,7 @@ const handleRandevuIptal = async (randevuId) => {
                     value={formData.hizmet}
                     onChange={(e) => {
                         const selectedHizmetId = e.target.value;
-                        setFormData({ ...formData, hizmet: selectedHizmetId }); // ID'yi set ediyoruz
+                        setFormData({ ...formData, hizmet: selectedHizmetId });
                     }}
                 >
                     <option value="">Hizmet Seçiniz</option>
@@ -276,40 +342,36 @@ const handleRandevuIptal = async (randevuId) => {
                     onChange={handleFormChange}
                 />
 
-                <div className="form-group">
-                    <label htmlFor="saat">Saat Seçiniz</label>
-                    <select
-                        id="saat"
-                        name="saat"
-                        value={formData.saat}
-                        onChange={handleFormChange}
-                        className="saat-select"
-                    >
-                        <option value="">Saat Seçiniz</option>
-                        {Array.from({ length: 11 }, (_, index) => {
-                            const hour = 9 + index; // 09:00'dan 19:00'a kadar saatler
-                            const formattedHour = hour.toString().padStart(2, "0") + ":00"; // Saatleri formatla
-                            return (
-                                <option key={hour} value={formattedHour}>
-                                    {formattedHour}
-                                </option>
-                            );
-                        })}
-                    </select>
-                </div>
+                <label htmlFor="saat">Saat Seçiniz</label>
+                <select
+                    id="saat"
+                    name="saat"
+                    value={formData.saat}
+                    onChange={handleFormChange}
+                    className="saat-select"
+                >
+                    <option value="">Saat Seçiniz</option>
+                    {Array.from({ length: 11 }, (_, index) => {
+                        const hour = 9 + index;
+                        return (
+                            <option key={hour} value={`${hour}:00`}>
+                                {hour}:00
+                            </option>
+                        );
+                    })}
+                </select>
 
-                <div className="form-group">
-                    <label htmlFor="notlar">Notlar</label>
-                    <textarea
-                        id="notlar"
-                        name="notlar"
-                        placeholder="Notlarınızı buraya yazabilirsiniz (isteğe bağlı)."
-                        value={formData.notlar || ""}
-                        onChange={handleFormChange}
-                        rows="3"
-                        className="notlar-textarea"
-                    />
-                </div>
+                <label htmlFor="notlar">Notlar</label>
+                <textarea
+                    id="notlar"
+                    name="notlar"
+                    placeholder="Notlarınızı buraya yazabilirsiniz (isteğe bağlı)."
+                    value={formData.notlar || ""}
+                    onChange={handleFormChange}
+                    rows="3"
+                    className="notlar-textarea"
+                />
+
                 <button className="randevu-al-btn" onClick={handleRandevuAl}>
                     Randevu Al
                 </button>
@@ -317,6 +379,7 @@ const handleRandevuIptal = async (randevuId) => {
         </div>
     </div>
 </div>
+
 
 
     );

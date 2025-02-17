@@ -1,97 +1,167 @@
 body, html {
-    margin: 0;
-    padding: 0;
-    background-color: #1f1f1f;
-    color: #ffcc00;
-    font-family: Arial, sans-serif;
-    height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #1f1f1f;
+  color: #ffcc00;
+  font-family: Arial, sans-serif;
+  height: 100%;
 }
 
+/* Sayfanın ana konteyneri */
 .musteri-container {
-    padding: 20px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
 }
 
+/* ✅ Hesap Bilgileri, Randevularım ve Randevu Al Aynı Satırda */
 .content {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
+  justify-content: space-between; /* İçerikleri yatayda yay */
+  align-items: flex-start; /* Üstten hizala */
+  width: 90%;
+  max-width: 1200px;
   margin-top: 20px;
 }
 
+/* ✅ Hesap Bilgileri Solda */
+.user-info {
+  background-color: #222;
+  color: gold;
+  padding: 20px;
+  border-radius: 10px;
+  width: 350px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+}
+
+/* Telefon Güncelleme Input */
+.user-info input {
+  padding: 10px;
+  border: 2px solid gold;
+  border-radius: 5px;
+  width: 80%;
+  background: black;
+  color: white;
+  font-size: 1rem;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column; /* Butonları alt alta koy */
+  align-items: center; /* Ortaya hizala */
+  width: 100%;
+}
+
+/* ✅ Güncelle ve Hesabımı Sil Butonları Alt Alta Olacak */
+.update-btn, .delete-btn {
+  width: 100%; /* Aynı genişlik */
+  max-width: 250px; /* Maksimum genişlik */
+  padding: 15px; /* Yükseklik eşitlendi */
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px; /* Arada mesafe bırak */
+  display: block;
+  text-align: center;
+  border: none;
+  background-color: red !important; /* KIRMIZI ZORUNLU */
+  color: white !important;
+}
+
+/* Güncelle Butonu */
+.update-btn {
+  background-color: red;
+  color: white;
+}
+
+.update-btn:hover {
+  background-color: darkred !important;
+}
+
+/* ✅ Hesabımı Sil Butonu Güncelle'nin Hemen Altında */
+.delete-btn {
+  background-color: red !important;
+  color: white !important;
+  font-weight: bold;
+  border-radius: 5px;
+  border: none !important;
+  position: static; /* 🚀 En üste gitmesini engelle */
+  display: block; /* Butonun alt alta durmasını sağla */
+}
+
+.delete-btn:hover {
+  background-color: darkred !important;
+  color: white;
+}
+
+/* ✅ Randevularım Butonu Ortada Olacak */
+.randevularim-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+}
+
+/* Randevularım Butonu */
 .randevularim-btn {
   background-color: #ffcc00;
   color: black;
-  padding: 10px 15px; /* Daha ince ve uzun yapmak için padding ayarlandı */
+  padding: 10px 15px;
   border: none;
   border-radius: 5px;
-  font-size: 14px; /* Font boyutunu biraz küçült */
+  font-size: 14px;
   cursor: pointer;
-  align-self: flex-start;
-  margin-left: 20px; /* Sola boşluk bırak */
-  margin-bottom: 10px; /* Mesaj kısmıyla mesafeyi artır */
-  width: 120px; /* Sabit genişlik */
-  height: 40px; /* Sabit yükseklik */
+  width: 150px;
+  height: 40px;
   text-align: center;
 }
 
-
-
+/* Randevular Listesi */
 .randevular {
   background-color: #292929;
   padding: 15px;
   border-radius: 10px;
-  width: 300px; /* Sabit genişlik */
-  margin-top: 10px; /* Üst boşluk ekle */
+  width: 300px;
+  margin-top: 10px;
   display: flex;
-  flex-direction: column; /* Mesajların dikey olarak sıralanmasını sağlar */
+  flex-direction: column;
 }
 
-
+/* Randevu Kartları */
 .randevu-card {
   background-color: #e6b800;
   color: white;
   padding: 10px;
   border-radius: 5px;
-  margin-bottom: 10px; /* Kartlar arasında boşluk */
-  width: 100%; /* Randevular kutusunun genişliğine göre otomatik ayarlanır */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Hafif bir gölge efekti */
+  margin-bottom: 10px;
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-
-.iptal-btn {
-    background-color: #ff6666;
-    border: none;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    text-align: center;
-}
-
-.iptal-btn:hover {
-    background-color: #ff3333;
-}
+/* ✅ Randevu Al Kısmı Sağ Tarafta Olacak */
 .randevu-al {
   background-color: #292929;
   padding: 20px;
   border-radius: 10px;
-  width: 40%;
-  margin-left: 20px; /* Kutucuğu sola kaydırmak için margin ekledik */
+  width: 350px;
 }
 
+/* Form İçindeki Select ve Input Elemanları */
 .form select, .form input {
-  width: calc(100% - 20px); /* Tüm kutucukların eşit genişlikte olması */
+  width: 100%;
   margin-bottom: 15px;
   padding: 10px;
   border-radius: 5px;
   border: none;
 }
 
+/* Form Butonu */
 .form button {
   width: 100%;
   padding: 10px;
@@ -106,6 +176,7 @@ body, html {
   background-color: #e6b800;
 }
 
+/* Saat ve Notlar İçin Form Alanları */
 .form-group {
   margin-bottom: 15px;
 }
@@ -116,8 +187,9 @@ label {
   display: block;
 }
 
+/* Notlar İçin Textarea */
 .notlar-textarea {
-  width: calc(100% - 20px);
+  width: 100%;
   padding: 10px;
   font-size: 14px;
   border: 1px solid #ccc;
@@ -125,6 +197,7 @@ label {
   resize: vertical;
 }
 
+/* Saat Seçimi */
 .saat-select {
   width: 100%;
   padding: 8px;
@@ -132,28 +205,3 @@ label {
   border-radius: 4px;
   font-size: 16px;
 }
-
-.delete-account-btn {
-  display: block;
-  width: 10%;
-  padding: 10px 15px;
-  margin-left: 20px; /* Sola boşluk bırak */
-  margin-bottom: 10px; /* Mesaj kısmıyla mesafeyi artır */
-  width: 120px; /* Sabit genişlik */
-  height: 40px;
-  background-color: #ff4d4d; /* Kırmızı renk */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 10px;
-  font-size: 16px;
-  font-weight: bold;
-  margin: 10px 0; /* Arada boşluk bırak */
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.delete-account-btn:hover {
-  background-color: #ff0000; /* Daha koyu kırmızı */
-}
-

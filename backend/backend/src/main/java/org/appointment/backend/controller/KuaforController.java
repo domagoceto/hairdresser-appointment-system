@@ -123,14 +123,6 @@ public class KuaforController {
         }
     }
 
-
-
-
-
-
-
-
-
     // Kuaför kendi bilgilerini görüntüleyebilir
     @GetMapping("/me")
     @PreAuthorize("hasRole('KUAFOR')") // Sadece 'KUAFOR' rolüne sahip kullanıcılar erişebilir

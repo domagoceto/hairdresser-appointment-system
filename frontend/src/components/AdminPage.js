@@ -384,7 +384,7 @@ const AdminPage = () => {
       <header>
         <h1>👋Merhaba, {adminName || "Admin"}</h1>
       </header>
-      <div className="button-container">
+      <div className="admin-button-container">
     <button onClick={() => setSelectedFunction("appointments")}>
         Randevular
     </button>
@@ -404,6 +404,7 @@ const AdminPage = () => {
         İletişim
     </button> 
 </div>
+
 
 
       {selectedFunction === "appointments" && (
@@ -463,42 +464,54 @@ const AdminPage = () => {
         </div>
       )}
 
-      {selectedFunction === "users" && (
-        <div className="user-container">
-          <h2>Kullanıcılar</h2>
-          <div className="search-container">
-            <input
-              type="text"
-              placeholder="Kullanıcı ara..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-bar"
-            />
-          </div>
-          <div className="list-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Ad</th>
-                  <th>Soyad</th>
-                  <th>Email</th>
-                  <th>Telefon</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUsers.map((user) => (
-                  <tr key={user.id}>
-                    <td>{user.ad}</td>
-                    <td>{user.soyad}</td>
-                    <td>{user.email}</td>
-                    <td>{user.telefon}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+{selectedFunction === "users" && (
+  <div className="user-container">
+    <h2>Kullanıcılar</h2>
+    <div className="search-container">
+      <input
+        type="text"
+        placeholder="Kullanıcı ara..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value.toLowerCase())} 
+        className="search-bar"
+      />
+    </div>
+    <div className="list-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Ad</th>
+            <th>Soyad</th>
+            <th>Email</th>
+            <th>Telefon</th>
+            <th>Rol</th>  {/* Yeni eklenen ROL sütunu */}
+          </tr>
+        </thead>
+        <tbody>
+          {users
+            .filter(
+              (user) =>
+                user.ad.toLowerCase().includes(searchTerm) ||
+                user.soyad.toLowerCase().includes(searchTerm) ||
+                user.email.toLowerCase().includes(searchTerm) ||
+                user.telefon.includes(searchTerm) ||
+                user.rol.toLowerCase().includes(searchTerm) // Rol filtresi eklendi
+            )
+            .map((user) => (
+              <tr key={user.id}>
+                <td>{user.ad}</td>
+                <td>{user.soyad}</td>
+                <td>{user.email}</td>
+                <td>{user.telefon}</td>
+                <td>{user.rol}</td> {/* Yeni eklenen ROL bilgisi */}
+              </tr>
+            ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+)}
+
 
 {selectedFunction === "services" && (
   <div className="service-container">
